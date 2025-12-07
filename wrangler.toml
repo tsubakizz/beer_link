@@ -16,13 +16,18 @@ binding = "ASSETS"
 # 公開する環境変数
 [vars]
 NEXT_PUBLIC_R2_PUBLIC_URL = "https://pub-cdb979a7c5384512a98ac2106b339f21.r2.dev"
-NEXT_PUBLIC_SUPABASE_URL = "https://dzxlhatxlpspjhzmipeh.supabase.co"
-NEXT_PUBLIC_SUPABASE_ANON_KEY = "sb_publishable_HlSP-NOxzMpYRguIEA1e7Q_8IefLKy2"
+NEXT_PUBLIC_SUPABASE_URL = "https://ywldjjuajjuabdenlylo.supabase.co"
+NEXT_PUBLIC_SUPABASE_ANON_KEY = "sb_publishable_e17vZYTMCHGnJaKXkVBJ_Q_gFNKRarH"
 
 # R2 バケットの紐付け
 [[r2_buckets]]
 binding = "R2_BUCKET"
 bucket_name = "beer-link-staging-public"
+
+# Hyperdrive (データベース接続)
+[[hyperdrive]]
+binding = "HYPERDRIVE"
+id = "7b4a4640e7ea42d0afef173747d26cf2"
 
 # ========================================
 # 本番環境
@@ -31,10 +36,15 @@ bucket_name = "beer-link-staging-public"
 name = "beer-link-production"
 
 [env.production.vars]
-NEXT_PUBLIC_SITE_URL = "https://beer-link.example.com"
-NEXT_PUBLIC_R2_PUBLIC_URL = "https://pub-yyyyyyyyyyyyyyyyyyyy.r2.dev"
-NEXT_PUBLIC_SUPABASE_URL = "https://yyyy.supabase.co"
+NEXT_PUBLIC_SITE_URL = "https://beer-link-production.m-tsubaki.workers.dev"
+NEXT_PUBLIC_R2_PUBLIC_URL = "https://pub-14a53d66f8944bc6b7fd7bd004e750a6.r2.dev"
+NEXT_PUBLIC_SUPABASE_URL = "https://dzxlhatxlpspjhzmipeh.supabase.co"
+NEXT_PUBLIC_SUPABASE_ANON_KEY = "sb_publishable_HlSP-NOxzMpYRguIEA1e7Q_8IefLKy2"
 
 [[env.production.r2_buckets]]
 binding = "R2_BUCKET"
 bucket_name = "beer-link-production-public"
+
+[[env.production.hyperdrive]]
+binding = "HYPERDRIVE"
+id = "324279092e4f467395948dd8fd689c7c"
