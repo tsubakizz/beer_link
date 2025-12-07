@@ -1,0 +1,40 @@
+#:schema node_modules/wrangler/config-schema.json
+
+# ========================================
+# Cloudflare Workers 設定
+# ========================================
+name = "beer-link-staging"
+main = ".open-next/worker.js"
+compatibility_date = "2024-12-01"
+compatibility_flags = ["nodejs_compat"]
+
+# 静的アセット
+[assets]
+directory = ".open-next/assets"
+binding = "ASSETS"
+
+# 公開する環境変数
+[vars]
+NEXT_PUBLIC_R2_PUBLIC_URL = "https://pub-cdb979a7c5384512a98ac2106b339f21.r2.dev"
+NEXT_PUBLIC_SUPABASE_URL = "https://dzxlhatxlpspjhzmipeh.supabase.co"
+NEXT_PUBLIC_SUPABASE_ANON_KEY = "sb_publishable_HlSP-NOxzMpYRguIEA1e7Q_8IefLKy2"
+
+# R2 バケットの紐付け
+[[r2_buckets]]
+binding = "R2_BUCKET"
+bucket_name = "beer-link-staging-public"
+
+# ========================================
+# 本番環境
+# ========================================
+[env.production]
+name = "beer-link-production"
+
+[env.production.vars]
+NEXT_PUBLIC_SITE_URL = "https://beer-link.example.com"
+NEXT_PUBLIC_R2_PUBLIC_URL = "https://pub-yyyyyyyyyyyyyyyyyyyy.r2.dev"
+NEXT_PUBLIC_SUPABASE_URL = "https://yyyy.supabase.co"
+
+[[env.production.r2_buckets]]
+binding = "R2_BUCKET"
+bucket_name = "beer-link-production-public"
