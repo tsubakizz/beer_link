@@ -35,6 +35,10 @@ bucket_name = "beer-link-staging-public"
 binding = "HYPERDRIVE"
 id = "7b4a4640e7ea42d0afef173747d26cf2"
 
+# ログ出力 (staging)
+[observability]
+enabled = true
+
 # ========================================
 # 本番環境
 # ========================================
@@ -60,3 +64,7 @@ bucket_name = "beer-link-production-public"
 [[env.production.hyperdrive]]
 binding = "HYPERDRIVE"
 id = "324279092e4f467395948dd8fd689c7c"
+
+# ログ出力 (production)
+[env.production.observability]
+enabled = true
