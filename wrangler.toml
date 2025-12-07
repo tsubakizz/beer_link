@@ -49,7 +49,7 @@ routes = [
 
 [env.production.vars]
 NEXT_PUBLIC_SITE_URL = "https://beer-link.com"
-NEXT_PUBLIC_R2_PUBLIC_URL = "https://pub-14a53d66f8944bc6b7fd7bd004e750a6.r2.dev"
+NEXT_PUBLIC_R2_PUBLIC_URL = "https://r2.beer-link.com"
 NEXT_PUBLIC_SUPABASE_URL = "https://dzxlhatxlpspjhzmipeh.supabase.co"
 NEXT_PUBLIC_SUPABASE_ANON_KEY = "sb_publishable_HlSP-NOxzMpYRguIEA1e7Q_8IefLKy2"
 

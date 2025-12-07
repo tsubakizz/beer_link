@@ -5,6 +5,10 @@ const nextConfig: NextConfig = {
     remotePatterns: [
       {
         protocol: "https",
+        hostname: "r2.beer-link.com",
+      },
+      {
+        protocol: "https",
         hostname: "pub-14a53d66f8944bc6b7fd7bd004e750a6.r2.dev",
       },
       {
