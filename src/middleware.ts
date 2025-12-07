@@ -1,7 +1,46 @@
-import { type NextRequest } from "next/server";
+import { type NextRequest, NextResponse } from "next/server";
 import { updateSession } from "@/lib/supabase/middleware";
 
+// Staging環境のBasic認証
+function checkBasicAuth(request: NextRequest): NextResponse | null {
+  // 本番環境ではBasic認証をスキップ
+  const isProduction = process.env.NEXT_PUBLIC_SITE_URL?.includes("production");
+  if (isProduction || process.env.NODE_ENV === "development") {
+    return null;
+  }
+
+  // Basic認証のチェック
+  const authHeader = request.headers.get("authorization");
+  if (authHeader) {
+    const [scheme, encoded] = authHeader.split(" ");
+    if (scheme === "Basic" && encoded) {
+      const decoded = atob(encoded);
+      const [user, pass] = decoded.split(":");
+      // 環境変数から認証情報を取得（デフォルト: staging:staging）
+      const expectedUser = process.env.STAGING_AUTH_USER || "staging";
+      const expectedPass = process.env.STAGING_AUTH_PASS || "staging";
+      if (user === expectedUser && pass === expectedPass) {
+        return null; // 認証成功
+      }
+    }
+  }
+
+  // 認証失敗 - Basic認証を要求
+  return new NextResponse("Authentication required", {
+    status: 401,
+    headers: {
+      "WWW-Authenticate": 'Basic realm="Staging Environment"',
+    },
+  });
+}
+
 export async function middleware(request: NextRequest) {
+  // Basic認証チェック（staging環境のみ）
+  const authResponse = checkBasicAuth(request);
+  if (authResponse) {
+    return authResponse;
+  }
+
   return await updateSession(request);
 }
 
