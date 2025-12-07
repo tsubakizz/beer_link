@@ -13,8 +13,14 @@ compatibility_flags = ["nodejs_compat"]
 directory = ".open-next/assets"
 binding = "ASSETS"
 
+# カスタムドメイン (staging)
+routes = [
+  { pattern = "staging.beer-link.com", custom_domain = true }
+]
+
 # 公開する環境変数
 [vars]
+NEXT_PUBLIC_SITE_URL = "https://staging.beer-link.com"
 NEXT_PUBLIC_R2_PUBLIC_URL = "https://pub-cdb979a7c5384512a98ac2106b339f21.r2.dev"
 NEXT_PUBLIC_SUPABASE_URL = "https://ywldjjuajjuabdenlylo.supabase.co"
 NEXT_PUBLIC_SUPABASE_ANON_KEY = "sb_publishable_e17vZYTMCHGnJaKXkVBJ_Q_gFNKRarH"
@@ -35,8 +41,14 @@ id = "7b4a4640e7ea42d0afef173747d26cf2"
 [env.production]
 name = "beer-link-production"
 
+# カスタムドメイン (production)
+routes = [
+  { pattern = "beer-link.com", custom_domain = true },
+  { pattern = "www.beer-link.com", custom_domain = true }
+]
+
 [env.production.vars]
-NEXT_PUBLIC_SITE_URL = "https://beer-link-production.m-tsubaki.workers.dev"
+NEXT_PUBLIC_SITE_URL = "https://beer-link.com"
 NEXT_PUBLIC_R2_PUBLIC_URL = "https://pub-14a53d66f8944bc6b7fd7bd004e750a6.r2.dev"
 NEXT_PUBLIC_SUPABASE_URL = "https://dzxlhatxlpspjhzmipeh.supabase.co"
 NEXT_PUBLIC_SUPABASE_ANON_KEY = "sb_publishable_HlSP-NOxzMpYRguIEA1e7Q_8IefLKy2"

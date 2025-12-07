@@ -3,9 +3,14 @@ import { updateSession } from "@/lib/supabase/middleware";
 
 // Staging環境のBasic認証
 function checkBasicAuth(request: NextRequest): NextResponse | null {
-  // 本番環境ではBasic認証をスキップ
-  const isProduction = process.env.NEXT_PUBLIC_SITE_URL?.includes("production");
-  if (isProduction || process.env.NODE_ENV === "development") {
+  const host = request.headers.get("host") || "";
+
+  // 本番環境（beer-link.com, www.beer-link.com）はBasic認証をスキップ
+  const isProduction = host === "beer-link.com" || host === "www.beer-link.com";
+  // ローカル環境もスキップ
+  const isLocal = host.includes("localhost") || host.includes("127.0.0.1");
+
+  if (isProduction || isLocal) {
     return null;
   }
 
