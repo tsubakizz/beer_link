@@ -85,6 +85,9 @@ NEXT_PUBLIC_R2_PUBLIC_URL=<your-r2-public-url>
 # スキーマをDBに適用
 npx drizzle-kit push
 
+# RLSを設定
+npx tsx src/lib/db/setup-rls.ts
+
 # 初期データ（都道府県、ビールスタイル）を投入
 npx tsx src/lib/db/seed.ts
 ```
@@ -122,6 +125,40 @@ npm run deploy:production
 - `staging` ブランチへのpush → ステージングにデプロイ
 - `main` ブランチへのpush → 本番にデプロイ
 
+## メンテナンスモード
+
+本番環境でのスキーマ変更など、一時的にサービスを停止する必要がある場合に使用します。
+
+### メンテナンスモードの動作
+
+- すべてのページアクセス → `/maintenance` ページにリダイレクト
+- APIリクエスト (`/api/*`) → 503エラーを返却
+- `/maintenance` ページ自体 → 正常にアクセス可能
+
+### メンテナンスモードの有効化
+
+```bash
+# ステージング環境
+npx wrangler secret put MAINTENANCE_MODE --env staging
+# プロンプトで "true" を入力
+
+# 本番環境
+npx wrangler secret put MAINTENANCE_MODE --env production
+# プロンプトで "true" を入力
+```
+
+### メンテナンスモードの解除
+
+```bash
+# ステージング環境
+npx wrangler secret put MAINTENANCE_MODE --env staging
+# プロンプトで "false" を入力
+
+# 本番環境
+npx wrangler secret put MAINTENANCE_MODE --env production
+# プロンプトで "false" を入力
+```
+
 ## 便利なコマンド
 
 ```bash
@@ -143,6 +180,78 @@ npm run lint
 # Drizzle Studio（DBブラウザ）
 npx drizzle-kit studio
 ```
+
+## データベーススキーマの変更
+
+### 環境の切り替え
+
+環境変数 `ENV_FILE` で接続先DBを切り替えます。
+
+| 環境 | ENV_FILE |
+|------|----------|
+| Local | `.env.local` (デフォルト) |
+| Staging | `.env.staging.local` |
+| Production | `.env.production.local` |
+
+### ローカル開発時のスキーマ変更
+
+```bash
+# 1. スキーマをDBに適用
+npx drizzle-kit push
+
+# 2. RLSを設定
+npx tsx src/lib/db/setup-rls.ts
+
+# 3. シードデータを投入（必要に応じて）
+npx tsx src/lib/db/seed.ts
+```
+
+### 本番環境へのスキーマ変更
+
+`drizzle-kit push` はRLS設定を削除するため、スキーマ変更時はメンテナンスモードを有効にしてから作業してください。
+
+```bash
+# 1. メンテナンスモードを有効化
+npx wrangler secret put MAINTENANCE_MODE --env production
+# プロンプトで "true" を入力
+
+# 2. スキーマをDBに適用
+ENV_FILE=.env.production.local npx drizzle-kit push
+
+# 3. RLSを設定
+ENV_FILE=.env.production.local npx tsx src/lib/db/setup-rls.ts
+
+# 4. シードデータを投入（必要に応じて）
+ENV_FILE=.env.production.local npx tsx src/lib/db/seed.ts
+
+# 5. メンテナンスモードを解除
+npx wrangler secret put MAINTENANCE_MODE --env production
+# プロンプトで "false" を入力
+```
+
+### RLS 設定の管理
+
+RLS 設定は `src/lib/db/setup-rls.ts` で管理しています。
+
+新しいテーブルを追加した場合は、`rlsConfig` 配列に設定を追加してください：
+
+```typescript
+const rlsConfig = [
+  // 公開読み取りのみ
+  { table: "テーブル名", policies: [{ name: "Public read access", cmd: "SELECT", using: "true" }] },
+
+  // ユーザー自身のデータのみアクセス可能
+  { table: "user_data", policies: [{ name: "Users can access own data", cmd: "SELECT", using: "(auth.uid() = user_id)" }] },
+
+  // RLSのみ有効化（ポリシーなし = サービスロール以外は全アクセス拒否）
+  { table: "private_table", policies: [] },
+];
+```
+
+### 注意事項
+
+- `drizzle-kit push` はRLS設定を削除する場合があります
+- 本番環境でのスキーマ変更時は必ずメンテナンスモードを有効にしてください
 
 ## ディレクトリ構成
 
