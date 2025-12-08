@@ -1,4 +1,5 @@
 import { pgTable, serial, text, integer, decimal, timestamp } from "drizzle-orm/pg-core";
+import { relations } from "drizzle-orm";
 
 export const beerStyles = pgTable("beer_styles", {
   id: serial("id").primaryKey(),
@@ -27,3 +28,6 @@ export const beerStyles = pgTable("beer_styles", {
 
 export type BeerStyle = typeof beerStyles.$inferSelect;
 export type NewBeerStyle = typeof beerStyles.$inferInsert;
+
+// beerStylesのリレーション定義は beer-style-relations.ts で循環参照を避けるため
+// 遅延インポートで定義する必要がある場合はここに追加
