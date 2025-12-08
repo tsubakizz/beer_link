@@ -14,6 +14,9 @@ export const metadata: Metadata = {
   description: "あなたのプロフィール、レビュー、お気に入りを管理",
 };
 
+// ビルド時にDBに接続できないため動的レンダリング
+export const dynamic = "force-dynamic";
+
 export default async function MyPage() {
   const supabase = await createClient();
   const { data: { user: authUser } } = await supabase.auth.getUser();

@@ -7,6 +7,9 @@ import Image from "next/image";
 import { BeerCard } from "@/components/beer";
 import type { Metadata } from "next";
 
+// ビルド時にDBに接続できないため動的レンダリング
+export const dynamic = "force-dynamic";
+
 interface Props {
   params: Promise<{ id: string }>;
 }

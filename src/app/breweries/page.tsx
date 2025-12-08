@@ -9,8 +9,8 @@ export const metadata = {
     "日本全国のクラフトビール醸造所を探索。各ブルワリーの特徴やビールラインナップをチェック。",
 };
 
-// ISR: 1時間ごとに再検証
-export const revalidate = 3600;
+// ビルド時にDBに接続できないため動的レンダリング
+export const dynamic = "force-dynamic";
 
 export default async function BreweriesPage() {
   // ブルワリー一覧を都道府県と製造ビール数と一緒に取得

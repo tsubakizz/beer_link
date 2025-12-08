@@ -5,6 +5,9 @@ import { RequestTabs } from "./RequestTabs";
 import { BeerRequestCard } from "./BeerRequestCard";
 import { StyleRequestCard } from "./StyleRequestCard";
 
+// ビルド時にDBに接続できないため動的レンダリング
+export const dynamic = "force-dynamic";
+
 interface Props {
   searchParams: Promise<{ type?: string }>;
 }

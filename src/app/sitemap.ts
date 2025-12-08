@@ -3,6 +3,9 @@ import { db } from "@/lib/db";
 import { beers, breweries, beerStyles } from "@/lib/db/schema";
 import { eq } from "drizzle-orm";
 
+// ビルド時にDBに接続できないため動的レンダリング
+export const dynamic = "force-dynamic";
+
 // 動的サイトマップ（DBからコンテンツを取得）
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://beer-link.example.com";

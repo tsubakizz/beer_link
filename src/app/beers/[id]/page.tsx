@@ -10,6 +10,9 @@ import { ReviewCard } from "@/components/review/ReviewCard";
 import { createClient } from "@/lib/supabase/server";
 import type { Metadata } from "next";
 
+// ビルド時にDBに接続できないため動的レンダリング
+export const dynamic = "force-dynamic";
+
 interface Props {
   params: Promise<{ id: string }>;
 }

@@ -3,6 +3,9 @@ import { beerStyles } from "@/lib/db/schema";
 import { desc } from "drizzle-orm";
 import { StyleList } from "./StyleList";
 
+// ビルド時にDBに接続できないため動的レンダリング
+export const dynamic = "force-dynamic";
+
 interface Props {
   searchParams: Promise<{ status?: string; q?: string }>;
 }

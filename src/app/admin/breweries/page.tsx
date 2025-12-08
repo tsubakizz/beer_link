@@ -3,6 +3,9 @@ import { breweries, prefectures } from "@/lib/db/schema";
 import { desc, eq } from "drizzle-orm";
 import { BreweryList } from "./BreweryList";
 
+// ビルド時にDBに接続できないため動的レンダリング
+export const dynamic = "force-dynamic";
+
 interface Props {
   searchParams: Promise<{ status?: string; q?: string }>;
 }

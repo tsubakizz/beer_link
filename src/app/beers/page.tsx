@@ -11,6 +11,9 @@ export const metadata = {
     "クラフトビールを探索。ビアスタイル、ブルワリーで絞り込んでお気に入りのビールを見つけよう。",
 };
 
+// ビルド時にDBに接続できないため動的レンダリング
+export const dynamic = "force-dynamic";
+
 interface Props {
   searchParams: Promise<{
     q?: string;
