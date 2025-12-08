@@ -1,10 +1,11 @@
-import { pgTable, serial, text, integer, decimal, timestamp } from "drizzle-orm/pg-core";
+import { pgTable, serial, text, integer, decimal, timestamp, varchar } from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm";
 
 export const beerStyles = pgTable("beer_styles", {
   id: serial("id").primaryKey(),
   slug: text("slug").notNull().unique(),
   name: text("name").notNull(),
+  shortDescription: varchar("short_description", { length: 100 }), // 一覧ページ用の短い紹介文
   description: text("description"),
   bitterness: integer("bitterness"),      // 1-5
   sweetness: integer("sweetness"),        // 1-5

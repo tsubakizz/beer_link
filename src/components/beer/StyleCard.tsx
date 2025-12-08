@@ -56,7 +56,7 @@ export function StyleCard({ style }: StyleCardProps) {
             <p className="text-sm text-base-content/60">発祥: {style.origin}</p>
           )}
           <p className="text-sm text-base-content/80 line-clamp-3">
-            {style.description || "説明はまだありません"}
+            {style.shortDescription || style.description || "説明はまだありません"}
           </p>
 
           <div className="flex flex-wrap gap-2 mt-auto pt-2">
