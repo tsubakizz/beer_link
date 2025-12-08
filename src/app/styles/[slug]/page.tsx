@@ -1,9 +1,15 @@
 import { db } from "@/lib/db";
-import { beerStyles, beers, breweries } from "@/lib/db/schema";
-import { eq, and } from "drizzle-orm";
+import {
+  beerStyles,
+  beers,
+  breweries,
+  beerStyleRelations,
+  RelationType,
+} from "@/lib/db/schema";
+import { eq, and, inArray } from "drizzle-orm";
 import { notFound, redirect } from "next/navigation";
 import Link from "next/link";
-import { FlavorProfile, BeerCard } from "@/components/beer";
+import { FlavorProfile, BeerCard, RelatedStyles } from "@/components/beer";
 import type { Metadata } from "next";
 
 // ビルド時にDBに接続できないため動的レンダリング
@@ -115,6 +121,7 @@ export default async function StylePage({ params }: Props) {
     notFound();
   }
 
+  // このスタイルのビールを取得
   const styleBeers = await db
     .select({
       id: beers.id,
@@ -138,6 +145,45 @@ export default async function StylePage({ params }: Props) {
     .leftJoin(beerStyles, eq(beers.styleId, beerStyles.id))
     .where(and(eq(beers.styleId, style.id), eq(beers.status, "approved")))
     .limit(12);
+
+  // 関連スタイルを取得
+  const relations = await db
+    .select({
+      relatedStyleId: beerStyleRelations.relatedStyleId,
+      relationType: beerStyleRelations.relationType,
+    })
+    .from(beerStyleRelations)
+    .where(eq(beerStyleRelations.styleId, style.id));
+
+  // 関連スタイルのIDを種類ごとに分類
+  const parentIds = relations
+    .filter((r) => r.relationType === RelationType.PARENT)
+    .map((r) => r.relatedStyleId);
+  const childIds = relations
+    .filter((r) => r.relationType === RelationType.CHILD)
+    .map((r) => r.relatedStyleId);
+  const siblingIds = relations
+    .filter((r) => r.relationType === RelationType.SIBLING)
+    .map((r) => r.relatedStyleId);
+
+  // 関連スタイルの詳細を取得
+  const allRelatedIds = [...parentIds, ...childIds, ...siblingIds];
+  const relatedStylesData =
+    allRelatedIds.length > 0
+      ? await db
+          .select({
+            id: beerStyles.id,
+            slug: beerStyles.slug,
+            name: beerStyles.name,
+          })
+          .from(beerStyles)
+          .where(inArray(beerStyles.id, allRelatedIds))
+      : [];
+
+  // 種類ごとにスタイルを分類
+  const parentStyles = relatedStylesData.filter((s) => parentIds.includes(s.id));
+  const childStyles = relatedStylesData.filter((s) => childIds.includes(s.id));
+  const siblingStyles = relatedStylesData.filter((s) => siblingIds.includes(s.id));
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -276,6 +322,15 @@ export default async function StylePage({ params }: Props) {
             </div>
           </div>
         </div>
+      </div>
+
+      {/* 関連するビアスタイル */}
+      <div className="mb-12">
+        <RelatedStyles
+          parentStyles={parentStyles}
+          childStyles={childStyles}
+          siblingStyles={siblingStyles}
+        />
       </div>
 
       {/* このスタイルのビール */}
