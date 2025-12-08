@@ -1,6 +1,31 @@
 import { type NextRequest, NextResponse } from "next/server";
 import { updateSession } from "@/lib/supabase/middleware";
 
+// メンテナンスモードのチェック
+function checkMaintenanceMode(request: NextRequest): NextResponse | null {
+  const maintenanceMode = process.env.MAINTENANCE_MODE;
+
+  if (maintenanceMode !== "true") {
+    return null;
+  }
+
+  // メンテナンスページ自体へのアクセスは許可
+  if (request.nextUrl.pathname === "/maintenance") {
+    return null;
+  }
+
+  // APIリクエストには503を返す
+  if (request.nextUrl.pathname.startsWith("/api/")) {
+    return NextResponse.json(
+      { error: "Service temporarily unavailable" },
+      { status: 503 }
+    );
+  }
+
+  // その他のリクエストはメンテナンスページにリダイレクト
+  return NextResponse.redirect(new URL("/maintenance", request.url));
+}
+
 // Staging環境のBasic認証
 function checkBasicAuth(request: NextRequest): NextResponse | null {
   const host = request.headers.get("host") || "";
@@ -40,6 +65,12 @@ function checkBasicAuth(request: NextRequest): NextResponse | null {
 }
 
 export async function middleware(request: NextRequest) {
+  // メンテナンスモードチェック
+  const maintenanceResponse = checkMaintenanceMode(request);
+  if (maintenanceResponse) {
+    return maintenanceResponse;
+  }
+
   // Basic認証チェック（staging環境のみ）
   const authResponse = checkBasicAuth(request);
   if (authResponse) {
