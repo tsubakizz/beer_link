@@ -3,6 +3,9 @@ import { beers, beerStyles, breweries, users } from "@/lib/db/schema";
 import { eq, desc, sql, or, ilike } from "drizzle-orm";
 import { BeerList } from "./BeerList";
 
+// ビルド時にDBに接続できないため動的レンダリング
+export const dynamic = "force-dynamic";
+
 interface Props {
   searchParams: Promise<{ status?: string; q?: string }>;
 }

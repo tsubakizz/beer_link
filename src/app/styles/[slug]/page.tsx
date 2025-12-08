@@ -6,6 +6,9 @@ import Link from "next/link";
 import { FlavorProfile, BeerCard } from "@/components/beer";
 import type { Metadata } from "next";
 
+// ビルド時にDBに接続できないため動的レンダリング
+export const dynamic = "force-dynamic";
+
 // 味の強さラベル
 const FLAVOR_LABELS: Record<number, string> = {
   1: "弱め",

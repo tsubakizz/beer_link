@@ -9,6 +9,9 @@ export const metadata: Metadata = {
   description: "新しいビールを追加できます",
 };
 
+// ビルド時にDBに接続できないため動的レンダリング
+export const dynamic = "force-dynamic";
+
 export default async function BeerSubmitPage() {
   // ブルワリー一覧を取得（承認済みのみ）
   const breweryList = await db

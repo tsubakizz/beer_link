@@ -5,6 +5,9 @@ import { StyleCard } from "@/components/beer";
 import { StyleFilter } from "@/components/beer/StyleFilter";
 import type { Metadata } from "next";
 
+// ビルド時にDBに接続できないため動的レンダリング
+export const dynamic = "force-dynamic";
+
 // 味の強さラベル
 const FLAVOR_LABELS: Record<number, string> = {
   1: "弱め",

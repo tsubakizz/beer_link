@@ -3,6 +3,9 @@ import { beers, beerStyles, breweries, reviews } from "@/lib/db/schema";
 import { eq, count } from "drizzle-orm";
 import Link from "next/link";
 
+// ビルド時にDBに接続できないため動的レンダリング
+export const dynamic = "force-dynamic";
+
 export default async function AdminDashboard() {
   // ビール統計
   const [pendingBeers] = await db
