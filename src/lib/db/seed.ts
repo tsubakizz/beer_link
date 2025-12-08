@@ -5,9 +5,12 @@ import * as fs from "fs";
 import * as path from "path";
 import { prefectures } from "./schema/prefectures";
 import { beerStyles } from "./schema/beer-styles";
+import { beerStyleRelations } from "./schema/beer-style-relations";
 
-// .env.local を読み込む
-config({ path: ".env.local" });
+// 環境変数 ENV_FILE で .env ファイルを切り替え可能
+// 例: ENV_FILE=.env.production.local npx tsx src/lib/db/seed.ts
+const envFile = process.env.ENV_FILE || ".env.local";
+config({ path: envFile, override: true });
 
 // 環境変数からDATABASE_URLを取得
 const connectionString = process.env.DATABASE_URL;
@@ -132,6 +135,29 @@ async function seed() {
     console.log(`  Inserted batch ${Math.floor(i / batchSize) + 1}/${Math.ceil(styleValues.length / batchSize)}`);
   }
   console.log(`✅ Inserted ${styleValues.length} beer styles`);
+
+  // 4. ビアスタイル関連CSVを読み込み
+  console.log("🔗 Loading beer style relations from CSV...");
+  const relationsPath = path.join(process.cwd(), "seeds", "beer-style-relations.csv");
+  const relationsContent = fs.readFileSync(relationsPath, "utf-8");
+  const relationRows = parseCSV(relationsContent);
+  console.log(`📄 Found ${relationRows.length} beer style relations in CSV`);
+
+  // 5. ビアスタイル関連データを投入
+  console.log("🔗 Inserting beer style relations...");
+  const relationValues = relationRows.map((row) => ({
+    styleId: parseInt(row.style_id),
+    relatedStyleId: parseInt(row.related_style_id),
+    relationType: parseInt(row.relation_type),
+  }));
+
+  // バッチ挿入（100件ずつ）
+  for (let i = 0; i < relationValues.length; i += batchSize) {
+    const batch = relationValues.slice(i, i + batchSize);
+    await db.insert(beerStyleRelations).values(batch).onConflictDoNothing();
+    console.log(`  Inserted batch ${Math.floor(i / batchSize) + 1}/${Math.ceil(relationValues.length / batchSize)}`);
+  }
+  console.log(`✅ Inserted ${relationValues.length} beer style relations`);
 
   console.log("🎉 Seeding completed!");
   process.exit(0);
