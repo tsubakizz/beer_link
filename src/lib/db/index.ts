@@ -1,13 +1,25 @@
 import { drizzle, PostgresJsDatabase } from "drizzle-orm/postgres-js";
 import postgres from "postgres";
 import * as schema from "./schema";
+import { getCloudflareContext } from "@opennextjs/cloudflare";
 
 /**
  * 新しいDB接続を作成
- * Cloudflare Workersでは各リクエストで新しい接続を使用する必要がある
+ * Cloudflare Workersでは Hyperdrive 経由で接続
+ * ローカル開発では DATABASE_URL を使用
  */
 function createDb(): PostgresJsDatabase<typeof schema> {
-  const connectionString = process.env.DATABASE_URL!;
+  let connectionString: string;
+
+  try {
+    // Cloudflare Workers 環境では Hyperdrive を使用
+    const { env } = getCloudflareContext();
+    connectionString = (env as { HYPERDRIVE: { connectionString: string } }).HYPERDRIVE.connectionString;
+  } catch {
+    // ローカル開発環境では process.env を使用
+    connectionString = process.env.DATABASE_URL!;
+  }
+
   const client = postgres(connectionString, {
     prepare: false,
     max: 1,
