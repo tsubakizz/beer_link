@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { StyleEditModal } from "./StyleEditModal";
+import Link from "next/link";
 import { deleteStyle, updateStyleStatus } from "./actions";
 
 interface Style {
@@ -12,6 +12,7 @@ interface Style {
   description: string | null;
   status: string;
   createdAt: Date;
+  otherNames: string[];
 }
 
 interface Props {
@@ -22,7 +23,6 @@ interface Props {
 
 export function StyleList({ styles, currentStatus, currentSearch }: Props) {
   const router = useRouter();
-  const [editingStyle, setEditingStyle] = useState<Style | null>(null);
   const [deletingId, setDeletingId] = useState<number | null>(null);
 
   const handleStatusFilter = (status: string) => {
@@ -103,6 +103,7 @@ export function StyleList({ styles, currentStatus, currentSearch }: Props) {
               <tr>
                 <th>ステータス</th>
                 <th>スタイル名</th>
+                <th>別名</th>
                 <th>説明</th>
                 <th>登録日</th>
                 <th>操作</th>
@@ -125,6 +126,19 @@ export function StyleList({ styles, currentStatus, currentSearch }: Props) {
                     </span>
                   </td>
                   <td className="font-medium">{style.name}</td>
+                  <td className="max-w-xs text-sm text-base-content/60">
+                    {style.otherNames.length > 0 ? (
+                      <div className="flex flex-wrap gap-1">
+                        {style.otherNames.map((name, i) => (
+                          <span key={i} className="badge badge-ghost badge-sm">
+                            {name}
+                          </span>
+                        ))}
+                      </div>
+                    ) : (
+                      "-"
+                    )}
+                  </td>
                   <td className="max-w-xs truncate text-sm text-base-content/60">
                     {style.description || "-"}
                   </td>
@@ -141,12 +155,12 @@ export function StyleList({ styles, currentStatus, currentSearch }: Props) {
                           確認
                         </button>
                       )}
-                      <button
-                        onClick={() => setEditingStyle(style)}
+                      <Link
+                        href={`/admin/styles/${style.id}/edit`}
                         className="btn btn-ghost btn-xs"
                       >
                         編集
-                      </button>
+                      </Link>
                       <button
                         onClick={() => handleDelete(style.id)}
                         className="btn btn-error btn-outline btn-xs"
@@ -169,14 +183,6 @@ export function StyleList({ styles, currentStatus, currentSearch }: Props) {
         <div className="text-center py-12 bg-base-100 rounded-lg">
           <p className="text-base-content/60">該当するスタイルがありません</p>
         </div>
-      )}
-
-      {/* 編集モーダル */}
-      {editingStyle && (
-        <StyleEditModal
-          style={editingStyle}
-          onClose={() => setEditingStyle(null)}
-        />
       )}
     </div>
   );

@@ -1,5 +1,5 @@
 import { db } from "@/lib/db";
-import { beerStyles } from "@/lib/db/schema";
+import { beerStyles, beerStyleOtherNames } from "@/lib/db/schema";
 import { desc } from "drizzle-orm";
 import { StyleList } from "./StyleList";
 
@@ -21,15 +21,41 @@ export default async function StylesAdminPage({ searchParams }: Props) {
     .from(beerStyles)
     .orderBy(desc(beerStyles.createdAt));
 
+  // 別名一覧を取得
+  const otherNamesList = await db
+    .select({
+      styleId: beerStyleOtherNames.styleId,
+      name: beerStyleOtherNames.name,
+    })
+    .from(beerStyleOtherNames);
+
+  // スタイルIDごとに別名をグループ化
+  const otherNamesByStyleId = otherNamesList.reduce(
+    (acc, { styleId, name }) => {
+      if (!acc[styleId]) acc[styleId] = [];
+      acc[styleId].push(name);
+      return acc;
+    },
+    {} as Record<number, string[]>
+  );
+
+  // スタイルに別名を付与
+  const styleListWithOtherNames = styleList.map((style) => ({
+    ...style,
+    otherNames: otherNamesByStyleId[style.id] || [],
+  }));
+
   // フィルタリング
-  let filteredStyles = styleList;
+  let filteredStyles = styleListWithOtherNames;
   if (statusFilter !== "all") {
     filteredStyles = filteredStyles.filter((s) => s.status === statusFilter);
   }
   if (searchQuery) {
     const search = searchQuery.toLowerCase();
-    filteredStyles = filteredStyles.filter((s) =>
-      s.name.toLowerCase().includes(search)
+    filteredStyles = filteredStyles.filter(
+      (s) =>
+        s.name.toLowerCase().includes(search) ||
+        s.otherNames.some((name) => name.toLowerCase().includes(search))
     );
   }
 
