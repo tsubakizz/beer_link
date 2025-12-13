@@ -31,6 +31,12 @@ const rlsConfig = [
 
   // スタイルリクエスト
   { table: "beer_style_requests", policies: [] },
+
+  // 問い合わせ（管理者のみアクセス、サービスロール経由）
+  { table: "contacts", policies: [] },
+
+  // ログイン維持トークン（サービスロール経由のみ）
+  { table: "remember_tokens", policies: [] },
 ];
 
 async function setupRLS() {
