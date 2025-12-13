@@ -4,11 +4,13 @@ import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
+import { setRememberMeToken } from "./actions";
 
 export default function LoginPage() {
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [rememberMe, setRememberMe] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
@@ -27,6 +29,11 @@ export default function LoginPage() {
       setError(error.message);
       setLoading(false);
       return;
+    }
+
+    // Remember meがチェックされていたらトークンを発行
+    if (rememberMe) {
+      await setRememberMeToken();
     }
 
     router.push("/");
@@ -92,6 +99,18 @@ export default function LoginPage() {
                 >
                   パスワードをお忘れですか？
                 </Link>
+              </label>
+            </div>
+
+            <div className="form-control">
+              <label className="label cursor-pointer justify-start gap-3">
+                <input
+                  type="checkbox"
+                  className="checkbox checkbox-primary checkbox-sm"
+                  checked={rememberMe}
+                  onChange={(e) => setRememberMe(e.target.checked)}
+                />
+                <span className="label-text">ログイン状態を維持する</span>
               </label>
             </div>
 
