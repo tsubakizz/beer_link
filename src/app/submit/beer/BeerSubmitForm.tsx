@@ -7,7 +7,7 @@ import { submitBeer } from "./actions";
 
 interface BeerSubmitFormProps {
   breweries: { id: number; name: string }[];
-  styles: { id: number; name: string }[];
+  styles: { id: number; name: string; otherNames: string[] }[];
 }
 
 export function BeerSubmitForm({ breweries, styles }: BeerSubmitFormProps) {
@@ -31,11 +31,17 @@ export function BeerSubmitForm({ breweries, styles }: BeerSubmitFormProps) {
     return breweries.filter((b) => b.name.toLowerCase().includes(search));
   }, [breweries, brewerySearch]);
 
-  // スタイルのフィルタリング
+  // スタイルのフィルタリング（別名も検索対象）
   const filteredStyles = useMemo(() => {
     if (!styleSearch) return styles;
     const search = styleSearch.toLowerCase();
-    return styles.filter((s) => s.name.toLowerCase().includes(search));
+    return styles.filter((s) => {
+      const nameMatch = s.name.toLowerCase().includes(search);
+      const otherNameMatch = s.otherNames.some((name) =>
+        name.toLowerCase().includes(search)
+      );
+      return nameMatch || otherNameMatch;
+    });
   }, [styles, styleSearch]);
 
   const selectedBrewery = breweries.find((b) => b.id.toString() === breweryId);
