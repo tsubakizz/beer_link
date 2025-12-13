@@ -17,7 +17,7 @@ services:
       - DATABASE_URL=postgresql://postgres:postgres@host.docker.internal:54322/postgres
       - NEXT_PUBLIC_SITE_URL=http://localhost:3000
       - SMTP_HOST=mailpit
-      - SMTP_PORT=1027
+      - SMTP_PORT=1025
     extra_hosts:
       - "host.docker.internal:host-gateway"
     depends_on:
