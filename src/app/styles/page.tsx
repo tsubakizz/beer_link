@@ -1,5 +1,5 @@
 import { db } from "@/lib/db";
-import { beerStyles } from "@/lib/db/schema";
+import { beerStyles, beerStyleOtherNames } from "@/lib/db/schema";
 import { eq, and, gte, lte, type SQL, type Column } from "drizzle-orm";
 import { StyleCard } from "@/components/beer";
 import { StyleFilter } from "@/components/beer/StyleFilter";
@@ -145,13 +145,36 @@ export default async function StylesPage({ searchParams }: Props) {
     .where(and(...conditions))
     .orderBy(beerStyles.name);
 
-  // 名前でフィルタリング
+  // 別名一覧を取得
+  const otherNames = await db
+    .select({
+      styleId: beerStyleOtherNames.styleId,
+      name: beerStyleOtherNames.name,
+    })
+    .from(beerStyleOtherNames);
+
+  // スタイルIDごとに別名をグループ化
+  const otherNamesByStyleId = otherNames.reduce(
+    (acc, { styleId, name }) => {
+      if (!acc[styleId]) acc[styleId] = [];
+      acc[styleId].push(name);
+      return acc;
+    },
+    {} as Record<number, string[]>
+  );
+
+  // 名前・説明・別名でフィルタリング
   const filteredStyles = q
-    ? styles.filter(
-        (s) =>
-          s.name.toLowerCase().includes(q.toLowerCase()) ||
-          s.description?.toLowerCase().includes(q.toLowerCase())
-      )
+    ? styles.filter((s) => {
+        const searchLower = q.toLowerCase();
+        const nameMatch = s.name.toLowerCase().includes(searchLower);
+        const descMatch = s.description?.toLowerCase().includes(searchLower);
+        const otherNamesForStyle = otherNamesByStyleId[s.id] || [];
+        const otherNameMatch = otherNamesForStyle.some((name) =>
+          name.toLowerCase().includes(searchLower)
+        );
+        return nameMatch || descMatch || otherNameMatch;
+      })
     : styles;
 
   // ページタイトルを生成

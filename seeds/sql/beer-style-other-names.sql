@@ -1,0 +1,61 @@
+-- テーブル作成
+CREATE TABLE IF NOT EXISTS beer_style_other_names (
+  id SERIAL PRIMARY KEY,
+  style_id INTEGER NOT NULL REFERENCES beer_styles(id) ON DELETE CASCADE,
+  name TEXT NOT NULL,
+  created_at TIMESTAMP DEFAULT NOW() NOT NULL
+);
+
+-- インデックス作成
+CREATE INDEX IF NOT EXISTS beer_style_other_names_style_id_idx ON beer_style_other_names(style_id);
+
+-- データ投入
+INSERT INTO beer_style_other_names (style_id, name) VALUES
+(10, 'Special Bitter'),
+(10, 'Premium Bitter'),
+(12, 'カスケードダークエール'),
+(12, 'CDA'),
+(16, 'スチームビア'),
+(16, 'Steam Beer'),
+(20, 'Polotmavý Ležák'),
+(21, 'Tmavý Ležák'),
+(23, 'Export Helles'),
+(23, 'Export'),
+(24, 'インペリアルIPA'),
+(24, 'DIPA'),
+(27, 'ダークヴァイツェン'),
+(30, 'エクストラ・スペシャル・ビター'),
+(32, 'FES'),
+(32, 'Export Stout'),
+(33, 'Frambozen'),
+(33, 'Raspberry Lambic'),
+(36, 'Pils'),
+(39, 'NEIPA'),
+(39, 'ニューイングランドIPA'),
+(41, 'ロシアン・インペリアルスタウト'),
+(41, 'RIS'),
+(43, 'インディア・ペール・エール'),
+(43, 'India Pale Ale'),
+(44, 'IGA'),
+(45, 'Common'),
+(47, 'Kriek Lambic'),
+(52, 'ニアビア'),
+(52, 'ビールテイスト飲料'),
+(52, 'NA Beer'),
+(53, 'ヘレスボック'),
+(53, 'Helles Bock'),
+(54, 'オクトーバーフェスト'),
+(55, 'Mild'),
+(56, 'スイートスタウト'),
+(56, 'クリームスタウト'),
+(58, 'Stock Ale'),
+(59, 'フランダース・ブラウンエール'),
+(62, 'Dessert Stout'),
+(65, 'ベルジャンダークストロングエール'),
+(66, 'スモークビール'),
+(70, 'ブラックラガー'),
+(77, 'Strong Scotch Ale'),
+(78, 'ヘフェヴァイツェン'),
+(78, 'ヴァイスビア'),
+(81, 'ヴィットビア'),
+(81, 'ベルジャンホワイト');

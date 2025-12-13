@@ -6,6 +6,7 @@ import * as path from "path";
 import { prefectures } from "./schema/prefectures";
 import { beerStyles } from "./schema/beer-styles";
 import { beerStyleRelations } from "./schema/beer-style-relations";
+import { beerStyleOtherNames } from "./schema/beer-style-other-names";
 
 // 環境変数 ENV_FILE で .env ファイルを切り替え可能
 // 例: ENV_FILE=.env.production.local npx tsx src/lib/db/seed.ts

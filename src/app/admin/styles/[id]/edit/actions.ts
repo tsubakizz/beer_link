@@ -24,11 +24,63 @@ async function checkAdmin() {
   return { success: true, user };
 }
 
+// スタイルを取得
+export async function getStyleById(styleId: number) {
+  const adminCheck = await checkAdmin();
+  if (!adminCheck.success) {
+    return adminCheck;
+  }
+
+  try {
+    const [style] = await db
+      .select()
+      .from(beerStyles)
+      .where(eq(beerStyles.id, styleId));
+
+    if (!style) {
+      return { success: false, error: "スタイルが見つかりません" };
+    }
+
+    // 別名を取得
+    const otherNames = await db
+      .select({ name: beerStyleOtherNames.name })
+      .from(beerStyleOtherNames)
+      .where(eq(beerStyleOtherNames.styleId, styleId));
+
+    return {
+      success: true,
+      style: {
+        ...style,
+        otherNames: otherNames.map((n) => n.name),
+      },
+    };
+  } catch (error) {
+    console.error("Failed to get style:", error);
+    return { success: false, error: "取得に失敗しました" };
+  }
+}
+
 interface UpdateStyleInput {
   name: string;
   description: string | null;
+  shortDescription: string | null;
   status: string;
   otherNames: string[];
+  bitterness: number | null;
+  sweetness: number | null;
+  body: number | null;
+  aroma: number | null;
+  sourness: number | null;
+  history: string | null;
+  origin: string | null;
+  abvMin: string | null;
+  abvMax: string | null;
+  ibuMin: number | null;
+  ibuMax: number | null;
+  srmMin: number | null;
+  srmMax: number | null;
+  servingTempMin: number | null;
+  servingTempMax: number | null;
 }
 
 // スタイルの更新
@@ -52,7 +104,23 @@ export async function updateStyle(styleId: number, input: UpdateStyleInput) {
         name: input.name,
         slug,
         description: input.description,
+        shortDescription: input.shortDescription,
         status: input.status,
+        bitterness: input.bitterness,
+        sweetness: input.sweetness,
+        body: input.body,
+        aroma: input.aroma,
+        sourness: input.sourness,
+        history: input.history,
+        origin: input.origin,
+        abvMin: input.abvMin,
+        abvMax: input.abvMax,
+        ibuMin: input.ibuMin,
+        ibuMax: input.ibuMax,
+        srmMin: input.srmMin,
+        srmMax: input.srmMax,
+        servingTempMin: input.servingTempMin,
+        servingTempMax: input.servingTempMax,
         updatedAt: new Date(),
       })
       .where(eq(beerStyles.id, styleId));
@@ -78,49 +146,5 @@ export async function updateStyle(styleId: number, input: UpdateStyleInput) {
   } catch (error) {
     console.error("Failed to update style:", error);
     return { success: false, error: "更新に失敗しました" };
-  }
-}
-
-// スタイルの削除
-export async function deleteStyle(styleId: number) {
-  const adminCheck = await checkAdmin();
-  if (!adminCheck.success) {
-    return adminCheck;
-  }
-
-  try {
-    await db.delete(beerStyles).where(eq(beerStyles.id, styleId));
-
-    revalidatePath("/admin/styles");
-    revalidatePath("/styles");
-    return { success: true };
-  } catch (error) {
-    console.error("Failed to delete style:", error);
-    return { success: false, error: "削除に失敗しました（このスタイルを使用しているビールがある可能性があります）" };
-  }
-}
-
-// スタイルのステータス変更
-export async function updateStyleStatus(styleId: number, status: string) {
-  const adminCheck = await checkAdmin();
-  if (!adminCheck.success) {
-    return adminCheck;
-  }
-
-  try {
-    await db
-      .update(beerStyles)
-      .set({
-        status,
-        updatedAt: new Date(),
-      })
-      .where(eq(beerStyles.id, styleId));
-
-    revalidatePath("/admin/styles");
-    revalidatePath("/styles");
-    return { success: true };
-  } catch (error) {
-    console.error("Failed to update style status:", error);
-    return { success: false, error: "ステータス更新に失敗しました" };
   }
 }

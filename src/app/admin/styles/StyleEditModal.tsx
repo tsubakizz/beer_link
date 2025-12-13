@@ -8,6 +8,7 @@ interface Style {
   name: string;
   description: string | null;
   status: string;
+  otherNames: string[];
 }
 
 interface Props {
@@ -22,6 +23,8 @@ export function StyleEditModal({ style, onClose }: Props) {
   const [name, setName] = useState(style.name);
   const [description, setDescription] = useState(style.description || "");
   const [status, setStatus] = useState(style.status);
+  const [otherNames, setOtherNames] = useState<string[]>(style.otherNames);
+  const [newOtherName, setNewOtherName] = useState("");
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -37,6 +40,7 @@ export function StyleEditModal({ style, onClose }: Props) {
         name: name.trim(),
         description: description || null,
         status,
+        otherNames,
       });
 
       if (result.success) {
@@ -100,6 +104,67 @@ export function StyleEditModal({ style, onClose }: Props) {
               <option value="pending">未確認</option>
               <option value="approved">確認済み</option>
             </select>
+          </div>
+
+          {/* 別名 */}
+          <div className="form-control">
+            <label className="label">
+              <span className="label-text">別名</span>
+            </label>
+            <div className="flex flex-wrap gap-2 mb-2">
+              {otherNames.map((otherName, index) => (
+                <span
+                  key={index}
+                  className="badge badge-lg gap-1"
+                >
+                  {otherName}
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setOtherNames(otherNames.filter((_, i) => i !== index))
+                    }
+                    className="btn btn-ghost btn-xs p-0"
+                  >
+                    ✕
+                  </button>
+                </span>
+              ))}
+              {otherNames.length === 0 && (
+                <span className="text-sm text-base-content/50">
+                  別名が登録されていません
+                </span>
+              )}
+            </div>
+            <div className="flex gap-2">
+              <input
+                type="text"
+                value={newOtherName}
+                onChange={(e) => setNewOtherName(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    e.preventDefault();
+                    if (newOtherName.trim() && !otherNames.includes(newOtherName.trim())) {
+                      setOtherNames([...otherNames, newOtherName.trim()]);
+                      setNewOtherName("");
+                    }
+                  }
+                }}
+                className="input input-bordered input-sm flex-1"
+                placeholder="別名を入力してEnter"
+              />
+              <button
+                type="button"
+                onClick={() => {
+                  if (newOtherName.trim() && !otherNames.includes(newOtherName.trim())) {
+                    setOtherNames([...otherNames, newOtherName.trim()]);
+                    setNewOtherName("");
+                  }
+                }}
+                className="btn btn-sm btn-outline"
+              >
+                追加
+              </button>
+            </div>
           </div>
 
           <div className="modal-action">
