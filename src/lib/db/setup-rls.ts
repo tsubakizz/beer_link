@@ -18,6 +18,7 @@ const rlsConfig = [
   // 公開読み取りのみ
   { table: "prefectures", policies: [{ name: "Public read access", cmd: "SELECT", using: "true" }] },
   { table: "beer_styles", policies: [{ name: "Public read access", cmd: "SELECT", using: "true" }] },
+  { table: "beer_style_other_names", policies: [{ name: "Public read access", cmd: "SELECT", using: "true" }] },
   { table: "beer_style_relations", policies: [{ name: "Public read access", cmd: "SELECT", using: "true" }] },
   { table: "beers", policies: [{ name: "Public read access", cmd: "SELECT", using: "true" }] },
   { table: "breweries", policies: [{ name: "Public read access", cmd: "SELECT", using: "true" }] },
