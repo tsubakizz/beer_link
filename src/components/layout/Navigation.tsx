@@ -1,9 +1,10 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
 import { createClient } from "@/lib/supabase/client";
+import { logout } from "@/app/(auth)/login/actions";
 import type { User } from "@supabase/supabase-js";
 
 const navItems = [
@@ -15,6 +16,7 @@ const navItems = [
 
 export function Navigation() {
   const pathname = usePathname();
+  const router = useRouter();
   const [user, setUser] = useState<User | null>(null);
   const [isAdmin, setIsAdmin] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -144,7 +146,8 @@ export function Navigation() {
                   <li>
                     <button
                       onClick={async () => {
-                        await supabase.auth.signOut();
+                        await logout();
+                        router.refresh();
                       }}
                       className="text-gray-700 hover:bg-yellow-100"
                     >

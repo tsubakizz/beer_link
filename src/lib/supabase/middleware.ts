@@ -1,5 +1,10 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
+import {
+  validateRememberTokenFromRequest,
+  createSupabaseSessionForUser,
+  REMEMBER_TOKEN_COOKIE_NAME,
+} from "@/lib/auth/remember-me";
 
 export async function updateSession(request: NextRequest) {
   let supabaseResponse = NextResponse.next({
@@ -29,9 +34,34 @@ export async function updateSession(request: NextRequest) {
     }
   );
 
-  const {
+  let {
     data: { user },
   } = await supabase.auth.getUser();
+
+  // Supabaseセッションがない場合、Remember meトークンで自動ログイン
+  if (!user) {
+    const rememberUser = await validateRememberTokenFromRequest(request);
+
+    if (rememberUser) {
+      // Admin APIでセッションを発行
+      const session = await createSupabaseSessionForUser(rememberUser.email);
+
+      if (session) {
+        // セッションを設定
+        const { data, error } = await supabase.auth.setSession({
+          access_token: session.access_token,
+          refresh_token: session.refresh_token,
+        });
+
+        if (!error && data.user) {
+          user = data.user;
+        }
+      } else {
+        // セッション発行に失敗した場合、無効なトークンとしてCookieを削除
+        supabaseResponse.cookies.delete(REMEMBER_TOKEN_COOKIE_NAME);
+      }
+    }
+  }
 
   // 認証が必要なパスの保護
   const protectedPaths = ["/mypage", "/submit"];
