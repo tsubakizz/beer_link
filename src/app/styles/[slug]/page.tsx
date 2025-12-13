@@ -4,6 +4,7 @@ import {
   beers,
   breweries,
   beerStyleRelations,
+  beerStyleOtherNames,
   RelationType,
 } from "@/lib/db/schema";
 import { eq, and, inArray } from "drizzle-orm";
@@ -65,6 +66,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   // スタイル詳細
   const style = await db
     .select({
+      id: beerStyles.id,
       name: beerStyles.name,
       description: beerStyles.description,
       origin: beerStyles.origin,
@@ -78,10 +80,21 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     return { title: "ビアスタイルが見つかりません | beer_link" };
   }
 
-  const title = `${style.name} | ビアスタイル一覧`;
+  // 別名を取得
+  const otherNames = await db
+    .select({ name: beerStyleOtherNames.name })
+    .from(beerStyleOtherNames)
+    .where(eq(beerStyleOtherNames.styleId, style.id));
+
+  const otherNamesStr = otherNames.map((n) => n.name).join("・");
+  const titleWithOtherNames = otherNamesStr
+    ? `${style.name}（${otherNamesStr}）`
+    : style.name;
+
+  const title = `${titleWithOtherNames} | ビアスタイル一覧`;
   const description =
     style.description ||
-    `${style.name}の特徴、歴史、おすすめビールを紹介。${style.origin ? `発祥: ${style.origin}。` : ""}beer_linkでビアスタイルを学ぼう。`;
+    `${titleWithOtherNames}の特徴、歴史、おすすめビールを紹介。${style.origin ? `発祥: ${style.origin}。` : ""}beer_linkでビアスタイルを学ぼう。`;
 
   return {
     title,
@@ -120,6 +133,12 @@ export default async function StylePage({ params }: Props) {
   if (!style) {
     notFound();
   }
+
+  // 別名を取得
+  const otherNames = await db
+    .select({ name: beerStyleOtherNames.name })
+    .from(beerStyleOtherNames)
+    .where(eq(beerStyleOtherNames.styleId, style.id));
 
   // このスタイルのビールを取得
   const styleBeers = await db
@@ -202,7 +221,14 @@ export default async function StylePage({ params }: Props) {
 
       {/* ヘッダー */}
       <div className="mb-10">
-        <h1 className="text-4xl font-bold mb-2">{style.name}</h1>
+        <h1 className="text-4xl font-bold mb-2">
+          {style.name}
+          {otherNames.length > 0 && (
+            <span className="text-2xl font-normal text-base-content/70">
+              （{otherNames.map((n) => n.name).join("・")}）
+            </span>
+          )}
+        </h1>
         {style.origin && (
           <p className="text-lg text-base-content/60">発祥: {style.origin}</p>
         )}
