@@ -1,0 +1,42 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: beer_link_app
+    ports:
+      - "3000:3000"
+    volumes:
+      - .:/app
+      - /app/node_modules
+      - /app/.next
+    env_file:
+      - .env.local
+    environment:
+      - NEXT_PUBLIC_SUPABASE_URL=http://host.docker.internal:54321
+      - DATABASE_URL=postgresql://postgres:postgres@host.docker.internal:54322/postgres
+      - NEXT_PUBLIC_SITE_URL=http://localhost:3000
+      - SMTP_HOST=mailpit
+      - SMTP_PORT=1027
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    depends_on:
+      - mailpit
+
+  mailpit:
+    image: axllent/mailpit:latest
+    container_name: beer_link_mailpit
+    restart: unless-stopped
+    ports:
+      - "8027:8025"
+      - "1027:1025"
+    environment:
+      MP_MAX_MESSAGES: 5000
+      MP_DATABASE: /data/mailpit.db
+      MP_SMTP_AUTH_ACCEPT_ANY: 1
+      MP_SMTP_AUTH_ALLOW_INSECURE: 1
+    volumes:
+      - mailpit_data:/data
+
+volumes:
+  mailpit_data:
