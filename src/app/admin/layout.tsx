@@ -9,6 +9,10 @@ import { AdminDesktopNav, AdminMobileMenu } from "./AdminNav";
 
 export const metadata: Metadata = {
   title: "管理画面 | beer_link",
+  robots: {
+    index: false,
+    follow: false,
+  },
 };
 
 export default async function AdminLayout({
