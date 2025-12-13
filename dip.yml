@@ -1,0 +1,54 @@
+version: '7.6'
+
+environment:
+  COMPOSE_PROJECT_NAME: beer_link
+
+compose:
+  files:
+    - docker-compose.yml
+
+interaction:
+  # Supabase CLI
+  supabase:
+    description: Run Supabase CLI
+    command: supabase
+
+  # Database
+  db-push:
+    description: Push schema to database
+    service: app
+    command: npx drizzle-kit push
+
+  db-studio:
+    description: Open Drizzle Studio
+    command: npx drizzle-kit studio
+
+  # npm
+  npm:
+    description: Run npm commands
+    service: app
+    command: npm
+
+  # メール確認
+  mail:
+    description: Open Mailpit UI
+    command: open http://localhost:8027
+
+  inbucket:
+    description: Open Inbucket UI (Supabase Auth)
+    command: open http://localhost:54324
+
+  studio:
+    description: Open Supabase Studio
+    command: open http://localhost:54323
+
+provision:
+  - supabase start
+  - dip compose build
+  - dip compose up -d
+  - dip db-push
+  - echo "=== Ready ==="
+  - echo "App        -> http://localhost:3000"
+  - echo "Mailpit    -> http://localhost:8027"
+  - echo "Inbucket   -> http://localhost:54324"
+  - echo "Studio     -> http://localhost:54323"
