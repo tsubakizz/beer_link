@@ -22,6 +22,7 @@ routes = [
 [vars]
 NEXT_PUBLIC_SITE_URL = "https://staging.beer-link.com"
 NEXT_PUBLIC_R2_PUBLIC_URL = "https://pub-cdb979a7c5384512a98ac2106b339f21.r2.dev"
+NEXT_PUBLIC_R2_ASSETS_URL = "https://pub-cc459d1800fc49b793f5669f940edb77.r2.dev"
 NEXT_PUBLIC_SUPABASE_URL = "https://ywldjjuajjuabdenlylo.supabase.co"
 NEXT_PUBLIC_SUPABASE_ANON_KEY = "sb_publishable_e17vZYTMCHGnJaKXkVBJ_Q_gFNKRarH"
 
@@ -54,6 +55,7 @@ routes = [
 [env.production.vars]
 NEXT_PUBLIC_SITE_URL = "https://beer-link.com"
 NEXT_PUBLIC_R2_PUBLIC_URL = "https://r2.beer-link.com"
+NEXT_PUBLIC_R2_ASSETS_URL = "https://r2-assets.beer-link.com"
 NEXT_PUBLIC_SUPABASE_URL = "https://dzxlhatxlpspjhzmipeh.supabase.co"
 NEXT_PUBLIC_SUPABASE_ANON_KEY = "sb_publishable_HlSP-NOxzMpYRguIEA1e7Q_8IefLKy2"
 

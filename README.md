@@ -77,6 +77,9 @@ R2_ACCESS_KEY_ID=<your-access-key>
 R2_SECRET_ACCESS_KEY=<your-secret-key>
 R2_BUCKET_NAME=beer-link-local-public
 NEXT_PUBLIC_R2_PUBLIC_URL=<your-r2-public-url>
+
+# Cloudflare R2 (静的アセット用)
+NEXT_PUBLIC_R2_ASSETS_URL=<your-r2-assets-url>
 ```
 
 ### 5. データベースのセットアップ
@@ -273,6 +276,95 @@ beer_link/
 ├── supabase/             # Supabase CLI設定
 ├── wrangler.toml         # Cloudflare Workers設定
 └── drizzle.config.ts     # Drizzle設定
+```
+
+## Cloudflare R2 画像管理
+
+### R2バケットの種類
+
+| バケット | 環境変数 | 用途 |
+|---------|---------|------|
+| `beer-link-staging-public` | `NEXT_PUBLIC_R2_PUBLIC_URL` | ステージング: ユーザーアップロード画像 |
+| `beer-link-production-public` | `NEXT_PUBLIC_R2_PUBLIC_URL` | 本番: ユーザーアップロード画像 |
+| `beer-link-assets` | `NEXT_PUBLIC_R2_ASSETS_URL` | 全環境共通: 静的アセット（ロゴ、KV、アイコン等） |
+
+### 環境別の公開URL
+
+| 環境 | NEXT_PUBLIC_R2_PUBLIC_URL | NEXT_PUBLIC_R2_ASSETS_URL |
+|-----|---------------------------|---------------------------|
+| 開発/ステージング | Cloudflare R2 公開URL | Cloudflare R2 公開URL |
+| 本番 | カスタムドメイン | カスタムドメイン |
+
+※ 実際のURLは `wrangler.toml` または `.env.local` を参照してください。
+
+### 静的アセットのアップロード手順
+
+静的アセット（ロゴ、KV、アイコンなど）を追加・更新する場合：
+
+```bash
+# 1. UUIDを生成
+uuidgen
+# 例: 663adb8a-c867-47da-bea7-ace4f266ba75
+
+# 2. R2にアップロード（ファイル名はUUID）
+npx wrangler r2 object put beer-link-assets/<uuid>.<拡張子> \
+  --file=<ローカルファイルパス> \
+  --content-type="image/webp" \
+  --remote
+
+# 例:
+npx wrangler r2 object put beer-link-assets/663adb8a-c867-47da-bea7-ace4f266ba75.webp \
+  --file=./images/icon.webp \
+  --content-type="image/webp" \
+  --remote
+```
+
+### 現在の静的アセット一覧
+
+| ファイル | UUID | 用途 |
+|---------|------|------|
+| logo.png | `02506bce-6ae7-45ee-bdb8-8156534a9758` | ヘッダーロゴ |
+| kv.webp | `a15279c4-18a7-434c-a4cf-1d23945fdd9c` | トップページKV |
+| book.webp | `663adb8a-c867-47da-bea7-ace4f266ba75` | 一覧機能アイコン |
+| review.webp | `288284bf-c706-475f-98c5-c0fa26afd9cd` | レビュー機能アイコン |
+| people.webp | `0fd4da87-6a9b-4447-9b24-0707bd323abc` | みんなで作るアイコン |
+| starter.webp | `4a9c3c2e-25f8-47c7-b1e7-d7b9f54e4466` | 初心者ガイドアイコン |
+
+### コード内での使用方法
+
+```tsx
+import Image from "next/image";
+
+// 静的アセット
+<Image
+  src={`${process.env.NEXT_PUBLIC_R2_ASSETS_URL}/663adb8a-c867-47da-bea7-ace4f266ba75.webp`}
+  alt="説明"
+  width={120}
+  height={120}
+/>
+
+// ユーザーアップロード画像
+<Image
+  src={`${process.env.NEXT_PUBLIC_R2_PUBLIC_URL}/${imageId}`}
+  alt="説明"
+  width={400}
+  height={300}
+/>
+```
+
+### next.config.ts の remotePatterns
+
+外部画像を使用する場合、`next.config.ts` に `remotePatterns` を設定する必要があります：
+
+```typescript
+images: {
+  remotePatterns: [
+    { protocol: "https", hostname: "r2.beer-link.com" },
+    { protocol: "https", hostname: "r2-assets.beer-link.com" },
+    { protocol: "https", hostname: "pub-cc459d1800fc49b793f5669f940edb77.r2.dev" },
+    // 他のR2ドメインも追加
+  ],
+}
 ```
 
 ## トラブルシューティング

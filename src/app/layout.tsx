@@ -20,20 +20,20 @@ const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://beer-link.example.c
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: {
-    default: "beer_link - クラフトビール一覧",
-    template: "%s | beer_link",
+    default: "Beer Link - 知って繋がる、ビールの楽しさ",
+    template: "%s | Beer Link",
   },
   description:
     "クラフトビールの情報・レビューが集まるファンサイト。ビール、ブルワリー、ビアスタイルの一覧と口コミ投稿機能を提供します。",
   keywords: ["クラフトビール", "ビール", "ブルワリー", "レビュー", "一覧", "IPA", "エール", "ラガー"],
-  authors: [{ name: "beer_link" }],
-  creator: "beer_link",
+  authors: [{ name: "Beer Link" }],
+  creator: "Beer Link",
   openGraph: {
     type: "website",
     locale: "ja_JP",
     url: siteUrl,
-    siteName: "beer_link",
-    title: "beer_link - クラフトビール一覧",
+    siteName: "Beer Link",
+    title: "Beer Link - 知って繋がる、ビールの楽しさ",
     description:
       "クラフトビールの情報・レビューが集まるファンサイト。ビール、ブルワリー、ビアスタイルの一覧と口コミ投稿機能を提供します。",
     images: [
@@ -41,13 +41,13 @@ export const metadata: Metadata = {
         url: "/og-image.png",
         width: 1200,
         height: 630,
-        alt: "beer_link - クラフトビール一覧",
+        alt: "Beer Link - 知って繋がる、ビールの楽しさ",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "beer_link - クラフトビール一覧",
+    title: "Beer Link - 知って繋がる、ビールの楽しさ",
     description:
       "クラフトビールの情報・レビューが集まるファンサイト。",
     images: ["/og-image.png"],

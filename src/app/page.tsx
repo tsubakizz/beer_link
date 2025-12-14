@@ -1,23 +1,31 @@
 import Link from "next/link";
+import Image from "next/image";
 
 export default function Home() {
   return (
     <div>
       {/* ヒーローセクション */}
-      <section className="relative min-h-[60vh] flex items-center justify-center bg-gradient-to-br from-yellow-100 via-yellow-200 to-amber-200 overflow-hidden">
-        {/* 泡のような装飾 */}
-        <div className="absolute top-0 left-0 w-full h-full opacity-20">
-          <div className="absolute top-10 left-10 w-32 h-32 bg-white rounded-full blur-3xl" />
-          <div className="absolute top-20 right-20 w-48 h-48 bg-yellow-400 rounded-full blur-3xl" />
-          <div className="absolute bottom-20 left-1/3 w-40 h-40 bg-white rounded-full blur-3xl" />
-        </div>
+      <section className="relative min-h-[50vh] md:min-h-[60vh] flex items-center justify-center overflow-hidden">
+        {/* KV背景画像 */}
+        <Image
+          src={`${process.env.NEXT_PUBLIC_R2_ASSETS_URL}/a15279c4-18a7-434c-a4cf-1d23945fdd9c.webp`}
+          alt="Beer Link キービジュアル"
+          fill
+          style={{ objectFit: "cover" }}
+          priority
+        />
+        {/* オーバーレイ */}
+        <div className="absolute inset-0 bg-black/40" />
 
         <div className="relative z-10 text-center px-4 max-w-3xl">
-          <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 text-amber-900">
-            クラフトビールの世界へようこそ
+          <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold mb-4 text-white drop-shadow-lg">
+            Beer Link
           </h1>
-          <p className="text-lg md:text-xl mb-8 text-amber-800">
-            beer_linkは、クラフトビール愛好家のための情報サイトです。
+          <h2 className="text-2xl md:text-3xl lg:text-4xl font-medium mb-6 text-white/90 drop-shadow">
+            知って繋がる、ビールの楽しさ
+          </h2>
+          <p className="text-lg md:text-xl mb-8 text-white/90 drop-shadow">
+            Beer Linkは、クラフトビール愛好家のための情報サイトです。
             <br className="hidden md:block" />
             ビール、ブルワリー、ビアスタイルの一覧と、
             <br className="hidden md:block" />
@@ -32,7 +40,7 @@ export default function Home() {
             </Link>
             <Link
               href="/styles"
-              className="btn btn-lg bg-transparent border-2 border-amber-600 text-amber-700 hover:bg-amber-600 hover:text-white"
+              className="btn btn-lg bg-white/90 border-2 border-white text-amber-700 hover:bg-white"
             >
               ビアスタイルを学ぶ
             </Link>
@@ -44,7 +52,7 @@ export default function Home() {
       <section className="py-20 px-4">
         <div className="container mx-auto">
           <h2 className="text-3xl font-bold text-center mb-4 text-gray-800">
-            beer_linkの特徴
+            Beer Linkの特徴
           </h2>
           <p className="text-center text-gray-600 mb-12">
             クラフトビールをもっと楽しむための3つの機能
@@ -52,7 +60,14 @@ export default function Home() {
           <div className="grid md:grid-cols-3 gap-8">
             {/* 一覧機能 */}
             <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-8 hover:shadow-xl transition-shadow">
-              <div className="text-5xl mb-4 text-center">📚</div>
+              <div className="flex justify-center mb-4">
+                <Image
+                  src={`${process.env.NEXT_PUBLIC_R2_ASSETS_URL}/663adb8a-c867-47da-bea7-ace4f266ba75.webp`}
+                  alt="一覧機能"
+                  width={120}
+                  height={120}
+                />
+              </div>
               <h3 className="text-xl font-bold text-center mb-4 text-gray-800">
                 充実の一覧機能
               </h3>
@@ -64,7 +79,14 @@ export default function Home() {
 
             {/* レビュー機能 */}
             <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-8 hover:shadow-xl transition-shadow">
-              <div className="text-5xl mb-4 text-center">⭐</div>
+              <div className="flex justify-center mb-4">
+                <Image
+                  src={`${process.env.NEXT_PUBLIC_R2_ASSETS_URL}/288284bf-c706-475f-98c5-c0fa26afd9cd.webp`}
+                  alt="レビュー機能"
+                  width={120}
+                  height={120}
+                />
+              </div>
               <h3 className="text-xl font-bold text-center mb-4 text-gray-800">
                 口コミ・レビュー
               </h3>
@@ -76,7 +98,14 @@ export default function Home() {
 
             {/* 追加申請機能 */}
             <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-8 hover:shadow-xl transition-shadow">
-              <div className="text-5xl mb-4 text-center">🍺</div>
+              <div className="flex justify-center mb-4">
+                <Image
+                  src={`${process.env.NEXT_PUBLIC_R2_ASSETS_URL}/0fd4da87-6a9b-4447-9b24-0707bd323abc.webp`}
+                  alt="みんなで作る一覧"
+                  width={120}
+                  height={120}
+                />
+              </div>
               <h3 className="text-xl font-bold text-center mb-4 text-gray-800">
                 みんなで作る一覧
               </h3>
@@ -91,30 +120,31 @@ export default function Home() {
 
       {/* 初心者向けセクション */}
       <section className="py-20 px-4 bg-amber-50/50">
-        <div className="container mx-auto">
-          <div className="flex flex-col md:flex-row items-center gap-12">
-            <div className="flex-1">
-              <h2 className="text-3xl font-bold mb-6 text-gray-800">
-                クラフトビール初心者の方へ
-              </h2>
-              <p className="text-lg mb-6 text-gray-600 leading-relaxed">
-                「クラフトビールに興味があるけど、何から始めればいいかわからない...」
-                <br />
-                そんな方のために、初心者向けガイドを用意しています。
-                <br />
-                ビアスタイルの違いや、自分好みのビールの見つけ方を学びましょう。
-              </p>
-              <Link
-                href="/guides"
-                className="btn bg-amber-600 text-white hover:bg-amber-700 border-none"
-              >
-                ガイドを見る
-              </Link>
-            </div>
-            <div className="flex-1 flex justify-center">
-              <div className="text-[10rem] leading-none">🍻</div>
-            </div>
+        <div className="container mx-auto max-w-2xl text-center">
+          <h2 className="text-3xl font-bold mb-8 text-gray-800">
+            クラフトビール初心者の方へ
+          </h2>
+          <div className="flex justify-center mb-8">
+            <Image
+              src={`${process.env.NEXT_PUBLIC_R2_ASSETS_URL}/4a9c3c2e-25f8-47c7-b1e7-d7b9f54e4466.webp`}
+              alt="初心者ガイド"
+              width={280}
+              height={280}
+            />
           </div>
+          <p className="text-lg mb-8 text-gray-600 leading-relaxed">
+            「クラフトビールに興味があるけど、何から始めればいいかわからない...」
+            <br />
+            そんな方のために、初心者向けガイドを用意しています。
+            <br />
+            ビアスタイルの違いや、自分好みのビールの見つけ方を学びましょう。
+          </p>
+          <Link
+            href="/guides"
+            className="btn bg-amber-600 text-white hover:bg-amber-700 border-none"
+          >
+            ガイドを見る
+          </Link>
         </div>
       </section>
 
