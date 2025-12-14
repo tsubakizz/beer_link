@@ -7,6 +7,7 @@ import { useState, useEffect } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { logout } from "@/app/(auth)/login/actions";
 import type { User } from "@supabase/supabase-js";
+import { Bubbles } from "./Bubbles";
 
 const navItems = [
   { href: "/beers", label: "ビール" },
@@ -58,8 +59,11 @@ export function Navigation() {
   };
 
   return (
-    <header className="sticky top-0 z-50 bg-gradient-to-r from-yellow-300 via-yellow-400 to-amber-400 shadow-lg">
-      <div className="container mx-auto px-4">
+    <header className="sticky top-0 z-50 bg-gradient-to-r from-yellow-300 via-yellow-400 to-amber-400 shadow-lg relative overflow-hidden">
+      {/* 泡の装飾 */}
+      <Bubbles count={10} variant="header" />
+
+      <div className="container mx-auto px-4 relative z-10">
         <div className="navbar min-h-16">
           {/* モバイルメニューボタン */}
           <div className="flex-none lg:hidden">

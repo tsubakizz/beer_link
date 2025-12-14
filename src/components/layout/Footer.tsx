@@ -1,11 +1,15 @@
 import Link from "next/link";
+import { Bubbles } from "./Bubbles";
 
 export function Footer() {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="bg-gradient-to-r from-yellow-300 via-yellow-400 to-amber-400">
-      <div className="container mx-auto px-4 py-10">
+    <footer className="bg-gradient-to-r from-yellow-300 via-yellow-400 to-amber-400 relative overflow-hidden">
+      {/* 泡の装飾 */}
+      <Bubbles count={8} variant="footer" />
+
+      <div className="container mx-auto px-4 py-10 relative z-10">
         {/* リンク */}
         <nav className="flex flex-wrap justify-center gap-6 mb-6">
           <Link
