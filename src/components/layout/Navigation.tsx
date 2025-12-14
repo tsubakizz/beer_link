@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
 import { createClient } from "@/lib/supabase/client";
@@ -87,10 +88,17 @@ export function Navigation() {
           <div className="flex-1">
             <Link
               href="/"
-              className="text-2xl font-bold text-amber-900 hover:text-amber-800 transition-colors flex items-center gap-2"
+              className="hover:opacity-80 transition-opacity flex items-center gap-2"
             >
-              <span className="text-3xl">🍺</span>
-              <span>beer_link</span>
+              <Image
+                src={`${process.env.NEXT_PUBLIC_R2_ASSETS_URL}/02506bce-6ae7-45ee-bdb8-8156534a9758.png`}
+                alt="Beer Link"
+                width={40}
+                height={40}
+                className="h-10 w-10 rounded-full object-cover"
+                priority
+              />
+              <span className="text-xl font-bold text-amber-900">Beer Link</span>
             </Link>
           </div>
 
