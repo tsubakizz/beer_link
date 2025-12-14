@@ -88,6 +88,47 @@ seeds/
 - デプロイ手順の変更
 - 開発環境のセットアップ手順の変更
 
+## Cloudflare R2 画像管理
+
+### R2バケットの種類
+
+| バケット | 環境変数 | 用途 |
+|---------|---------|------|
+| `beer-link-staging-public` | `NEXT_PUBLIC_R2_PUBLIC_URL` | ユーザーアップロード画像（ビール写真等） |
+| `beer-link-production-public` | `NEXT_PUBLIC_R2_PUBLIC_URL` | ユーザーアップロード画像（本番） |
+| `beer-link-assets` | `NEXT_PUBLIC_R2_ASSETS_URL` | 静的アセット（ロゴ、KV、アイコン等） |
+
+### 静的アセットの追加手順
+
+```bash
+# 1. UUIDを生成
+uuidgen
+
+# 2. R2にアップロード（ファイル名はUUID、小文字推奨）
+npx wrangler r2 object put beer-link-assets/<uuid>.<拡張子> \
+  --file=<ローカルファイルパス> \
+  --content-type="image/webp" \
+  --remote
+```
+
+### 現在の静的アセット一覧
+
+| UUID | 用途 |
+|------|------|
+| `02506bce-6ae7-45ee-bdb8-8156534a9758.png` | ヘッダーロゴ |
+| `a15279c4-18a7-434c-a4cf-1d23945fdd9c.webp` | トップページKV |
+| `663adb8a-c867-47da-bea7-ace4f266ba75.webp` | 一覧機能アイコン |
+| `288284bf-c706-475f-98c5-c0fa26afd9cd.webp` | レビュー機能アイコン |
+| `0fd4da87-6a9b-4447-9b24-0707bd323abc.webp` | みんなで作るアイコン |
+| `4a9c3c2e-25f8-47c7-b1e7-d7b9f54e4466.webp` | 初心者ガイドアイコン |
+
+### 画像使用時の注意
+
+- 静的アセットは `NEXT_PUBLIC_R2_ASSETS_URL` を使用
+- ユーザーアップロード画像は `NEXT_PUBLIC_R2_PUBLIC_URL` を使用
+- Next.js Image の `fill` 使用時は `style={{ objectFit: "cover" }}` を指定
+- 新しいドメインを使う場合は `next.config.ts` の `remotePatterns` に追加
+
 ## コーディング規約
 
 - Server Components をデフォルトで使用
