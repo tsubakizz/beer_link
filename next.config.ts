@@ -9,11 +9,19 @@ const nextConfig: NextConfig = {
       },
       {
         protocol: "https",
+        hostname: "r2-assets.beer-link.com",
+      },
+      {
+        protocol: "https",
         hostname: "pub-14a53d66f8944bc6b7fd7bd004e750a6.r2.dev",
       },
       {
         protocol: "https",
         hostname: "pub-cdb979a7c5384512a98ac2106b339f21.r2.dev",
+      },
+      {
+        protocol: "https",
+        hostname: "pub-cc459d1800fc49b793f5669f940edb77.r2.dev",
       },
     ],
   },
