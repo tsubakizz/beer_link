@@ -26,6 +26,19 @@ const nextConfig: NextConfig = {
     ],
     minimumCacheTTL: 31536000, // 1年間（秒単位）
   },
+  async headers() {
+    return [
+      {
+        source: "/_next/image",
+        headers: [
+          {
+            key: "Cache-Control",
+            value: "public, max-age=31536000, immutable",
+          },
+        ],
+      },
+    ];
+  },
 };
 
 export default nextConfig;
