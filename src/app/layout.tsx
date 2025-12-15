@@ -3,7 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { Navigation } from "@/components/layout/Navigation";
 import { Footer } from "@/components/layout/Footer";
-import { GoogleAnalytics } from "@/components/GoogleAnalytics";
+import { GoogleTagManager } from "@next/third-parties/google";
 import { BackgroundBubbles } from "@/components/layout/BackgroundBubbles";
 
 const geistSans = Geist({
@@ -73,10 +73,12 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ja">
+      {process.env.NEXT_PUBLIC_GTM_ID && (
+        <GoogleTagManager gtmId={process.env.NEXT_PUBLIC_GTM_ID} />
+      )}
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <GoogleAnalytics />
         <BackgroundBubbles />
         <div className="min-h-screen flex flex-col relative z-10">
           <Navigation />
