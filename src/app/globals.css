@@ -72,3 +72,66 @@ body {
   color: var(--foreground);
   font-family: var(--font-sans), Arial, Helvetica, sans-serif;
 }
+
+/* 泡のアニメーション用スタイル */
+.bubbles-header {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+  opacity: 0.7;
+}
+
+.bubbles-footer {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+  opacity: 0.7;
+}
+
+.bubble {
+  position: absolute;
+  left: var(--position);
+  bottom: 0;
+  width: var(--size);
+  height: var(--size);
+  background-color: rgba(255, 255, 255, 0.8);
+  border-radius: 50%;
+  animation: rise var(--time) ease-in infinite;
+  animation-delay: var(--delay);
+  opacity: 0;
+}
+
+@keyframes rise {
+  0% {
+    bottom: 0;
+    opacity: 0;
+  }
+  5% {
+    opacity: 0.8;
+  }
+  50% {
+    opacity: 0.4;
+  }
+  95% {
+    opacity: 0.1;
+  }
+  100% {
+    bottom: calc(100% - var(--size));
+    opacity: 0;
+  }
+}
+
+/* 浮遊アニメーション（背景泡用） */
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-15px);
+  }
+}

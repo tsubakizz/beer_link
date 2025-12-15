@@ -4,6 +4,7 @@ import "./globals.css";
 import { Navigation } from "@/components/layout/Navigation";
 import { Footer } from "@/components/layout/Footer";
 import { GoogleAnalytics } from "@/components/GoogleAnalytics";
+import { BackgroundBubbles } from "@/components/layout/BackgroundBubbles";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -76,7 +77,8 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <GoogleAnalytics />
-        <div className="min-h-screen flex flex-col">
+        <BackgroundBubbles />
+        <div className="min-h-screen flex flex-col relative z-10">
           <Navigation />
           <main className="flex-1">{children}</main>
           <Footer />
