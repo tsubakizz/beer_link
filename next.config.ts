@@ -24,6 +24,7 @@ const nextConfig: NextConfig = {
         hostname: "pub-cc459d1800fc49b793f5669f940edb77.r2.dev",
       },
     ],
+    minimumCacheTTL: 31536000, // 1年間（秒単位）
   },
 };
 

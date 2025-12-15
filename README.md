@@ -307,23 +307,30 @@ uuidgen
 # 例: 663adb8a-c867-47da-bea7-ace4f266ba75
 
 # 2. R2にアップロード（ファイル名はUUID）
+# IMPORTANT: --cache-control を必ず指定すること（ブラウザキャッシュを有効化）
 npx wrangler r2 object put beer-link-assets/<uuid>.<拡張子> \
   --file=<ローカルファイルパス> \
   --content-type="image/webp" \
+  --cache-control="public, max-age=31536000, immutable" \
   --remote
 
 # 例:
 npx wrangler r2 object put beer-link-assets/663adb8a-c867-47da-bea7-ace4f266ba75.webp \
   --file=./images/icon.webp \
   --content-type="image/webp" \
+  --cache-control="public, max-age=31536000, immutable" \
   --remote
 ```
+
+**注意**:
+- `--cache-control` オプションは必須です。これにより画像が1年間ブラウザにキャッシュされ、パフォーマンスが向上します。
+- ユーザーアップロード画像（reviews/beers/breweries）は自動的に Cache-Control が設定されます。
 
 ### 現在の静的アセット一覧
 
 | ファイル | UUID | 用途 |
 |---------|------|------|
-| logo.png | `02506bce-6ae7-45ee-bdb8-8156534a9758` | ヘッダーロゴ |
+| logo.webp | `7fde81d3-c2be-4b41-8485-7ab75bf50055` | ヘッダーロゴ |
 | kv.webp | `a15279c4-18a7-434c-a4cf-1d23945fdd9c` | トップページKV |
 | book.webp | `663adb8a-c867-47da-bea7-ace4f266ba75` | 一覧機能アイコン |
 | review.webp | `288284bf-c706-475f-98c5-c0fa26afd9cd` | レビュー機能アイコン |
