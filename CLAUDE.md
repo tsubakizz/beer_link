@@ -105,11 +105,17 @@ seeds/
 uuidgen
 
 # 2. R2にアップロード（ファイル名はUUID、小文字推奨）
+# IMPORTANT: --cache-control を必ず指定すること（ブラウザキャッシュを有効化）
 npx wrangler r2 object put beer-link-assets/<uuid>.<拡張子> \
   --file=<ローカルファイルパス> \
   --content-type="image/webp" \
+  --cache-control="public, max-age=31536000, immutable" \
   --remote
 ```
+
+**注意**:
+- `--cache-control` オプションは必須です。これにより画像が1年間ブラウザにキャッシュされます。
+- ユーザーアップロード画像（reviews/beers/breweries）は自動的に Cache-Control が設定されます。
 
 ### 現在の静的アセット一覧
 
