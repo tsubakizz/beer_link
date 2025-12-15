@@ -22,6 +22,7 @@ export function Navigation() {
   const [user, setUser] = useState<User | null>(null);
   const [isAdmin, setIsAdmin] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const supabase = createClient();
 
   useEffect(() => {
@@ -31,6 +32,7 @@ export function Navigation() {
       if (user) {
         checkAdminRole(user.id);
       }
+      setIsLoading(false);
     });
 
     // 認証状態の変更を監視
@@ -128,7 +130,10 @@ export function Navigation() {
 
           {/* 認証ボタン */}
           <div className="flex-none ml-4">
-            {user ? (
+            {isLoading ? (
+              // ローディング中は空のスペースを確保
+              <div className="w-24 h-12" />
+            ) : user ? (
               <div className="dropdown dropdown-end">
                 <div
                   tabIndex={0}
