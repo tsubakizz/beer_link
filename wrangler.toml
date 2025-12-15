@@ -58,6 +58,7 @@ NEXT_PUBLIC_R2_PUBLIC_URL = "https://r2.beer-link.com"
 NEXT_PUBLIC_R2_ASSETS_URL = "https://r2-assets.beer-link.com"
 NEXT_PUBLIC_SUPABASE_URL = "https://dzxlhatxlpspjhzmipeh.supabase.co"
 NEXT_PUBLIC_SUPABASE_ANON_KEY = "sb_publishable_HlSP-NOxzMpYRguIEA1e7Q_8IefLKy2"
+NEXT_PUBLIC_GA_MEASUREMENT_ID = "G-X41T68NKXT"
 
 [[env.production.r2_buckets]]
 binding = "R2_BUCKET"
