@@ -26,7 +26,7 @@ export function NavigationClient({ user, isAdmin }: NavigationClientProps) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   return (
-    <header className="sticky top-0 z-50 bg-gradient-to-r from-yellow-300 via-yellow-400 to-amber-400 shadow-lg relative overflow-hidden">
+    <header className="sticky top-0 z-50 bg-gradient-to-r from-yellow-300 via-yellow-400 to-amber-400 shadow-lg relative">
       {/* 泡の装飾 */}
       <Bubbles count={10} variant="header" />
 
