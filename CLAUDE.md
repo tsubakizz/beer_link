@@ -137,7 +137,131 @@ npx wrangler r2 object put beer-link-assets/<uuid>.<拡張子> \
 
 ## コーディング規約
 
-- Server Components をデフォルトで使用
-- クライアント操作が必要な場合のみ `"use client"` を使用
+### Server Component優先の原則（SEO対策）
+
+**基本方針**: 可能な限りServer Componentを使用し、必要最小限のみClient Componentを使用する
+
+#### Server Componentを使うべき場面
+
+- 静的なコンテンツ（タイトル、説明文、ラベル、リンクテキスト等）
+- データフェッチング（データベースクエリ、API呼び出し）
+- SEOが重要なページ（認証ページ、公開ページ、ランディングページ等）
+- レイアウト構造（カード、コンテナ、グリッド等）
+
+#### Client Componentを使うべき場面（最小限に）
+
+- ユーザーインタラクション（onClick, onChange等のイベントハンドラ）
+- 状態管理（useState, useReducer等）
+- ブラウザAPI（window, localStorage等）
+- カスタムフック（useRouter, usePathname等）
+
+#### コンポーネント分割パターン
+
+**悪い例（ページ全体がClient Component）**:
+
+```tsx
+"use client";
+export default function LoginPage() {
+  const [email, setEmail] = useState("");
+  return (
+    <div>
+      <h1>ログイン</h1>  {/* ← SEOに不利 */}
+      <form>...</form>
+    </div>
+  );
+}
+```
+
+**良い例（Server Component + Client Component分離）**:
+
+```tsx
+// page.tsx (Server Component)
+export const metadata = { title: "ログイン" };  // ← SEO対策
+export default function LoginPage() {
+  return (
+    <div>
+      <h1>ログイン</h1>  {/* ← SSRされてSEOに有利 */}
+      <LoginForm />      {/* ← フォームのみClient */}
+    </div>
+  );
+}
+
+// LoginForm.tsx (Client Component)
+"use client";
+export function LoginForm() {
+  const [email, setEmail] = useState("");
+  return <form>...</form>;  // ← 状態管理が必要な部分のみClient
+}
+```
+
+#### 実装時のチェックリスト
+
+- [ ] ページコンポーネント（page.tsx）はServer Componentになっているか
+- [ ] metadataを設定してSEO対策をしているか
+- [ ] 静的なHTML構造（タイトル、説明文、カード構造）はServer Component側にあるか
+- [ ] Client Componentはフォームロジックと状態管理のみを含んでいるか
+- [ ] 不要な "use client" ディレクティブを削除したか
+
+### その他の規約
+
 - Server Actions は `"use server"` で定義
 - 管理画面の操作は必ず `checkAdmin()` で権限チェック
+
+## Git & GitHub ワークフロー
+
+### コミットメッセージ
+
+**フォーマット**: `(#<issue番号>) <prefix>: <メッセージ>`
+
+**Prefix一覧**:
+
+- `feat`: 新機能の追加
+- `fix`: バグ修正
+- `docs`: ドキュメントのみの変更
+- `style`: コードの意味に影響しない変更（空白、フォーマット、セミコロン等）
+- `refactor`: バグ修正や機能追加を伴わないコード変更
+- `perf`: パフォーマンス改善
+- `test`: テストの追加・修正
+- `chore`: ビルドプロセスやツール、ライブラリの変更
+
+**例**:
+
+```bash
+(#29) refactor: 認証ページをServer/Client Componentに分離
+(#26) fix: ヘッダーのドロップダウンメニューが表示されない問題を修正
+(#29) docs: Server Component優先のガイドラインを追加
+```
+
+**原則**:
+
+- コミットはできるだけ細かいまとまりに分ける
+- 1つのコミットは1つの論理的な変更を含む
+- コミットメッセージは日本語で記述
+
+### Pull Request
+
+**Description形式**: Markdown形式で記述
+
+**テンプレート**:
+
+```markdown
+## 概要
+
+[変更の概要を簡潔に説明]
+
+Closes #<issue番号>
+
+## 変更内容
+
+[主要な変更点を箇条書きで列挙]
+
+## 確認事項
+
+- [ ] チェック項目1
+- [ ] チェック項目2
+
+## テスト
+
+- [ ] テスト項目1
+- [ ] テスト項目2
+```
