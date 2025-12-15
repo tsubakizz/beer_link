@@ -95,7 +95,7 @@ export function Navigation() {
               className="hover:opacity-80 transition-opacity flex items-center gap-2"
             >
               <Image
-                src={`${process.env.NEXT_PUBLIC_R2_ASSETS_URL}/02506bce-6ae7-45ee-bdb8-8156534a9758.png`}
+                src={`${process.env.NEXT_PUBLIC_R2_ASSETS_URL}/7fde81d3-c2be-4b41-8485-7ab75bf50055.webp`}
                 alt="Beer Link"
                 width={40}
                 height={40}

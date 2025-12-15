@@ -115,7 +115,7 @@ npx wrangler r2 object put beer-link-assets/<uuid>.<拡張子> \
 
 | UUID | 用途 |
 |------|------|
-| `02506bce-6ae7-45ee-bdb8-8156534a9758.png` | ヘッダーロゴ |
+| `7fde81d3-c2be-4b41-8485-7ab75bf50055.webp` | ヘッダーロゴ |
 | `a15279c4-18a7-434c-a4cf-1d23945fdd9c.webp` | トップページKV |
 | `663adb8a-c867-47da-bea7-ace4f266ba75.webp` | 一覧機能アイコン |
 | `288284bf-c706-475f-98c5-c0fa26afd9cd.webp` | レビュー機能アイコン |
