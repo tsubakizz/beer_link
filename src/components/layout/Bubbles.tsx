@@ -1,33 +1,48 @@
-import React from "react";
+"use client";
+
+import React, { useState, useEffect } from "react";
 
 interface BubblesProps {
   count?: number;
   variant?: "header" | "footer";
 }
 
-// 泡のパラメータを事前に生成（サーバーコンポーネントでも使えるように固定値）
-const bubbleConfigs = [
-  { size: 1.2, distance: 3.5, position: 8, time: 4.5, delay: 0.2 },
-  { size: 2.1, distance: 4.2, position: 22, time: 5.1, delay: 1.3 },
-  { size: 1.5, distance: 2.8, position: 35, time: 4.8, delay: 0.7 },
-  { size: 2.8, distance: 5.1, position: 48, time: 5.5, delay: 2.1 },
-  { size: 1.8, distance: 3.2, position: 62, time: 4.2, delay: 0.5 },
-  { size: 2.4, distance: 4.8, position: 75, time: 5.8, delay: 1.8 },
-  { size: 1.3, distance: 2.5, position: 88, time: 4.0, delay: 2.5 },
-  { size: 2.0, distance: 3.8, position: 95, time: 5.3, delay: 0.9 },
-  { size: 1.6, distance: 4.0, position: 15, time: 4.6, delay: 1.5 },
-  { size: 2.2, distance: 3.0, position: 55, time: 5.0, delay: 2.8 },
-  { size: 1.9, distance: 4.5, position: 70, time: 4.3, delay: 0.3 },
-  { size: 2.6, distance: 5.5, position: 42, time: 5.6, delay: 1.1 },
-];
+interface BubbleConfig {
+  size: number;
+  distance: number;
+  position: number;
+  time: number;
+  delay: number;
+}
+
+function generateBubbles(count: number): BubbleConfig[] {
+  return Array.from({ length: count }, () => ({
+    size: Math.random() * 1.0 + 0.8, // 0.8〜1.8rem
+    distance: Math.random() * 3.0 + 2.5, // 2.5〜5.5rem
+    position: Math.random() * 100, // 0〜100%
+    time: Math.random() * 2.0 + 4.0, // 4〜6秒
+    delay: Math.random() * 3.0, // 0〜3秒
+  }));
+}
 
 export function Bubbles({ count = 8, variant = "footer" }: BubblesProps) {
+  const [bubbles, setBubbles] = useState<BubbleConfig[]>([]);
+
+  useEffect(() => {
+    setBubbles(generateBubbles(count));
+  }, [count]);
+
   const containerClass =
     variant === "header" ? "bubbles-header" : "bubbles-footer";
 
+  // 初回レンダリング時は空（ハイドレーションエラー回避）
+  if (bubbles.length === 0) {
+    return <div className={containerClass} />;
+  }
+
   return (
     <div className={containerClass}>
-      {bubbleConfigs.slice(0, count).map((config, i) => (
+      {bubbles.map((config, i) => (
         <div
           key={i}
           className="bubble"

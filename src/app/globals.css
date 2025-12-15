@@ -80,7 +80,7 @@ body {
   z-index: 0;
   overflow: hidden;
   pointer-events: none;
-  opacity: 0.4;
+  opacity: 0.7;
 }
 
 .bubbles-footer {
@@ -89,7 +89,7 @@ body {
   z-index: 0;
   overflow: hidden;
   pointer-events: none;
-  opacity: 0.3;
+  opacity: 0.7;
 }
 
 .bubble {
@@ -98,7 +98,7 @@ body {
   bottom: 0;
   width: var(--size);
   height: var(--size);
-  background-color: rgba(255, 255, 255, 0.7);
+  background-color: rgba(255, 255, 255, 0.8);
   border-radius: 50%;
   animation: rise var(--time) ease-in infinite;
   animation-delay: var(--delay);
@@ -122,5 +122,16 @@ body {
   100% {
     bottom: calc(100% - var(--size));
     opacity: 0;
+  }
+}
+
+/* 浮遊アニメーション（背景泡用） */
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-15px);
   }
 }
