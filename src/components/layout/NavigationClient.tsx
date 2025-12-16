@@ -2,9 +2,8 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { useState } from "react";
-import { logout } from "@/app/(auth)/login/actions";
 import type { User } from "@supabase/supabase-js";
 import { Bubbles } from "./Bubbles";
 
@@ -17,12 +16,10 @@ const navItems = [
 
 interface NavigationClientProps {
   user: User | null;
-  isAdmin: boolean;
 }
 
-export function NavigationClient({ user, isAdmin }: NavigationClientProps) {
+export function NavigationClient({ user }: NavigationClientProps) {
   const pathname = usePathname();
-  const router = useRouter();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   return (
@@ -32,29 +29,6 @@ export function NavigationClient({ user, isAdmin }: NavigationClientProps) {
 
       <div className="container mx-auto px-4 relative z-10">
         <div className="navbar min-h-16">
-          {/* モバイルメニューボタン */}
-          <div className="flex-none lg:hidden">
-            <button
-              className="btn btn-square btn-ghost text-amber-900 hover:bg-yellow-600/30"
-              onClick={() => setIsMenuOpen(!isMenuOpen)}
-              aria-label="メニューを開く"
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                className="inline-block w-6 h-6 stroke-current"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M4 6h16M4 12h16M4 18h16"
-                />
-              </svg>
-            </button>
-          </div>
-
           {/* ロゴ */}
           <div className="flex-1">
             <Link
@@ -93,48 +67,15 @@ export function NavigationClient({ user, isAdmin }: NavigationClientProps) {
             </ul>
           </nav>
 
-          {/* 認証ボタン */}
-          <div className="flex-none ml-4">
+          {/* ログイン/マイページボタン */}
+          <div className="flex-none ml-4 hidden lg:block">
             {user ? (
-              <div className="dropdown dropdown-end">
-                <div
-                  tabIndex={0}
-                  role="button"
-                  className="btn btn-circle bg-amber-900 text-yellow-100 hover:bg-amber-800 border-none"
-                >
-                  <span className="text-lg font-bold">
-                    {user.email?.[0].toUpperCase() || "U"}
-                  </span>
-                </div>
-                <ul
-                  tabIndex={0}
-                  className="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow-lg bg-white rounded-box w-52 border border-gray-200"
-                >
-                  <li>
-                    <Link href="/mypage" className="text-gray-700 hover:bg-yellow-100">
-                      マイページ
-                    </Link>
-                  </li>
-                  {isAdmin && (
-                    <li>
-                      <Link href="/admin" className="text-amber-700 hover:bg-yellow-100 font-medium">
-                        管理画面
-                      </Link>
-                    </li>
-                  )}
-                  <li>
-                    <button
-                      onClick={async () => {
-                        await logout();
-                        router.refresh();
-                      }}
-                      className="text-gray-700 hover:bg-yellow-100"
-                    >
-                      ログアウト
-                    </button>
-                  </li>
-                </ul>
-              </div>
+              <Link
+                href="/mypage"
+                className="btn bg-amber-900 text-yellow-100 hover:bg-amber-800 border-none"
+              >
+                マイページ
+              </Link>
             ) : (
               <Link
                 href="/login"
@@ -143,6 +84,29 @@ export function NavigationClient({ user, isAdmin }: NavigationClientProps) {
                 ログイン
               </Link>
             )}
+          </div>
+
+          {/* モバイルメニューボタン（右側） */}
+          <div className="flex-none lg:hidden ml-2">
+            <button
+              className="btn btn-square btn-ghost text-amber-900 hover:bg-yellow-600/30"
+              onClick={() => setIsMenuOpen(!isMenuOpen)}
+              aria-label="メニューを開く"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                className="inline-block w-6 h-6 stroke-current"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M4 6h16M4 12h16M4 18h16"
+                />
+              </svg>
+            </button>
           </div>
         </div>
       </div>
@@ -166,6 +130,26 @@ export function NavigationClient({ user, isAdmin }: NavigationClientProps) {
                 </Link>
               </li>
             ))}
+            {/* ログイン/マイページリンク */}
+            <li className="mt-2 pt-2 border-t border-yellow-600/30">
+              {user ? (
+                <Link
+                  href="/mypage"
+                  className="block px-4 py-3 rounded-lg font-medium text-amber-900 hover:bg-yellow-600/30 transition-all"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  マイページ
+                </Link>
+              ) : (
+                <Link
+                  href="/login"
+                  className="block px-4 py-3 rounded-lg font-medium text-amber-900 hover:bg-yellow-600/30 transition-all"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  ログイン
+                </Link>
+              )}
+            </li>
           </ul>
         </div>
       )}

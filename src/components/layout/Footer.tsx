@@ -1,53 +1,24 @@
-import Link from "next/link";
-import { Bubbles } from "./Bubbles";
+import { createClient } from "@/lib/supabase/server";
+import { FooterClient } from "./FooterClient";
 
-export function Footer() {
-  const currentYear = new Date().getFullYear();
+export async function Footer() {
+  const supabase = await createClient();
 
-  return (
-    <footer className="bg-gradient-to-r from-yellow-300 via-yellow-400 to-amber-400 relative overflow-hidden">
-      {/* 泡の装飾 */}
-      <Bubbles count={8} variant="footer" />
+  // サーバーサイドでユーザー情報を取得
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
 
-      <div className="container mx-auto px-4 py-10 relative z-10">
-        {/* リンク */}
-        <nav className="flex flex-wrap justify-center gap-6 mb-6">
-          <Link
-            href="/about"
-            className="text-amber-900 hover:text-amber-700 transition-colors"
-          >
-            サイトについて
-          </Link>
-          <Link
-            href="/terms"
-            className="text-amber-900 hover:text-amber-700 transition-colors"
-          >
-            利用規約
-          </Link>
-          <Link
-            href="/privacy"
-            className="text-amber-900 hover:text-amber-700 transition-colors"
-          >
-            プライバシーポリシー
-          </Link>
-          <Link
-            href="/contact"
-            className="text-amber-900 hover:text-amber-700 transition-colors"
-          >
-            お問い合わせ
-          </Link>
-        </nav>
+  // 管理者権限を確認
+  let isAdmin = false;
+  if (user) {
+    const { data } = await supabase
+      .from("users")
+      .select("role")
+      .eq("id", user.id)
+      .single();
+    isAdmin = data?.role === "admin";
+  }
 
-        {/* コピーライト */}
-        <div className="text-center">
-          <p className="text-amber-900">
-            Copyright {currentYear} Beer Link. All rights reserved.
-          </p>
-          <p className="text-sm mt-2 text-amber-800">
-            お酒は20歳になってから。飲酒運転は法律で禁止されています。
-          </p>
-        </div>
-      </div>
-    </footer>
-  );
+  return <FooterClient user={user} isAdmin={isAdmin} />;
 }
