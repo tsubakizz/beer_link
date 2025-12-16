@@ -3,7 +3,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { db } from "@/lib/db";
 import { beers, users } from "@/lib/db/schema";
-import { eq } from "drizzle-orm";
+import { eq, and, ne } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 
 // 管理者権限チェック
@@ -40,6 +40,16 @@ export async function updateBeer(beerId: number, input: UpdateBeerInput) {
   const adminCheck = await checkAdmin();
   if (!adminCheck.success) {
     return adminCheck;
+  }
+
+  // 重複チェック（自分自身を除く）
+  const [existingBeer] = await db
+    .select()
+    .from(beers)
+    .where(and(eq(beers.name, input.name), ne(beers.id, beerId)));
+
+  if (existingBeer) {
+    return { success: false, error: "同じ名前のビールが既に登録されています" };
   }
 
   try {

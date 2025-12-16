@@ -35,6 +35,16 @@ export async function submitBeer(input: SubmitBeerInput) {
     });
   }
 
+  // 重複チェック
+  const [existingBeer] = await db
+    .select()
+    .from(beers)
+    .where(eq(beers.name, input.name));
+
+  if (existingBeer) {
+    return { success: false, error: "同じ名前のビールが既に登録されています" };
+  }
+
   try {
     await db.insert(beers).values({
       name: input.name,

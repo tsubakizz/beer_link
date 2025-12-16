@@ -5,7 +5,7 @@ import { users } from "./users";
 
 export const beers = pgTable("beers", {
   id: serial("id").primaryKey(),
-  name: text("name").notNull(),
+  name: text("name").notNull().unique(),
   description: text("description"),
   breweryId: integer("brewery_id").notNull().references(() => breweries.id),
   styleId: integer("style_id").references(() => beerStyles.id),
