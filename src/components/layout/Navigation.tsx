@@ -9,16 +9,5 @@ export async function Navigation() {
     data: { user },
   } = await supabase.auth.getUser();
 
-  // 管理者権限を確認
-  let isAdmin = false;
-  if (user) {
-    const { data } = await supabase
-      .from("users")
-      .select("role")
-      .eq("id", user.id)
-      .single();
-    isAdmin = data?.role === "admin";
-  }
-
-  return <NavigationClient user={user} isAdmin={isAdmin} />;
+  return <NavigationClient user={user} />;
 }
