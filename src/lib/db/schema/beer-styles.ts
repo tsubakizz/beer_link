@@ -4,7 +4,7 @@ import { relations } from "drizzle-orm";
 export const beerStyles = pgTable("beer_styles", {
   id: serial("id").primaryKey(),
   slug: text("slug").notNull().unique(),
-  name: text("name").notNull(),
+  name: text("name").notNull().unique(),
   shortDescription: varchar("short_description", { length: 100 }), // 一覧ページ用の短い紹介文
   description: text("description"),
   bitterness: integer("bitterness"),      // 1-5

@@ -3,7 +3,7 @@ import { prefectures } from "./prefectures";
 
 export const breweries = pgTable("breweries", {
   id: serial("id").primaryKey(),
-  name: text("name").notNull(),
+  name: text("name").notNull().unique(),
   description: text("description"),
   prefectureId: integer("prefecture_id").references(() => prefectures.id),
   address: text("address"),
