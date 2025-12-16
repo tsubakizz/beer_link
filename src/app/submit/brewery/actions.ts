@@ -33,6 +33,16 @@ export async function submitBrewery(input: SubmitBreweryInput) {
     });
   }
 
+  // 重複チェック
+  const [existingBrewery] = await db
+    .select()
+    .from(breweries)
+    .where(eq(breweries.name, input.name));
+
+  if (existingBrewery) {
+    return { success: false, error: "同じ名前のブルワリーが既に登録されています" };
+  }
+
   try {
     await db.insert(breweries).values({
       name: input.name,

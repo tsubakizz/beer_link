@@ -2,7 +2,7 @@
 
 import { createClient } from "@/lib/supabase/server";
 import { db } from "@/lib/db";
-import { beerStyles, users } from "@/lib/db/schema";
+import { beerStyles, beerStyleOtherNames, users } from "@/lib/db/schema";
 import { eq } from "drizzle-orm";
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
@@ -31,6 +31,26 @@ export async function submitStyle(input: SubmitStyleInput) {
       email: user.email!,
       displayName: user.user_metadata.display_name || user.email?.split("@")[0],
     });
+  }
+
+  // 重複チェック（スタイル名）
+  const [existingStyle] = await db
+    .select()
+    .from(beerStyles)
+    .where(eq(beerStyles.name, input.name));
+
+  if (existingStyle) {
+    return { success: false, error: "同じ名前のスタイルが既に登録されています" };
+  }
+
+  // 重複チェック（別名）
+  const [existingOtherName] = await db
+    .select()
+    .from(beerStyleOtherNames)
+    .where(eq(beerStyleOtherNames.name, input.name));
+
+  if (existingOtherName) {
+    return { success: false, error: "この名前は既に別のスタイルの別名として登録されています" };
   }
 
   // スラグを生成
