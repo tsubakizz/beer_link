@@ -3,7 +3,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { db } from "@/lib/db";
 import { beerStyles, beerStyleOtherNames, users } from "@/lib/db/schema";
-import { eq } from "drizzle-orm";
+import { eq, and, ne, inArray } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 
 // 管理者権限チェック
@@ -36,6 +36,57 @@ export async function updateStyle(styleId: number, input: UpdateStyleInput) {
   const adminCheck = await checkAdmin();
   if (!adminCheck.success) {
     return adminCheck;
+  }
+
+  // 重複チェック（スタイル名 - 自分自身を除く）
+  const [existingStyle] = await db
+    .select()
+    .from(beerStyles)
+    .where(and(eq(beerStyles.name, input.name), ne(beerStyles.id, styleId)));
+
+  if (existingStyle) {
+    return { success: false, error: "同じ名前のスタイルが既に登録されています" };
+  }
+
+  // 重複チェック（入力名が既存の別名と被っていないか）
+  const [existingOtherNameForName] = await db
+    .select()
+    .from(beerStyleOtherNames)
+    .where(and(
+      eq(beerStyleOtherNames.name, input.name),
+      ne(beerStyleOtherNames.styleId, styleId)
+    ));
+
+  if (existingOtherNameForName) {
+    return { success: false, error: "この名前は既に別のスタイルの別名として登録されています" };
+  }
+
+  // 重複チェック（入力別名が既存のスタイル名と被っていないか）
+  if (input.otherNames.length > 0) {
+    const conflictingStyles = await db
+      .select()
+      .from(beerStyles)
+      .where(and(
+        inArray(beerStyles.name, input.otherNames),
+        ne(beerStyles.id, styleId)
+      ));
+
+    if (conflictingStyles.length > 0) {
+      return { success: false, error: `別名「${conflictingStyles[0].name}」は既にスタイル名として登録されています` };
+    }
+
+    // 重複チェック（入力別名が既存の別名と被っていないか - 自分の別名は除く）
+    const conflictingOtherNames = await db
+      .select()
+      .from(beerStyleOtherNames)
+      .where(and(
+        inArray(beerStyleOtherNames.name, input.otherNames),
+        ne(beerStyleOtherNames.styleId, styleId)
+      ));
+
+    if (conflictingOtherNames.length > 0) {
+      return { success: false, error: `別名「${conflictingOtherNames[0].name}」は既に別のスタイルの別名として登録されています` };
+    }
   }
 
   try {
