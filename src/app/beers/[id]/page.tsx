@@ -7,6 +7,7 @@ import Image from "next/image";
 import { FlavorProfile, FavoriteButton, BeerCard } from "@/components/beer";
 import { BeerFilter } from "@/components/beer/BeerFilter";
 import { ReviewCard } from "@/components/review/ReviewCard";
+import { AuthRequiredLink } from "@/components/ui/AuthRequiredLink";
 import { createClient } from "@/lib/supabase/server";
 import type { Metadata } from "next";
 
@@ -148,6 +149,11 @@ export default async function BeerPage({ params }: Props) {
 
 // フィルターページコンポーネント
 async function FilteredBeersPage({ filterType, filterId }: { filterType: "style" | "brewery"; filterId: number }) {
+  // 認証状態を取得
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  const isAuthenticated = !!user;
+
   let filterName = "";
   let styleSlug: string | null = null;
 
@@ -282,9 +288,13 @@ async function FilteredBeersPage({ filterType, filterId }: { filterType: "style"
             {filterType === "style" ? "スタイル" : "ブルワリー"}で絞り込み中
           </span>
         </div>
-        <Link href="/submit/beer" className="btn btn-primary btn-sm">
+        <AuthRequiredLink
+          href="/submit/beer"
+          isAuthenticated={isAuthenticated}
+          className="btn btn-primary btn-sm"
+        >
           + ビールを追加
-        </Link>
+        </AuthRequiredLink>
       </div>
 
       {/* ビール一覧 */}
@@ -300,9 +310,13 @@ async function FilteredBeersPage({ filterType, filterId }: { filterType: "style"
           <p className="text-lg text-base-content/60 mb-4">
             {filterName}のビールはまだ登録されていません
           </p>
-          <Link href="/submit/beer" className="btn btn-primary">
+          <AuthRequiredLink
+            href="/submit/beer"
+            isAuthenticated={isAuthenticated}
+            className="btn btn-primary"
+          >
             最初のビールを登録する
-          </Link>
+          </AuthRequiredLink>
         </div>
       )}
     </div>

@@ -1,10 +1,11 @@
 import { db } from "@/lib/db";
 import { beers, breweries, beerStyles } from "@/lib/db/schema";
 import { eq, and, ilike, or, count } from "drizzle-orm";
+import { createClient } from "@/lib/supabase/server";
 import { BeerCard } from "@/components/beer";
 import { BeerFilter } from "@/components/beer/BeerFilter";
 import { Pagination, ITEMS_PER_PAGE } from "@/components/ui/Pagination";
-import Link from "next/link";
+import { AuthRequiredLink } from "@/components/ui/AuthRequiredLink";
 
 export const metadata = {
   title: "ビール一覧 | beer_link",
@@ -27,6 +28,11 @@ interface Props {
 export default async function BeersPage({ searchParams }: Props) {
   const params = await searchParams;
   const { q, style, brewery } = params;
+
+  // 認証状態を取得
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  const isAuthenticated = !!user;
 
   // ページ番号を取得（デフォルト: 1）
   const currentPage = Math.max(1, parseInt(params.page || "1", 10) || 1);
@@ -134,9 +140,13 @@ export default async function BeersPage({ searchParams }: Props) {
             </span>
           )}
         </div>
-        <Link href="/submit/beer" className="btn btn-primary btn-sm">
+        <AuthRequiredLink
+          href="/submit/beer"
+          isAuthenticated={isAuthenticated}
+          className="btn btn-primary btn-sm"
+        >
           + ビールを追加
-        </Link>
+        </AuthRequiredLink>
       </div>
 
       {/* ビール一覧 */}
