@@ -1,5 +1,11 @@
 import { db } from "@/lib/db";
-import { beers, breweries, beerStyles } from "@/lib/db/schema";
+import {
+  beers,
+  breweries,
+  beerStyles,
+  beerStyleOtherNames,
+  prefectures,
+} from "@/lib/db/schema";
 import { eq, and, ilike, or, count } from "drizzle-orm";
 import { createClient } from "@/lib/supabase/server";
 import { BeerCard } from "@/components/beer";
@@ -21,13 +27,14 @@ interface Props {
     q?: string;
     style?: string;
     brewery?: string;
+    prefecture?: string;
     page?: string;
   }>;
 }
 
 export default async function BeersPage({ searchParams }: Props) {
   const params = await searchParams;
-  const { q, style, brewery } = params;
+  const { q, style, brewery, prefecture } = params;
 
   // 認証状態を取得
   const supabase = await createClient();
@@ -61,10 +68,18 @@ export default async function BeersPage({ searchParams }: Props) {
     }
   }
 
-  // 総件数を取得
+  if (prefecture) {
+    const prefectureId = parseInt(prefecture, 10);
+    if (!isNaN(prefectureId)) {
+      conditions.push(eq(breweries.prefectureId, prefectureId));
+    }
+  }
+
+  // 総件数を取得（都道府県フィルターのためブルワリーをjoin）
   const [{ totalCount }] = await db
     .select({ totalCount: count() })
     .from(beers)
+    .leftJoin(breweries, eq(beers.breweryId, breweries.id))
     .where(and(...conditions));
 
   // ビール一覧を取得（ページネーション付き）
@@ -94,19 +109,46 @@ export default async function BeersPage({ searchParams }: Props) {
     .limit(ITEMS_PER_PAGE)
     .offset(offset);
 
-  // フィルター用のスタイルとブルワリー一覧を取得
-  const [styleOptions, breweryOptions] = await Promise.all([
-    db
-      .select({ id: beerStyles.id, name: beerStyles.name })
-      .from(beerStyles)
-      .where(eq(beerStyles.status, "approved"))
-      .orderBy(beerStyles.name),
-    db
-      .select({ id: breweries.id, name: breweries.name })
-      .from(breweries)
-      .where(eq(breweries.status, "approved"))
-      .orderBy(breweries.name),
-  ]);
+  // フィルター用のスタイル、ブルワリー、都道府県一覧を取得
+  const [styleList, otherNamesList, breweryOptions, prefectureOptions] =
+    await Promise.all([
+      db
+        .select({ id: beerStyles.id, name: beerStyles.name })
+        .from(beerStyles)
+        .where(eq(beerStyles.status, "approved"))
+        .orderBy(beerStyles.name),
+      db
+        .select({
+          styleId: beerStyleOtherNames.styleId,
+          name: beerStyleOtherNames.name,
+        })
+        .from(beerStyleOtherNames),
+      db
+        .select({ id: breweries.id, name: breweries.name })
+        .from(breweries)
+        .where(eq(breweries.status, "approved"))
+        .orderBy(breweries.name),
+      db
+        .select({ id: prefectures.id, name: prefectures.name })
+        .from(prefectures)
+        .orderBy(prefectures.id),
+    ]);
+
+  // スタイルIDごとに別名をグループ化
+  const otherNamesByStyleId = otherNamesList.reduce(
+    (acc, { styleId, name }) => {
+      if (!acc[styleId]) acc[styleId] = [];
+      acc[styleId].push(name);
+      return acc;
+    },
+    {} as Record<number, string[]>
+  );
+
+  // スタイルリストに別名を追加
+  const styleOptions = styleList.map((style) => ({
+    ...style,
+    otherNames: otherNamesByStyleId[style.id] || [],
+  }));
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -123,9 +165,11 @@ export default async function BeersPage({ searchParams }: Props) {
       <BeerFilter
         styles={styleOptions}
         breweries={breweryOptions}
+        prefectures={prefectureOptions}
         currentQuery={q}
         currentStyle={style}
         currentBrewery={brewery}
+        currentPrefecture={prefecture}
       />
 
       {/* ビール数表示 & 追加ボタン */}
@@ -134,7 +178,7 @@ export default async function BeersPage({ searchParams }: Props) {
           <span className="badge badge-lg badge-primary">
             全{totalCount}件
           </span>
-          {(q || style || brewery) && (
+          {(q || style || brewery || prefecture) && (
             <span className="text-sm text-base-content/60">
               フィルター適用中
             </span>
@@ -160,7 +204,7 @@ export default async function BeersPage({ searchParams }: Props) {
         <div className="text-center py-20">
           <div className="text-6xl mb-4">🍺</div>
           <p className="text-lg text-base-content/60">
-            {q || style || brewery
+            {q || style || brewery || prefecture
               ? "条件に合うビールが見つかりませんでした"
               : "ビールがまだ登録されていません"}
           </p>
@@ -172,7 +216,7 @@ export default async function BeersPage({ searchParams }: Props) {
         currentPage={currentPage}
         totalCount={totalCount}
         basePath="/beers"
-        searchParams={{ q, style, brewery }}
+        searchParams={{ q, style, brewery, prefecture }}
       />
     </div>
   );
