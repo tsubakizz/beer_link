@@ -1,6 +1,8 @@
 import { db } from "@/lib/db";
 import { breweries, beerStyles, beerStyleOtherNames } from "@/lib/db/schema";
 import { eq } from "drizzle-orm";
+import { createClient } from "@/lib/supabase/server";
+import { redirect } from "next/navigation";
 import { BeerSubmitForm } from "./BeerSubmitForm";
 import type { Metadata } from "next";
 
@@ -13,6 +15,14 @@ export const metadata: Metadata = {
 export const dynamic = "force-dynamic";
 
 export default async function BeerSubmitPage() {
+  // 認証チェック
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+
+  if (!user) {
+    redirect("/login");
+  }
+
   // ブルワリー一覧を取得（承認済みのみ）
   const breweryList = await db
     .select({ id: breweries.id, name: breweries.name })

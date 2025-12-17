@@ -1,3 +1,5 @@
+import { createClient } from "@/lib/supabase/server";
+import { redirect } from "next/navigation";
 import { BrewerySubmitForm } from "./BrewerySubmitForm";
 import type { Metadata } from "next";
 
@@ -6,7 +8,18 @@ export const metadata: Metadata = {
   description: "新しいブルワリーを追加できます",
 };
 
-export default function BrewerySubmitPage() {
+// 認証チェックのため動的レンダリング
+export const dynamic = "force-dynamic";
+
+export default async function BrewerySubmitPage() {
+  // 認証チェック
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+
+  if (!user) {
+    redirect("/login");
+  }
+
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="max-w-md mx-auto">
