@@ -2,30 +2,40 @@
 
 import { useRouter, useSearchParams } from "next/navigation";
 import { useCallback, useState } from "react";
+import { SearchableSelect } from "@/components/ui/SearchableSelect";
 
 interface FilterOption {
   id: number;
   name: string;
 }
 
+interface StyleOption extends FilterOption {
+  otherNames?: string[];
+}
+
 interface BeerFilterProps {
-  styles: FilterOption[];
+  styles: StyleOption[];
   breweries: FilterOption[];
+  prefectures?: FilterOption[];
   currentQuery?: string;
   currentStyle?: string;
   currentBrewery?: string;
+  currentPrefecture?: string;
 }
 
 export function BeerFilter({
   styles,
   breweries,
+  prefectures,
   currentQuery,
   currentStyle,
   currentBrewery,
+  currentPrefecture,
 }: BeerFilterProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [query, setQuery] = useState(currentQuery || "");
+  const [isComposing, setIsComposing] = useState(false);
 
   const updateFilter = useCallback(
     (key: string, value: string) => {
@@ -35,6 +45,8 @@ export function BeerFilter({
       } else {
         params.delete(key);
       }
+      // ページを1に戻す
+      params.delete("page");
       router.push(`/beers?${params.toString()}`);
     },
     [router, searchParams]
@@ -43,9 +55,11 @@ export function BeerFilter({
   const handleSearch = useCallback(
     (e: React.FormEvent) => {
       e.preventDefault();
+      // IME変換中は検索しない
+      if (isComposing) return;
       updateFilter("q", query);
     },
-    [query, updateFilter]
+    [query, updateFilter, isComposing]
   );
 
   const clearFilters = useCallback(() => {
@@ -53,7 +67,7 @@ export function BeerFilter({
     router.push("/beers");
   }, [router]);
 
-  const hasFilters = currentQuery || currentStyle || currentBrewery;
+  const hasFilters = currentQuery || currentStyle || currentBrewery || currentPrefecture;
 
   return (
     <div className="card bg-base-100 shadow mb-8">
@@ -67,6 +81,8 @@ export function BeerFilter({
               className="input input-bordered join-item flex-1"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
+              onCompositionStart={() => setIsComposing(true)}
+              onCompositionEnd={() => setIsComposing(false)}
             />
             <button type="submit" className="btn btn-primary join-item">
               <svg
@@ -88,41 +104,34 @@ export function BeerFilter({
 
         {/* フィルター */}
         <div className="flex flex-wrap gap-4">
-          <div className="form-control w-full sm:w-auto sm:min-w-48">
-            <label className="label">
-              <span className="label-text">ビアスタイル</span>
-            </label>
-            <select
-              className="select select-bordered"
-              value={currentStyle || ""}
-              onChange={(e) => updateFilter("style", e.target.value)}
-            >
-              <option value="">すべてのスタイル</option>
-              {styles.map((style) => (
-                <option key={style.id} value={style.id}>
-                  {style.name}
-                </option>
-              ))}
-            </select>
-          </div>
+          <SearchableSelect
+            options={styles}
+            value={currentStyle}
+            onChange={(value) => updateFilter("style", value)}
+            label="ビアスタイル"
+            placeholder="スタイルを検索..."
+            emptyLabel="すべてのスタイル"
+          />
 
-          <div className="form-control w-full sm:w-auto sm:min-w-48">
-            <label className="label">
-              <span className="label-text">ブルワリー</span>
-            </label>
-            <select
-              className="select select-bordered"
-              value={currentBrewery || ""}
-              onChange={(e) => updateFilter("brewery", e.target.value)}
-            >
-              <option value="">すべてのブルワリー</option>
-              {breweries.map((brewery) => (
-                <option key={brewery.id} value={brewery.id}>
-                  {brewery.name}
-                </option>
-              ))}
-            </select>
-          </div>
+          <SearchableSelect
+            options={breweries}
+            value={currentBrewery}
+            onChange={(value) => updateFilter("brewery", value)}
+            label="ブルワリー"
+            placeholder="ブルワリーを検索..."
+            emptyLabel="すべてのブルワリー"
+          />
+
+          {prefectures && prefectures.length > 0 && (
+            <SearchableSelect
+              options={prefectures}
+              value={currentPrefecture}
+              onChange={(value) => updateFilter("prefecture", value)}
+              label="都道府県"
+              placeholder="都道府県を検索..."
+              emptyLabel="すべての都道府県"
+            />
+          )}
 
           {hasFilters && (
             <div className="form-control justify-end">
