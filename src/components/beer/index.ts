@@ -4,6 +4,7 @@ export { StyleCard } from "./StyleCard";
 export { BeerCard } from "./BeerCard";
 export { BreweryCard } from "./BreweryCard";
 export { BeerFilter } from "./BeerFilter";
+export { BreweryFilter } from "./BreweryFilter";
 export { StyleFilter } from "./StyleFilter";
 export { FavoriteButton } from "./FavoriteButton";
 export { RelatedStyles } from "./RelatedStyles";
