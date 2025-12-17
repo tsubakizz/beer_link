@@ -159,6 +159,9 @@ export function ReviewForm({ beerId }: ReviewFormProps) {
           currentImageUrl={imageUrl}
           aspectRatio="video"
         />
+        <p className="text-sm text-base-content/60 mt-2">
+          投稿いただいた写真は、ビールの代表画像として使用させていただく場合があります。
+        </p>
       </div>
 
       {/* 送信ボタン */}

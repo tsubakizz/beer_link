@@ -23,7 +23,7 @@ export async function compressImage(
 ): Promise<File> {
   const mergedOptions = { ...DEFAULT_OPTIONS, ...options };
 
-  // 画像を圧縮（canvasで再描画されるためEXIFも削除される）
+  // 画像を圧縮してWebPに変換（canvasで再描画されるためEXIFも削除される）
   const compressedFile = await imageCompression(file, {
     maxSizeMB: mergedOptions.maxSizeMB,
     maxWidthOrHeight: mergedOptions.maxWidthOrHeight,
@@ -31,6 +31,8 @@ export async function compressImage(
     useWebWorker: true,
     // EXIFデータを保持しない（デフォルトでfalse）
     preserveExif: false,
+    // WebPに変換
+    fileType: "image/webp",
   });
 
   return compressedFile;
@@ -61,7 +63,7 @@ export function isImageFile(file: File): boolean {
  * 許可されたファイル形式かどうかを判定
  */
 export function isAllowedImageType(file: File): boolean {
-  const allowedTypes = ["image/jpeg", "image/png", "image/webp", "image/gif"];
+  const allowedTypes = ["image/jpeg", "image/png", "image/webp"];
   return allowedTypes.includes(file.type);
 }
 
