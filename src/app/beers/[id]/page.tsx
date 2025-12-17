@@ -1,5 +1,5 @@
 import { db } from "@/lib/db";
-import { beers, breweries, beerStyles, reviews, users, beerFavorites } from "@/lib/db/schema";
+import { beers, breweries, beerStyles, reviews, users, beerFavorites, prefectures } from "@/lib/db/schema";
 import { eq, avg, count, desc, and, or } from "drizzle-orm";
 import { notFound } from "next/navigation";
 import Link from "next/link";
@@ -219,8 +219,8 @@ async function FilteredBeersPage({ filterType, filterId }: { filterType: "style"
     .where(and(...conditions))
     .orderBy(beers.name);
 
-  // フィルター用のスタイルとブルワリー一覧を取得
-  const [styleOptions, breweryOptions] = await Promise.all([
+  // フィルター用のスタイル、ブルワリー、都道府県一覧を取得
+  const [styleOptions, breweryOptions, prefectureOptions] = await Promise.all([
     db
       .select({ id: beerStyles.id, name: beerStyles.name })
       .from(beerStyles)
@@ -231,6 +231,10 @@ async function FilteredBeersPage({ filterType, filterId }: { filterType: "style"
       .from(breweries)
       .where(eq(breweries.status, "approved"))
       .orderBy(breweries.name),
+    db
+      .select({ id: prefectures.id, name: prefectures.name })
+      .from(prefectures)
+      .orderBy(prefectures.id),
   ]);
 
   const pageTitle = `${filterName}のビール一覧`;
@@ -274,6 +278,7 @@ async function FilteredBeersPage({ filterType, filterId }: { filterType: "style"
       <BeerFilter
         styles={styleOptions}
         breweries={breweryOptions}
+        prefectures={prefectureOptions}
         currentStyle={filterType === "style" ? String(filterId) : undefined}
         currentBrewery={filterType === "brewery" ? String(filterId) : undefined}
       />
@@ -338,6 +343,10 @@ async function BeerDetailPage({ beerId }: { beerId: number }) {
         id: breweries.id,
         name: breweries.name,
       },
+      prefecture: {
+        id: prefectures.id,
+        name: prefectures.name,
+      },
       style: {
         id: beerStyles.id,
         name: beerStyles.name,
@@ -351,6 +360,7 @@ async function BeerDetailPage({ beerId }: { beerId: number }) {
     })
     .from(beers)
     .leftJoin(breweries, eq(beers.breweryId, breweries.id))
+    .leftJoin(prefectures, eq(breweries.prefectureId, prefectures.id))
     .leftJoin(beerStyles, eq(beers.styleId, beerStyles.id))
     .where(eq(beers.id, beerId))
     .limit(1)
@@ -554,6 +564,14 @@ async function BeerDetailPage({ beerId }: { beerId: number }) {
                 className="btn btn-outline btn-sm"
               >
                 {beer.brewery.name}のビール一覧 →
+              </Link>
+            )}
+            {beer.prefecture?.id && (
+              <Link
+                href={`/prefectures/${beer.prefecture.id}/beers`}
+                className="btn btn-outline btn-sm"
+              >
+                {beer.prefecture.name}のビール一覧 →
               </Link>
             )}
           </div>
