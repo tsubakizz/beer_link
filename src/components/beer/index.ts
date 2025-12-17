@@ -1,4 +1,5 @@
 export { FlavorProfile } from "./FlavorProfile";
+export { FlavorBars } from "./FlavorBars";
 export { StyleCard } from "./StyleCard";
 export { BeerCard } from "./BeerCard";
 export { BreweryCard } from "./BreweryCard";

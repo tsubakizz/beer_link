@@ -6,7 +6,8 @@ import { redirect } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 import { ProfileForm } from "./ProfileForm";
-import { BeerCard, FlavorProfile } from "@/components/beer";
+import { ReviewActions } from "./ReviewActions";
+import { BeerCard, FlavorBars } from "@/components/beer";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -220,12 +221,17 @@ export default async function MyPage() {
                           {review.comment && (
                             <p className="text-sm mt-2 line-clamp-2">{review.comment}</p>
                           )}
+
+                          {/* 編集・削除ボタン */}
+                          <div className="mt-2 flex justify-end">
+                            <ReviewActions reviewId={review.id} beerId={review.beer.id} />
+                          </div>
                         </div>
 
                         {/* 味評価 */}
                         {(review.bitterness || review.sweetness || review.body || review.aroma || review.sourness) && (
-                          <div className="hidden md:block shrink-0">
-                            <FlavorProfile
+                          <div className="hidden md:block shrink-0 w-48">
+                            <FlavorBars
                               data={{
                                 bitterness: review.bitterness,
                                 sweetness: review.sweetness,
@@ -234,7 +240,6 @@ export default async function MyPage() {
                                 sourness: review.sourness,
                               }}
                               size="sm"
-                              showLabels={false}
                             />
                           </div>
                         )}
