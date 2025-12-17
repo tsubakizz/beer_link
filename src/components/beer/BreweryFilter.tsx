@@ -9,29 +9,17 @@ interface FilterOption {
   name: string;
 }
 
-interface StyleOption extends FilterOption {
-  otherNames?: string[];
-}
-
-interface BeerFilterProps {
-  styles: StyleOption[];
-  breweries: FilterOption[];
-  prefectures?: FilterOption[];
+interface BreweryFilterProps {
+  prefectures: FilterOption[];
   currentQuery?: string;
-  currentStyle?: string;
-  currentBrewery?: string;
   currentPrefecture?: string;
 }
 
-export function BeerFilter({
-  styles,
-  breweries,
+export function BreweryFilter({
   prefectures,
   currentQuery,
-  currentStyle,
-  currentBrewery,
   currentPrefecture,
-}: BeerFilterProps) {
+}: BreweryFilterProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [query, setQuery] = useState(currentQuery || "");
@@ -47,7 +35,7 @@ export function BeerFilter({
       }
       // ページを1に戻す
       params.delete("page");
-      router.push(`/beers?${params.toString()}`);
+      router.push(`/breweries?${params.toString()}`);
     },
     [router, searchParams]
   );
@@ -64,10 +52,10 @@ export function BeerFilter({
 
   const clearFilters = useCallback(() => {
     setQuery("");
-    router.push("/beers");
+    router.push("/breweries");
   }, [router]);
 
-  const hasFilters = currentQuery || currentStyle || currentBrewery || currentPrefecture;
+  const hasFilters = currentQuery || currentPrefecture;
 
   return (
     <div className="card bg-base-100 shadow mb-8">
@@ -77,7 +65,7 @@ export function BeerFilter({
           <div className="join w-full">
             <input
               type="text"
-              placeholder="ビール名で検索..."
+              placeholder="ブルワリー名で検索..."
               className="input input-bordered join-item flex-1"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
@@ -105,33 +93,13 @@ export function BeerFilter({
         {/* フィルター */}
         <div className="flex flex-wrap gap-4">
           <SearchableSelect
-            options={styles}
-            value={currentStyle}
-            onChange={(value) => updateFilter("style", value)}
-            label="ビアスタイル"
-            placeholder="スタイルを検索..."
-            emptyLabel="すべてのスタイル"
+            options={prefectures}
+            value={currentPrefecture}
+            onChange={(value) => updateFilter("prefecture", value)}
+            label="都道府県"
+            placeholder="都道府県を検索..."
+            emptyLabel="すべての都道府県"
           />
-
-          <SearchableSelect
-            options={breweries}
-            value={currentBrewery}
-            onChange={(value) => updateFilter("brewery", value)}
-            label="ブルワリー"
-            placeholder="ブルワリーを検索..."
-            emptyLabel="すべてのブルワリー"
-          />
-
-          {prefectures && prefectures.length > 0 && (
-            <SearchableSelect
-              options={prefectures}
-              value={currentPrefecture}
-              onChange={(value) => updateFilter("prefecture", value)}
-              label="都道府県"
-              placeholder="都道府県を検索..."
-              emptyLabel="すべての都道府県"
-            />
-          )}
 
           {hasFilters && (
             <div className="form-control justify-end">

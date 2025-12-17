@@ -3,6 +3,7 @@
 import { useState, useTransition } from "react";
 import { updateBrewery } from "./actions";
 import { ImageUploader } from "@/components/ui/ImageUploader";
+import { FormSearchSelect } from "@/components/ui/FormSearchSelect";
 
 interface Brewery {
   id: number;
@@ -88,23 +89,14 @@ export function BreweryEditModal({ brewery, prefectures, onClose }: Props) {
           </div>
 
           {/* 都道府県 */}
-          <div className="form-control">
-            <label className="label">
-              <span className="label-text">都道府県</span>
-            </label>
-            <select
-              value={prefectureId || ""}
-              onChange={(e) => setPrefectureId(e.target.value ? parseInt(e.target.value) : null)}
-              className="select select-bordered"
-            >
-              <option value="">選択してください</option>
-              {prefectures.map((pref) => (
-                <option key={pref.id} value={pref.id}>
-                  {pref.name}
-                </option>
-              ))}
-            </select>
-          </div>
+          <FormSearchSelect
+            options={prefectures}
+            value={prefectureId?.toString() || ""}
+            onChange={(value) => setPrefectureId(value ? parseInt(value, 10) : null)}
+            label="都道府県"
+            placeholder="都道府県を検索..."
+            clearable
+          />
 
           {/* 住所 */}
           <div className="form-control">

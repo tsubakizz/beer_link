@@ -168,7 +168,13 @@ export default async function BreweryDetailPage({ params }: Props) {
 
           {brewery.prefecture && (
             <p className="text-lg text-base-content/60 mb-4">
-              📍 {brewery.prefecture.name}
+              📍{" "}
+              <Link
+                href={`/prefectures/${brewery.prefecture.id}/breweries`}
+                className="hover:text-primary transition-colors"
+              >
+                {brewery.prefecture.name}
+              </Link>
             </p>
           )}
 
@@ -207,6 +213,24 @@ export default async function BreweryDetailPage({ params }: Props) {
               {breweryBeers.length} ビール
             </span>
           </div>
+
+          {/* 関連ページへのリンク */}
+          {brewery.prefecture && (
+            <div className="flex flex-wrap gap-3 mt-6">
+              <Link
+                href={`/prefectures/${brewery.prefecture.id}/beers`}
+                className="btn btn-outline btn-sm"
+              >
+                {brewery.prefecture.name}のビール一覧 →
+              </Link>
+              <Link
+                href={`/prefectures/${brewery.prefecture.id}/breweries`}
+                className="btn btn-outline btn-sm"
+              >
+                {brewery.prefecture.name}のブルワリー一覧 →
+              </Link>
+            </div>
+          )}
         </div>
       </div>
 
