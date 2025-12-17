@@ -603,7 +603,12 @@ async function BeerDetailPage({ beerId }: { beerId: number }) {
         {beerReviews.length > 0 ? (
           <div className="space-y-4">
             {beerReviews.map((review) => (
-              <ReviewCard key={review.id} review={review} />
+              <ReviewCard
+                key={review.id}
+                review={review}
+                beerId={beer.id}
+                currentUserId={user?.id}
+              />
             ))}
           </div>
         ) : (

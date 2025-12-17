@@ -1,5 +1,6 @@
 import Image from "next/image";
-import { FlavorProfile } from "@/components/beer";
+import { FlavorBars } from "@/components/beer";
+import { ReviewCardActions } from "./ReviewCardActions";
 
 interface ReviewCardProps {
   review: {
@@ -19,9 +20,12 @@ interface ReviewCardProps {
       profileImageUrl?: string | null;
     } | null;
   };
+  beerId?: number;
+  currentUserId?: string | null;
 }
 
-export function ReviewCard({ review }: ReviewCardProps) {
+export function ReviewCard({ review, beerId, currentUserId }: ReviewCardProps) {
+  const isOwner = currentUserId && review.user?.id === currentUserId;
   const hasFlavorData =
     review.bitterness ||
     review.sweetness ||
@@ -87,33 +91,31 @@ export function ReviewCard({ review }: ReviewCardProps) {
         </div>
 
         {/* コンテンツ */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="space-y-3">
           {/* コメント */}
-          <div className={hasFlavorData ? "md:col-span-2" : "md:col-span-3"}>
-            {review.comment && (
-              <p className="text-base-content/80 whitespace-pre-wrap">
-                {review.comment}
-              </p>
-            )}
+          {review.comment && (
+            <p className="text-base-content/80 whitespace-pre-wrap">
+              {review.comment}
+            </p>
+          )}
 
-            {/* レビュー画像 */}
-            {review.imageUrl && (
-              <div className="mt-3">
-                <Image
-                  src={review.imageUrl}
-                  alt="レビュー画像"
-                  width={300}
-                  height={200}
-                  className="rounded-lg object-cover"
-                />
-              </div>
-            )}
-          </div>
+          {/* レビュー画像 */}
+          {review.imageUrl && (
+            <div>
+              <Image
+                src={review.imageUrl}
+                alt="レビュー画像"
+                width={300}
+                height={200}
+                className="rounded-lg object-cover"
+              />
+            </div>
+          )}
 
           {/* 味の評価 */}
           {hasFlavorData && (
-            <div className="flex justify-center md:justify-end">
-              <FlavorProfile
+            <div className="max-w-sm">
+              <FlavorBars
                 data={{
                   bitterness: review.bitterness,
                   sweetness: review.sweetness,
@@ -122,11 +124,15 @@ export function ReviewCard({ review }: ReviewCardProps) {
                   sourness: review.sourness,
                 }}
                 size="sm"
-                showLabels={false}
               />
             </div>
           )}
         </div>
+
+        {/* 編集・削除ボタン（自分のレビューの場合のみ表示） */}
+        {isOwner && beerId && (
+          <ReviewCardActions reviewId={review.id} beerId={beerId} />
+        )}
       </div>
     </div>
   );
