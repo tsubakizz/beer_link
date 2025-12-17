@@ -1,9 +1,10 @@
 "use client";
 
-import { useState, useTransition, useMemo } from "react";
+import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { submitBeer } from "./actions";
+import { FormSearchSelect } from "@/components/ui/FormSearchSelect";
 
 interface BeerSubmitFormProps {
   breweries: { id: number; name: string }[];
@@ -18,34 +19,7 @@ export function BeerSubmitForm({ breweries, styles }: BeerSubmitFormProps) {
 
   const [name, setName] = useState("");
   const [breweryId, setBreweryId] = useState("");
-  const [brewerySearch, setBrewerySearch] = useState("");
   const [styleId, setStyleId] = useState("");
-  const [styleSearch, setStyleSearch] = useState("");
-  const [showBreweryDropdown, setShowBreweryDropdown] = useState(false);
-  const [showStyleDropdown, setShowStyleDropdown] = useState(false);
-
-  // ブルワリーのフィルタリング
-  const filteredBreweries = useMemo(() => {
-    if (!brewerySearch) return breweries;
-    const search = brewerySearch.toLowerCase();
-    return breweries.filter((b) => b.name.toLowerCase().includes(search));
-  }, [breweries, brewerySearch]);
-
-  // スタイルのフィルタリング（別名も検索対象）
-  const filteredStyles = useMemo(() => {
-    if (!styleSearch) return styles;
-    const search = styleSearch.toLowerCase();
-    return styles.filter((s) => {
-      const nameMatch = s.name.toLowerCase().includes(search);
-      const otherNameMatch = s.otherNames.some((name) =>
-        name.toLowerCase().includes(search)
-      );
-      return nameMatch || otherNameMatch;
-    });
-  }, [styles, styleSearch]);
-
-  const selectedBrewery = breweries.find((b) => b.id.toString() === breweryId);
-  const selectedStyle = styles.find((s) => s.id.toString() === styleId);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -90,9 +64,7 @@ export function BeerSubmitForm({ breweries, styles }: BeerSubmitFormProps) {
               setSuccess(false);
               setName("");
               setBreweryId("");
-              setBrewerySearch("");
               setStyleId("");
-              setStyleSearch("");
             }}
             className="btn btn-primary"
           >
@@ -131,126 +103,40 @@ export function BeerSubmitForm({ breweries, styles }: BeerSubmitFormProps) {
       </div>
 
       {/* ブルワリー（ライブサーチ） */}
-      <div className="form-control">
-        <label className="label">
-          <span className="label-text">ブルワリー *</span>
-        </label>
-        <div className="relative">
-          <input
-            type="text"
-            className="input input-bordered w-full"
-            placeholder="ブルワリー名で検索..."
-            value={selectedBrewery ? selectedBrewery.name : brewerySearch}
-            onChange={(e) => {
-              setBrewerySearch(e.target.value);
-              setBreweryId("");
-              setShowBreweryDropdown(true);
-            }}
-            onFocus={() => setShowBreweryDropdown(true)}
-            onBlur={() => setTimeout(() => setShowBreweryDropdown(false), 200)}
-          />
-          {showBreweryDropdown && (
-            <ul className="absolute z-10 w-full bg-base-100 border border-base-300 rounded-box shadow-lg mt-1 max-h-48 overflow-y-auto">
-              {filteredBreweries.length > 0 ? (
-                filteredBreweries.slice(0, 10).map((brewery) => (
-                  <li key={brewery.id}>
-                    <button
-                      type="button"
-                      className="w-full text-left px-4 py-2 hover:bg-base-200"
-                      onClick={() => {
-                        setBreweryId(brewery.id.toString());
-                        setBrewerySearch("");
-                        setShowBreweryDropdown(false);
-                      }}
-                    >
-                      {brewery.name}
-                    </button>
-                  </li>
-                ))
-              ) : (
-                <li className="px-4 py-2 text-base-content/60">
-                  該当するブルワリーがありません
-                </li>
-              )}
-            </ul>
-          )}
-        </div>
-        <label className="label">
-          <span className="label-text-alt">
+      <FormSearchSelect
+        options={breweries}
+        value={breweryId}
+        onChange={setBreweryId}
+        label="ブルワリー"
+        placeholder="ブルワリー名で検索..."
+        required
+        helperText={
+          <>
             見つからない場合は{" "}
             <Link href="/submit/brewery" className="link link-primary">
               ブルワリーを追加
             </Link>
-          </span>
-        </label>
-      </div>
+          </>
+        }
+      />
 
       {/* ビアスタイル（任意・ライブサーチ） */}
-      <div className="form-control">
-        <label className="label">
-          <span className="label-text">ビアスタイル（任意）</span>
-        </label>
-        <div className="relative">
-          <input
-            type="text"
-            className="input input-bordered w-full"
-            placeholder="スタイル名で検索..."
-            value={selectedStyle ? selectedStyle.name : styleSearch}
-            onChange={(e) => {
-              setStyleSearch(e.target.value);
-              setStyleId("");
-              setShowStyleDropdown(true);
-            }}
-            onFocus={() => setShowStyleDropdown(true)}
-            onBlur={() => setTimeout(() => setShowStyleDropdown(false), 200)}
-          />
-          {selectedStyle && (
-            <button
-              type="button"
-              className="absolute right-2 top-1/2 -translate-y-1/2 btn btn-ghost btn-xs"
-              onClick={() => {
-                setStyleId("");
-                setStyleSearch("");
-              }}
-            >
-              ✕
-            </button>
-          )}
-          {showStyleDropdown && (
-            <ul className="absolute z-10 w-full bg-base-100 border border-base-300 rounded-box shadow-lg mt-1 max-h-48 overflow-y-auto">
-              {filteredStyles.length > 0 ? (
-                filteredStyles.slice(0, 10).map((style) => (
-                  <li key={style.id}>
-                    <button
-                      type="button"
-                      className="w-full text-left px-4 py-2 hover:bg-base-200"
-                      onClick={() => {
-                        setStyleId(style.id.toString());
-                        setStyleSearch("");
-                        setShowStyleDropdown(false);
-                      }}
-                    >
-                      {style.name}
-                    </button>
-                  </li>
-                ))
-              ) : (
-                <li className="px-4 py-2 text-base-content/60">
-                  該当するスタイルがありません
-                </li>
-              )}
-            </ul>
-          )}
-        </div>
-        <label className="label">
-          <span className="label-text-alt">
+      <FormSearchSelect
+        options={styles}
+        value={styleId}
+        onChange={setStyleId}
+        label="ビアスタイル（任意）"
+        placeholder="スタイル名で検索..."
+        clearable
+        helperText={
+          <>
             見つからない場合は{" "}
             <Link href="/submit/style" className="link link-primary">
               スタイルを追加
             </Link>
-          </span>
-        </label>
-      </div>
+          </>
+        }
+      />
 
       <button
         type="submit"
