@@ -1,7 +1,8 @@
 import { db } from "@/lib/db";
 import { breweries, prefectures, beers } from "@/lib/db/schema";
-import { eq, sql, count } from "drizzle-orm";
+import { eq, count } from "drizzle-orm";
 import { BreweryCard } from "@/components/beer";
+import { Pagination, ITEMS_PER_PAGE } from "@/components/ui/Pagination";
 
 export const metadata = {
   title: "ブルワリー一覧 | beer_link",
@@ -12,7 +13,25 @@ export const metadata = {
 // ビルド時にDBに接続できないため動的レンダリング
 export const dynamic = "force-dynamic";
 
-export default async function BreweriesPage() {
+interface Props {
+  searchParams: Promise<{
+    page?: string;
+  }>;
+}
+
+export default async function BreweriesPage({ searchParams }: Props) {
+  const params = await searchParams;
+
+  // ページ番号を取得（デフォルト: 1）
+  const currentPage = Math.max(1, parseInt(params.page || "1", 10) || 1);
+  const offset = (currentPage - 1) * ITEMS_PER_PAGE;
+
+  // 総件数を取得
+  const [{ totalCount }] = await db
+    .select({ totalCount: count() })
+    .from(breweries)
+    .where(eq(breweries.status, "approved"));
+
   // ブルワリー一覧を都道府県と製造ビール数と一緒に取得
   const breweryList = await db
     .select({
@@ -32,7 +51,9 @@ export default async function BreweriesPage() {
     .leftJoin(beers, eq(beers.breweryId, breweries.id))
     .where(eq(breweries.status, "approved"))
     .groupBy(breweries.id, prefectures.id, prefectures.name)
-    .orderBy(breweries.name);
+    .orderBy(breweries.name)
+    .limit(ITEMS_PER_PAGE)
+    .offset(offset);
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -48,7 +69,7 @@ export default async function BreweriesPage() {
       {/* ブルワリー数表示 */}
       <div className="mb-6">
         <span className="badge badge-lg badge-secondary">
-          {breweryList.length} ブルワリー
+          全{totalCount}件
         </span>
       </div>
 
@@ -67,6 +88,13 @@ export default async function BreweriesPage() {
           </p>
         </div>
       )}
+
+      {/* ページネーション */}
+      <Pagination
+        currentPage={currentPage}
+        totalCount={totalCount}
+        basePath="/breweries"
+      />
     </div>
   );
 }
