@@ -3,6 +3,8 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
+import { validatePassword, MIN_PASSWORD_LENGTH } from "@/lib/validation/password";
+import { PasswordStrengthIndicator } from "@/components/ui/PasswordStrengthIndicator";
 
 export function ResetPasswordForm() {
   const router = useRouter();
@@ -23,8 +25,9 @@ export function ResetPasswordForm() {
       return;
     }
 
-    if (password.length < 6) {
-      setError("パスワードは6文字以上で入力してください");
+    const passwordValidation = validatePassword(password);
+    if (!passwordValidation.isValid) {
+      setError(passwordValidation.errors[0]);
       setLoading(false);
       return;
     }
@@ -100,13 +103,15 @@ export function ResetPasswordForm() {
             </label>
             <input
               type="password"
-              placeholder="6文字以上"
+              placeholder={`${MIN_PASSWORD_LENGTH}文字以上`}
               className="input input-bordered w-full"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
-              minLength={6}
+              minLength={MIN_PASSWORD_LENGTH}
+              autoComplete="new-password"
             />
+            <PasswordStrengthIndicator password={password} />
           </div>
 
           <div className="form-control">
@@ -120,7 +125,8 @@ export function ResetPasswordForm() {
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
               required
-              minLength={6}
+              minLength={MIN_PASSWORD_LENGTH}
+              autoComplete="new-password"
             />
           </div>
 
