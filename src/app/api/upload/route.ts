@@ -8,7 +8,7 @@ import { z } from "zod";
 // リクエストのバリデーションスキーマ
 const uploadRequestSchema = z.object({
   filename: z.string().min(1),
-  contentType: z.string().regex(/^image\/(jpeg|png|webp|gif)$/),
+  contentType: z.string().regex(/^image\/(jpeg|png|webp)$/),
   category: z.enum(["reviews", "beers", "breweries"]),
 });
 

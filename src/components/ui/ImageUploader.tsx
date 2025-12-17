@@ -55,7 +55,7 @@ export function ImageUploader({
 
       // ファイルタイプチェック
       if (!isAllowedImageType(file)) {
-        const error = "JPEG、PNG、WebP、GIF形式の画像のみ対応しています";
+        const error = "JPEG、PNG、WebP形式の画像のみ対応しています";
         setErrorMessage(error);
         onUploadError?.(error);
         return;
@@ -88,12 +88,13 @@ export function ImageUploader({
         setStatus("uploading");
         setProgress(50);
 
-        // presigned URLを取得
+        // presigned URLを取得（ファイル名の拡張子をwebpに変更）
+        const webpFilename = file.name.replace(/\.[^/.]+$/, ".webp");
         const response = await fetch("/api/upload", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            filename: file.name,
+            filename: webpFilename,
             contentType: compressedFile.type,
             category,
           }),
@@ -165,7 +166,7 @@ export function ImageUploader({
       <input
         ref={fileInputRef}
         type="file"
-        accept="image/jpeg,image/png,image/webp,image/gif"
+        accept="image/jpeg,image/png,image/webp"
         onChange={handleFileSelect}
         className="hidden"
         disabled={isLoading}
@@ -243,7 +244,7 @@ export function ImageUploader({
             クリックして画像を選択
           </span>
           <span className="text-xs text-base-content/40">
-            JPEG, PNG, WebP, GIF (最大10MB)
+            JPEG, PNG, WebP (最大10MB)
           </span>
         </button>
       )}
