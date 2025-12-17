@@ -1,8 +1,9 @@
 import { db } from "@/lib/db";
 import { beers, breweries, beerStyles } from "@/lib/db/schema";
-import { eq, and, ilike, or } from "drizzle-orm";
+import { eq, and, ilike, or, count } from "drizzle-orm";
 import { BeerCard } from "@/components/beer";
 import { BeerFilter } from "@/components/beer/BeerFilter";
+import { Pagination, ITEMS_PER_PAGE } from "@/components/ui/Pagination";
 import Link from "next/link";
 
 export const metadata = {
@@ -19,12 +20,17 @@ interface Props {
     q?: string;
     style?: string;
     brewery?: string;
+    page?: string;
   }>;
 }
 
 export default async function BeersPage({ searchParams }: Props) {
   const params = await searchParams;
   const { q, style, brewery } = params;
+
+  // ページ番号を取得（デフォルト: 1）
+  const currentPage = Math.max(1, parseInt(params.page || "1", 10) || 1);
+  const offset = (currentPage - 1) * ITEMS_PER_PAGE;
 
   // 検索条件を構築（未確認・確認済みの両方を表示）
   const conditions = [or(eq(beers.status, "approved"), eq(beers.status, "pending"))!];
@@ -49,7 +55,13 @@ export default async function BeersPage({ searchParams }: Props) {
     }
   }
 
-  // ビール一覧を取得
+  // 総件数を取得
+  const [{ totalCount }] = await db
+    .select({ totalCount: count() })
+    .from(beers)
+    .where(and(...conditions));
+
+  // ビール一覧を取得（ページネーション付き）
   const beerList = await db
     .select({
       id: beers.id,
@@ -72,7 +84,9 @@ export default async function BeersPage({ searchParams }: Props) {
     .leftJoin(breweries, eq(beers.breweryId, breweries.id))
     .leftJoin(beerStyles, eq(beers.styleId, beerStyles.id))
     .where(and(...conditions))
-    .orderBy(beers.name);
+    .orderBy(beers.name)
+    .limit(ITEMS_PER_PAGE)
+    .offset(offset);
 
   // フィルター用のスタイルとブルワリー一覧を取得
   const [styleOptions, breweryOptions] = await Promise.all([
@@ -112,7 +126,7 @@ export default async function BeersPage({ searchParams }: Props) {
       <div className="mb-6 flex items-center justify-between">
         <div className="flex items-center gap-4">
           <span className="badge badge-lg badge-primary">
-            {beerList.length} ビール
+            全{totalCount}件
           </span>
           {(q || style || brewery) && (
             <span className="text-sm text-base-content/60">
@@ -142,6 +156,14 @@ export default async function BeersPage({ searchParams }: Props) {
           </p>
         </div>
       )}
+
+      {/* ページネーション */}
+      <Pagination
+        currentPage={currentPage}
+        totalCount={totalCount}
+        basePath="/beers"
+        searchParams={{ q, style, brewery }}
+      />
     </div>
   );
 }

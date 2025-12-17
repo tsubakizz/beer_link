@@ -1,8 +1,9 @@
 import { db } from "@/lib/db";
 import { beerStyles, beerStyleOtherNames } from "@/lib/db/schema";
-import { eq, and, gte, lte, type SQL, type Column } from "drizzle-orm";
+import { eq, and, gte, lte, ilike, or, exists, count, type SQL, type Column } from "drizzle-orm";
 import { StyleCard } from "@/components/beer";
 import { StyleFilter } from "@/components/beer/StyleFilter";
+import { Pagination, ITEMS_PER_PAGE } from "@/components/ui/Pagination";
 import type { Metadata } from "next";
 
 // ビルド時にDBに接続できないため動的レンダリング
@@ -38,6 +39,7 @@ interface Props {
     aroma_max?: string;
     sourness_min?: string;
     sourness_max?: string;
+    page?: string;
   }>;
 }
 
@@ -101,6 +103,10 @@ export default async function StylesPage({ searchParams }: Props) {
   const params = await searchParams;
   const { q } = params;
 
+  // ページ番号を取得（デフォルト: 1）
+  const currentPage = Math.max(1, parseInt(params.page || "1", 10) || 1);
+  const offset = (currentPage - 1) * ITEMS_PER_PAGE;
+
   // 検索条件を構築
   const conditions: SQL[] = [eq(beerStyles.status, "approved")];
 
@@ -138,44 +144,43 @@ export default async function StylesPage({ searchParams }: Props) {
     params.sourness_max
   );
 
-  // スタイル一覧を取得
+  // キーワード検索条件を追加（サーバーサイドで実行）
+  if (q) {
+    const searchPattern = `%${q}%`;
+    // 名前・説明・別名のいずれかにマッチ
+    conditions.push(
+      or(
+        ilike(beerStyles.name, searchPattern),
+        ilike(beerStyles.description, searchPattern),
+        exists(
+          db
+            .select()
+            .from(beerStyleOtherNames)
+            .where(
+              and(
+                eq(beerStyleOtherNames.styleId, beerStyles.id),
+                ilike(beerStyleOtherNames.name, searchPattern)
+              )
+            )
+        )
+      )!
+    );
+  }
+
+  // 総件数を取得
+  const [{ totalCount }] = await db
+    .select({ totalCount: count() })
+    .from(beerStyles)
+    .where(and(...conditions));
+
+  // スタイル一覧を取得（ページネーション付き）
   const styles = await db
     .select()
     .from(beerStyles)
     .where(and(...conditions))
-    .orderBy(beerStyles.name);
-
-  // 別名一覧を取得
-  const otherNames = await db
-    .select({
-      styleId: beerStyleOtherNames.styleId,
-      name: beerStyleOtherNames.name,
-    })
-    .from(beerStyleOtherNames);
-
-  // スタイルIDごとに別名をグループ化
-  const otherNamesByStyleId = otherNames.reduce(
-    (acc, { styleId, name }) => {
-      if (!acc[styleId]) acc[styleId] = [];
-      acc[styleId].push(name);
-      return acc;
-    },
-    {} as Record<number, string[]>
-  );
-
-  // 名前・説明・別名でフィルタリング
-  const filteredStyles = q
-    ? styles.filter((s) => {
-        const searchLower = q.toLowerCase();
-        const nameMatch = s.name.toLowerCase().includes(searchLower);
-        const descMatch = s.description?.toLowerCase().includes(searchLower);
-        const otherNamesForStyle = otherNamesByStyleId[s.id] || [];
-        const otherNameMatch = otherNamesForStyle.some((name) =>
-          name.toLowerCase().includes(searchLower)
-        );
-        return nameMatch || descMatch || otherNameMatch;
-      })
-    : styles;
+    .orderBy(beerStyles.name)
+    .limit(ITEMS_PER_PAGE)
+    .offset(offset);
 
   // ページタイトルを生成
   const filterDescriptions: string[] = [];
@@ -229,7 +234,7 @@ export default async function StylesPage({ searchParams }: Props) {
       {/* スタイル数表示 */}
       <div className="mb-6 flex items-center gap-4">
         <span className="badge badge-lg badge-primary">
-          {filteredStyles.length} スタイル
+          全{totalCount}件
         </span>
         {hasFilters && (
           <span className="text-sm text-base-content/60">フィルター適用中</span>
@@ -237,9 +242,9 @@ export default async function StylesPage({ searchParams }: Props) {
       </div>
 
       {/* スタイル一覧 */}
-      {filteredStyles.length > 0 ? (
+      {styles.length > 0 ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-          {filteredStyles.map((style) => (
+          {styles.map((style) => (
             <StyleCard key={style.id} style={style} />
           ))}
         </div>
@@ -253,6 +258,26 @@ export default async function StylesPage({ searchParams }: Props) {
           </p>
         </div>
       )}
+
+      {/* ページネーション */}
+      <Pagination
+        currentPage={currentPage}
+        totalCount={totalCount}
+        basePath="/styles"
+        searchParams={{
+          q,
+          bitterness_min: params.bitterness_min,
+          bitterness_max: params.bitterness_max,
+          sweetness_min: params.sweetness_min,
+          sweetness_max: params.sweetness_max,
+          body_min: params.body_min,
+          body_max: params.body_max,
+          aroma_min: params.aroma_min,
+          aroma_max: params.aroma_max,
+          sourness_min: params.sourness_min,
+          sourness_max: params.sourness_max,
+        }}
+      />
     </div>
   );
 }
