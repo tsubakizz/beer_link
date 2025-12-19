@@ -6,10 +6,16 @@ import {
   beerStyleOtherNames,
   prefectures,
 } from "@/lib/db/schema";
-import { eq, and, count } from "drizzle-orm";
+import { eq, and, count, isNotNull } from "drizzle-orm";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { BeerCard, BeerFilter } from "@/components/beer";
+import {
+  BITTERNESS_OPTIONS,
+  BITTERNESS_RANGES,
+  ABV_OPTIONS,
+  ABV_RANGES,
+} from "@/lib/constants/beer-filters";
 import { Pagination, ITEMS_PER_PAGE } from "@/components/ui/Pagination";
 import { AuthRequiredLink } from "@/components/ui/AuthRequiredLink";
 import { Breadcrumb } from "@/components/ui/Breadcrumb";
@@ -117,7 +123,7 @@ export default async function StyleBeersPage({ params, searchParams }: Props) {
     .offset(offset);
 
   // フィルター用のオプションを取得（ビールが存在するもののみ）
-  const [styleList, otherNamesList, breweryOptions, prefectureOptions] =
+  const [styleList, otherNamesList, breweryOptions, prefectureOptions, beersWithIbu, beersWithAbv] =
     await Promise.all([
       // ビールが存在するスタイルのみ取得
       db
@@ -145,7 +151,33 @@ export default async function StyleBeersPage({ params, searchParams }: Props) {
         .innerJoin(breweries, eq(breweries.prefectureId, prefectures.id))
         .innerJoin(beers, eq(beers.breweryId, breweries.id))
         .orderBy(prefectures.id),
+      db
+        .select({ ibu: beers.ibu })
+        .from(beers)
+        .where(isNotNull(beers.ibu)),
+      db
+        .select({ abv: beers.abv })
+        .from(beers)
+        .where(isNotNull(beers.abv)),
     ]);
+
+  // 苦味フィルターオプション（該当ビールがあるレベルのみ）
+  const bitternessOptions = BITTERNESS_OPTIONS.filter((option) => {
+    const range = BITTERNESS_RANGES[option.value];
+    return beersWithIbu.some((beer) => {
+      const ibu = beer.ibu!;
+      return ibu >= range.min && (range.max === null || ibu <= range.max);
+    });
+  }).map((o) => ({ value: o.value, label: o.label }));
+
+  // ABVフィルターオプション（該当ビールがあるレベルのみ）
+  const abvOptions = ABV_OPTIONS.filter((option) => {
+    const range = ABV_RANGES[option.value];
+    return beersWithAbv.some((beer) => {
+      const abv = parseFloat(beer.abv!);
+      return abv >= range.min && (range.max === null || abv <= range.max);
+    });
+  }).map((o) => ({ value: o.value, label: o.label }));
 
   // スタイルIDごとに別名をグループ化
   const otherNamesByStyleId = otherNamesList.reduce(
@@ -189,6 +221,8 @@ export default async function StyleBeersPage({ params, searchParams }: Props) {
         styles={styleOptions}
         breweries={breweryOptions}
         prefectures={prefectureOptions}
+        bitternessOptions={bitternessOptions}
+        abvOptions={abvOptions}
         currentStyle={String(style.id)}
       />
 

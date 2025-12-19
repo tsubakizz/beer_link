@@ -6,10 +6,17 @@ import {
   beerStyleOtherNames,
   prefectures,
 } from "@/lib/db/schema";
-import { eq, and, ilike, or, count } from "drizzle-orm";
+import { eq, and, ilike, or, count, gte, lte, isNotNull } from "drizzle-orm";
 import { createClient } from "@/lib/supabase/server";
-import { BeerCard } from "@/components/beer";
-import { BeerFilter } from "@/components/beer/BeerFilter";
+import { BeerCard, BeerFilter } from "@/components/beer";
+import {
+  BITTERNESS_OPTIONS,
+  ABV_OPTIONS,
+  BITTERNESS_RANGES,
+  ABV_RANGES,
+  type BitternessLevel,
+  type AbvLevel,
+} from "@/lib/constants/beer-filters";
 import { Pagination, ITEMS_PER_PAGE } from "@/components/ui/Pagination";
 import { AuthRequiredLink } from "@/components/ui/AuthRequiredLink";
 import { Breadcrumb } from "@/components/ui/Breadcrumb";
@@ -18,23 +25,26 @@ import type { Metadata } from "next";
 // ビルド時にDBに接続できないため動的レンダリング
 export const dynamic = "force-dynamic";
 
+
 interface Props {
   searchParams: Promise<{
     q?: string;
     style?: string;
     brewery?: string;
     prefecture?: string;
+    bitterness?: string;
+    abv?: string;
     page?: string;
   }>;
 }
 
 export async function generateMetadata({ searchParams }: Props): Promise<Metadata> {
   const params = await searchParams;
-  const { style, brewery, prefecture, q } = params;
+  const { style, brewery, prefecture, bitterness, abv, q } = params;
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://beer-link.com";
 
   // 単一フィルターの場合は構造化URLをcanonicalに設定
-  const activeFilters = [style, brewery, prefecture, q].filter(Boolean).length;
+  const activeFilters = [style, brewery, prefecture, bitterness, abv, q].filter(Boolean).length;
 
   if (activeFilters === 1 && !q) {
     if (style) {
@@ -91,6 +101,26 @@ export async function generateMetadata({ searchParams }: Props): Promise<Metadat
         };
       }
     }
+    if (bitterness && BITTERNESS_OPTIONS.some((o) => o.value === bitterness)) {
+      const option = BITTERNESS_OPTIONS.find((o) => o.value === bitterness)!;
+      return {
+        title: `苦味${option.label}のビール一覧`,
+        description: `苦味${option.label}（${option.description}）のクラフトビールを探索。苦味で選ぶビール探し。`,
+        alternates: {
+          canonical: `${siteUrl}/beers/bitterness/${bitterness}`,
+        },
+      };
+    }
+    if (abv && ABV_OPTIONS.some((o) => o.value === abv)) {
+      const option = ABV_OPTIONS.find((o) => o.value === abv)!;
+      return {
+        title: `アルコール度数${option.label}のビール一覧`,
+        description: `アルコール度数${option.label}（${option.description}）のクラフトビールを探索。アルコール度数で選ぶビール探し。`,
+        alternates: {
+          canonical: `${siteUrl}/beers/abv/${abv}`,
+        },
+      };
+    }
   }
 
   // デフォルトのメタデータ
@@ -106,7 +136,7 @@ export async function generateMetadata({ searchParams }: Props): Promise<Metadat
 
 export default async function BeersPage({ searchParams }: Props) {
   const params = await searchParams;
-  const { q, style, brewery, prefecture } = params;
+  const { q, style, brewery, prefecture, bitterness, abv } = params;
 
   // 認証状態を取得
   const supabase = await createClient();
@@ -149,6 +179,26 @@ export default async function BeersPage({ searchParams }: Props) {
     }
   }
 
+  // 苦味（IBU）フィルター
+  if (bitterness && bitterness in BITTERNESS_RANGES) {
+    const range = BITTERNESS_RANGES[bitterness as BitternessLevel];
+    conditions.push(isNotNull(beers.ibu));
+    conditions.push(gte(beers.ibu, range.min));
+    if (range.max !== null) {
+      conditions.push(lte(beers.ibu, range.max));
+    }
+  }
+
+  // ABVフィルター
+  if (abv && abv in ABV_RANGES) {
+    const range = ABV_RANGES[abv as AbvLevel];
+    conditions.push(isNotNull(beers.abv));
+    conditions.push(gte(beers.abv, String(range.min)));
+    if (range.max !== null) {
+      conditions.push(lte(beers.abv, String(range.max)));
+    }
+  }
+
   // 総件数を取得（都道府県フィルターのためブルワリーをjoin）
   const [{ totalCount }] = await db
     .select({ totalCount: count() })
@@ -184,7 +234,7 @@ export default async function BeersPage({ searchParams }: Props) {
     .offset(offset);
 
   // フィルター用のスタイル、ブルワリー、都道府県一覧を取得（ビールが存在するもののみ）
-  const [styleList, otherNamesList, breweryOptions, prefectureOptions] =
+  const [styleList, otherNamesList, breweryOptions, prefectureOptions, beersWithIbu, beersWithAbv] =
     await Promise.all([
       // ビールが存在するスタイルのみ取得
       db
@@ -212,7 +262,35 @@ export default async function BeersPage({ searchParams }: Props) {
         .innerJoin(breweries, eq(breweries.prefectureId, prefectures.id))
         .innerJoin(beers, eq(beers.breweryId, breweries.id))
         .orderBy(prefectures.id),
+      // IBUが設定されているビールを取得（苦味フィルター用）
+      db
+        .select({ ibu: beers.ibu })
+        .from(beers)
+        .where(isNotNull(beers.ibu)),
+      // ABVが設定されているビールを取得（アルコール度数フィルター用）
+      db
+        .select({ abv: beers.abv })
+        .from(beers)
+        .where(isNotNull(beers.abv)),
     ]);
+
+  // 苦味フィルターオプション（該当ビールがあるレベルのみ）
+  const bitternessOptions = BITTERNESS_OPTIONS.filter((option) => {
+    const range = BITTERNESS_RANGES[option.value];
+    return beersWithIbu.some((beer) => {
+      const ibu = beer.ibu!;
+      return ibu >= range.min && (range.max === null || ibu <= range.max);
+    });
+  }).map((o) => ({ value: o.value, label: o.label }));
+
+  // ABVフィルターオプション（該当ビールがあるレベルのみ）
+  const abvOptions = ABV_OPTIONS.filter((option) => {
+    const range = ABV_RANGES[option.value];
+    return beersWithAbv.some((beer) => {
+      const abv = parseFloat(beer.abv!);
+      return abv >= range.min && (range.max === null || abv <= range.max);
+    });
+  }).map((o) => ({ value: o.value, label: o.label }));
 
   // スタイルIDごとに別名をグループ化
   const otherNamesByStyleId = otherNamesList.reduce(
@@ -249,17 +327,21 @@ export default async function BeersPage({ searchParams }: Props) {
         styles={styleOptions}
         breweries={breweryOptions}
         prefectures={prefectureOptions}
+        bitternessOptions={bitternessOptions}
+        abvOptions={abvOptions}
         currentQuery={q}
         currentStyle={style}
         currentBrewery={brewery}
         currentPrefecture={prefecture}
+        currentBitterness={bitterness}
+        currentAbv={abv}
       />
 
       {/* ビール数表示 & 追加ボタン */}
       <div className="mb-6 flex items-center justify-between">
         <div className="flex items-center gap-4">
           <span className="badge badge-lg badge-primary">全{totalCount}件</span>
-          {(q || style || brewery || prefecture) && (
+          {(q || style || brewery || prefecture || bitterness || abv) && (
             <span className="text-sm text-base-content/60">
               フィルター適用中
             </span>
@@ -285,7 +367,7 @@ export default async function BeersPage({ searchParams }: Props) {
         <div className="text-center py-20">
           <div className="text-6xl mb-4">🍺</div>
           <p className="text-lg text-base-content/60">
-            {q || style || brewery || prefecture
+            {q || style || brewery || prefecture || bitterness || abv
               ? "条件に合うビールが見つかりませんでした"
               : "ビールがまだ登録されていません"}
           </p>
@@ -297,7 +379,7 @@ export default async function BeersPage({ searchParams }: Props) {
         currentPage={currentPage}
         totalCount={totalCount}
         basePath="/beers"
-        searchParams={{ q, style, brewery, prefecture }}
+        searchParams={{ q, style, brewery, prefecture, bitterness, abv }}
       />
     </div>
   );
