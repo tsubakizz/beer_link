@@ -1,6 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import { StyleSubmitForm } from "./StyleSubmitForm";
+import { Breadcrumb } from "@/components/ui/Breadcrumb";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -23,6 +24,14 @@ export default async function StyleSubmitPage() {
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="max-w-md mx-auto">
+        {/* パンくずリスト */}
+        <Breadcrumb
+          items={[
+            { label: "ビアスタイル", href: "/styles" },
+            { label: "追加" },
+          ]}
+        />
+
         <h1 className="text-3xl font-bold mb-2">ビアスタイル追加</h1>
         <p className="text-base-content/70 mb-8">
           サイトに掲載されていないビアスタイルを追加できます。
