@@ -8,6 +8,7 @@ import { FlavorProfile, FavoriteButton, BeerCard } from "@/components/beer";
 import { BeerFilter } from "@/components/beer/BeerFilter";
 import { ReviewCard } from "@/components/review/ReviewCard";
 import { AuthRequiredLink } from "@/components/ui/AuthRequiredLink";
+import { Breadcrumb } from "@/components/ui/Breadcrumb";
 import { createClient } from "@/lib/supabase/server";
 import type { Metadata } from "next";
 
@@ -242,17 +243,12 @@ async function FilteredBeersPage({ filterType, filterId }: { filterType: "style"
   return (
     <div className="container mx-auto px-4 py-8">
       {/* パンくずリスト */}
-      <div className="breadcrumbs text-sm mb-6">
-        <ul>
-          <li>
-            <Link href="/">ホーム</Link>
-          </li>
-          <li>
-            <Link href="/beers">ビール</Link>
-          </li>
-          <li>{filterName}</li>
-        </ul>
-      </div>
+      <Breadcrumb
+        items={[
+          { label: "ビール", href: "/beers" },
+          { label: filterName },
+        ]}
+      />
 
       {/* ヘッダーセクション */}
       <div className="text-center mb-10">
@@ -434,17 +430,12 @@ async function BeerDetailPage({ beerId }: { beerId: number }) {
   return (
     <div className="container mx-auto px-4 py-8">
       {/* パンくずリスト */}
-      <div className="breadcrumbs text-sm mb-6">
-        <ul>
-          <li>
-            <Link href="/">ホーム</Link>
-          </li>
-          <li>
-            <Link href="/beers">ビール</Link>
-          </li>
-          <li>{beer.name}</li>
-        </ul>
-      </div>
+      <Breadcrumb
+        items={[
+          { label: "ビール", href: "/beers" },
+          { label: beer.name },
+        ]}
+      />
 
       {/* メイン情報 */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-12">

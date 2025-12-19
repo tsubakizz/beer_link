@@ -2,9 +2,9 @@ import { db } from "@/lib/db";
 import { beers, breweries, beerStyles } from "@/lib/db/schema";
 import { eq } from "drizzle-orm";
 import { notFound } from "next/navigation";
-import Link from "next/link";
 import Image from "next/image";
 import { ReviewForm } from "./ReviewForm";
+import { Breadcrumb } from "@/components/ui/Breadcrumb";
 import type { Metadata } from "next";
 
 // ビルド時にDBに接続できないため動的レンダリング
@@ -76,20 +76,13 @@ export default async function ReviewPage({ params }: Props) {
   return (
     <div className="container mx-auto px-4 py-8">
       {/* パンくずリスト */}
-      <div className="breadcrumbs text-sm mb-6">
-        <ul>
-          <li>
-            <Link href="/">ホーム</Link>
-          </li>
-          <li>
-            <Link href="/beers">ビール</Link>
-          </li>
-          <li>
-            <Link href={`/beers/${beer.id}`}>{beer.name}</Link>
-          </li>
-          <li>レビューを書く</li>
-        </ul>
-      </div>
+      <Breadcrumb
+        items={[
+          { label: "ビール", href: "/beers" },
+          { label: beer.name, href: `/beers/${beer.id}` },
+          { label: "レビューを書く" },
+        ]}
+      />
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* ビール情報 */}
