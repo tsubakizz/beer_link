@@ -12,12 +12,8 @@ import { BeerCard } from "@/components/beer";
 import { BeerFilter } from "@/components/beer/BeerFilter";
 import { Pagination, ITEMS_PER_PAGE } from "@/components/ui/Pagination";
 import { AuthRequiredLink } from "@/components/ui/AuthRequiredLink";
-
-export const metadata = {
-  title: "ビール一覧 | beer_link",
-  description:
-    "クラフトビールを探索。ビアスタイル、ブルワリーで絞り込んでお気に入りのビールを見つけよう。",
-};
+import { Breadcrumb } from "@/components/ui/Breadcrumb";
+import type { Metadata } from "next";
 
 // ビルド時にDBに接続できないため動的レンダリング
 export const dynamic = "force-dynamic";
@@ -32,21 +28,99 @@ interface Props {
   }>;
 }
 
+export async function generateMetadata({ searchParams }: Props): Promise<Metadata> {
+  const params = await searchParams;
+  const { style, brewery, prefecture, q } = params;
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://beer-link.com";
+
+  // 単一フィルターの場合は構造化URLをcanonicalに設定
+  const activeFilters = [style, brewery, prefecture, q].filter(Boolean).length;
+
+  if (activeFilters === 1 && !q) {
+    if (style) {
+      const styleData = await db
+        .select({ slug: beerStyles.slug, name: beerStyles.name })
+        .from(beerStyles)
+        .where(eq(beerStyles.id, parseInt(style, 10)))
+        .limit(1)
+        .then((rows) => rows[0]);
+
+      if (styleData) {
+        return {
+          title: `${styleData.name}のビール一覧`,
+          description: `${styleData.name}スタイルのクラフトビールを探索。Beer Linkで${styleData.name}のビールを見つけよう。`,
+          alternates: {
+            canonical: `${siteUrl}/beers/style/${styleData.slug}`,
+          },
+        };
+      }
+    }
+    if (brewery) {
+      const breweryData = await db
+        .select({ name: breweries.name })
+        .from(breweries)
+        .where(eq(breweries.id, parseInt(brewery, 10)))
+        .limit(1)
+        .then((rows) => rows[0]);
+
+      if (breweryData) {
+        return {
+          title: `${breweryData.name}のビール一覧`,
+          description: `${breweryData.name}が醸造するクラフトビールを探索。Beer Linkで${breweryData.name}のビールを見つけよう。`,
+          alternates: {
+            canonical: `${siteUrl}/beers/brewery/${brewery}`,
+          },
+        };
+      }
+    }
+    if (prefecture) {
+      const prefectureData = await db
+        .select({ name: prefectures.name })
+        .from(prefectures)
+        .where(eq(prefectures.id, parseInt(prefecture, 10)))
+        .limit(1)
+        .then((rows) => rows[0]);
+
+      if (prefectureData) {
+        return {
+          title: `${prefectureData.name}のビール一覧`,
+          description: `${prefectureData.name}のブルワリーが醸造するクラフトビールを探索。Beer Linkで${prefectureData.name}のビールを見つけよう。`,
+          alternates: {
+            canonical: `${siteUrl}/beers/prefecture/${prefecture}`,
+          },
+        };
+      }
+    }
+  }
+
+  // デフォルトのメタデータ
+  return {
+    title: "ビール一覧",
+    description:
+      "クラフトビールを探索。ビアスタイル、ブルワリーで絞り込んでお気に入りのビールを見つけよう。",
+    alternates: {
+      canonical: `${siteUrl}/beers`,
+    },
+  };
+}
+
 export default async function BeersPage({ searchParams }: Props) {
   const params = await searchParams;
   const { q, style, brewery, prefecture } = params;
 
   // 認証状態を取得
   const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
   const isAuthenticated = !!user;
 
   // ページ番号を取得（デフォルト: 1）
   const currentPage = Math.max(1, parseInt(params.page || "1", 10) || 1);
   const offset = (currentPage - 1) * ITEMS_PER_PAGE;
 
-  // 検索条件を構築（未確認・確認済みの両方を表示）
-  const conditions = [or(eq(beers.status, "approved"), eq(beers.status, "pending"))!];
+  // 検索条件を構築
+  const conditions: ReturnType<typeof eq>[] = [];
 
   if (q) {
     conditions.push(
@@ -109,12 +183,14 @@ export default async function BeersPage({ searchParams }: Props) {
     .limit(ITEMS_PER_PAGE)
     .offset(offset);
 
-  // フィルター用のスタイル、ブルワリー、都道府県一覧を取得
+  // フィルター用のスタイル、ブルワリー、都道府県一覧を取得（ビールが存在するもののみ）
   const [styleList, otherNamesList, breweryOptions, prefectureOptions] =
     await Promise.all([
+      // ビールが存在するスタイルのみ取得
       db
-        .select({ id: beerStyles.id, name: beerStyles.name })
+        .selectDistinct({ id: beerStyles.id, name: beerStyles.name, slug: beerStyles.slug })
         .from(beerStyles)
+        .innerJoin(beers, eq(beers.styleId, beerStyles.id))
         .where(eq(beerStyles.status, "approved"))
         .orderBy(beerStyles.name),
       db
@@ -123,14 +199,18 @@ export default async function BeersPage({ searchParams }: Props) {
           name: beerStyleOtherNames.name,
         })
         .from(beerStyleOtherNames),
+      // ビールが存在するブルワリーのみ取得
       db
-        .select({ id: breweries.id, name: breweries.name })
+        .selectDistinct({ id: breweries.id, name: breweries.name })
         .from(breweries)
-        .where(eq(breweries.status, "approved"))
+        .innerJoin(beers, eq(beers.breweryId, breweries.id))
         .orderBy(breweries.name),
+      // ビールが存在する都道府県のみ取得
       db
-        .select({ id: prefectures.id, name: prefectures.name })
+        .selectDistinct({ id: prefectures.id, name: prefectures.name })
         .from(prefectures)
+        .innerJoin(breweries, eq(breweries.prefectureId, prefectures.id))
+        .innerJoin(beers, eq(beers.breweryId, breweries.id))
         .orderBy(prefectures.id),
     ]);
 
@@ -145,13 +225,16 @@ export default async function BeersPage({ searchParams }: Props) {
   );
 
   // スタイルリストに別名を追加
-  const styleOptions = styleList.map((style) => ({
-    ...style,
-    otherNames: otherNamesByStyleId[style.id] || [],
+  const styleOptions = styleList.map((s) => ({
+    ...s,
+    otherNames: otherNamesByStyleId[s.id] || [],
   }));
 
   return (
     <div className="container mx-auto px-4 py-8">
+      {/* パンくずリスト */}
+      <Breadcrumb items={[{ label: "ビール" }]} />
+
       {/* ヘッダーセクション */}
       <div className="text-center mb-10">
         <h1 className="text-4xl font-bold mb-4">ビール一覧</h1>
@@ -175,9 +258,7 @@ export default async function BeersPage({ searchParams }: Props) {
       {/* ビール数表示 & 追加ボタン */}
       <div className="mb-6 flex items-center justify-between">
         <div className="flex items-center gap-4">
-          <span className="badge badge-lg badge-primary">
-            全{totalCount}件
-          </span>
+          <span className="badge badge-lg badge-primary">全{totalCount}件</span>
           {(q || style || brewery || prefecture) && (
             <span className="text-sm text-base-content/60">
               フィルター適用中
