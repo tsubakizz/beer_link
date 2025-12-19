@@ -1,8 +1,10 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import Script from "next/script";
 import "./globals.css";
 import { Navigation } from "@/components/layout/Navigation";
 import { Footer } from "@/components/layout/Footer";
+import { FooterAd } from "@/components/ads";
 import { GoogleTagManager } from "@next/third-parties/google";
 import { BackgroundBubbles } from "@/components/layout/BackgroundBubbles";
 
@@ -71,10 +73,20 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const adsenseClientId = process.env.NEXT_PUBLIC_ADSENSE_CLIENT_ID;
+
   return (
     <html lang="ja">
       {process.env.NEXT_PUBLIC_GTM_ID && (
         <GoogleTagManager gtmId={process.env.NEXT_PUBLIC_GTM_ID} />
+      )}
+      {adsenseClientId && (
+        <Script
+          async
+          src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${adsenseClientId}`}
+          crossOrigin="anonymous"
+          strategy="afterInteractive"
+        />
       )}
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
@@ -83,6 +95,7 @@ export default function RootLayout({
         <div className="min-h-screen flex flex-col relative z-10">
           <Navigation />
           <main className="flex-1">{children}</main>
+          <FooterAd />
           <Footer />
         </div>
       </body>
