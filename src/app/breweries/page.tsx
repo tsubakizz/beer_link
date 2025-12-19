@@ -3,12 +3,8 @@ import { breweries, prefectures, beers } from "@/lib/db/schema";
 import { eq, count, and, ilike, or } from "drizzle-orm";
 import { BreweryCard, BreweryFilter } from "@/components/beer";
 import { Pagination, ITEMS_PER_PAGE } from "@/components/ui/Pagination";
-
-export const metadata = {
-  title: "ブルワリー一覧 | beer_link",
-  description:
-    "日本全国のクラフトビール醸造所を探索。各ブルワリーの特徴やビールラインナップをチェック。",
-};
+import { Breadcrumb } from "@/components/ui/Breadcrumb";
+import type { Metadata } from "next";
 
 // ビルド時にDBに接続できないため動的レンダリング
 export const dynamic = "force-dynamic";
@@ -21,6 +17,44 @@ interface Props {
   }>;
 }
 
+export async function generateMetadata({
+  searchParams,
+}: Props): Promise<Metadata> {
+  const params = await searchParams;
+  const { prefecture, q } = params;
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://beer-link.com";
+
+  // 単一フィルター（都道府県のみ）かつ検索クエリなしの場合は構造化URLをcanonicalに設定
+  if (prefecture && !q) {
+    const prefectureData = await db
+      .select({ name: prefectures.name })
+      .from(prefectures)
+      .where(eq(prefectures.id, parseInt(prefecture, 10)))
+      .limit(1)
+      .then((rows) => rows[0]);
+
+    if (prefectureData) {
+      return {
+        title: `${prefectureData.name}のブルワリー一覧`,
+        description: `${prefectureData.name}のクラフトビール醸造所を探索。Beer Linkで${prefectureData.name}のブルワリーを見つけよう。`,
+        alternates: {
+          canonical: `${siteUrl}/breweries/prefecture/${prefecture}`,
+        },
+      };
+    }
+  }
+
+  // デフォルトのメタデータ
+  return {
+    title: "ブルワリー一覧",
+    description:
+      "日本全国のクラフトビール醸造所を探索。各ブルワリーの特徴やビールラインナップをチェック。",
+    alternates: {
+      canonical: `${siteUrl}/breweries`,
+    },
+  };
+}
+
 export default async function BreweriesPage({ searchParams }: Props) {
   const params = await searchParams;
   const { q, prefecture } = params;
@@ -30,11 +64,14 @@ export default async function BreweriesPage({ searchParams }: Props) {
   const offset = (currentPage - 1) * ITEMS_PER_PAGE;
 
   // 検索条件を構築
-  const conditions = [eq(breweries.status, "approved")];
+  const conditions: ReturnType<typeof eq>[] = [];
 
   if (q) {
     conditions.push(
-      or(ilike(breweries.name, `%${q}%`), ilike(breweries.description, `%${q}%`))!
+      or(
+        ilike(breweries.name, `%${q}%`),
+        ilike(breweries.description, `%${q}%`)
+      )!
     );
   }
 
@@ -74,14 +111,18 @@ export default async function BreweriesPage({ searchParams }: Props) {
     .limit(ITEMS_PER_PAGE)
     .offset(offset);
 
-  // フィルター用の都道府県一覧を取得
+  // フィルター用の都道府県一覧を取得（ブルワリーが存在するもののみ）
   const prefectureOptions = await db
-    .select({ id: prefectures.id, name: prefectures.name })
+    .selectDistinct({ id: prefectures.id, name: prefectures.name })
     .from(prefectures)
+    .innerJoin(breweries, eq(breweries.prefectureId, prefectures.id))
     .orderBy(prefectures.id);
 
   return (
     <div className="container mx-auto px-4 py-8">
+      {/* パンくずリスト */}
+      <Breadcrumb items={[{ label: "ブルワリー" }]} />
+
       {/* ヘッダーセクション */}
       <div className="text-center mb-10">
         <h1 className="text-4xl font-bold mb-4">ブルワリー一覧</h1>
@@ -100,9 +141,7 @@ export default async function BreweriesPage({ searchParams }: Props) {
 
       {/* ブルワリー数表示 */}
       <div className="mb-6 flex items-center gap-4">
-        <span className="badge badge-lg badge-secondary">
-          全{totalCount}件
-        </span>
+        <span className="badge badge-lg badge-secondary">全{totalCount}件</span>
         {(q || prefecture) && (
           <span className="text-sm text-base-content/60">
             フィルター適用中
