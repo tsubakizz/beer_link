@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { Navigation } from "@/components/layout/Navigation";
 import { Footer } from "@/components/layout/Footer";
+import { FooterAd } from "@/components/ads";
 import { GoogleTagManager } from "@next/third-parties/google";
 import { BackgroundBubbles } from "@/components/layout/BackgroundBubbles";
 
@@ -64,6 +65,9 @@ export const metadata: Metadata = {
       "max-snippet": -1,
     },
   },
+  other: {
+    "google-adsense-account": "ca-pub-8072275026982974",
+  },
 };
 
 export default function RootLayout({
@@ -83,6 +87,7 @@ export default function RootLayout({
         <div className="min-h-screen flex flex-col relative z-10">
           <Navigation />
           <main className="flex-1">{children}</main>
+          <FooterAd />
           <Footer />
         </div>
       </body>

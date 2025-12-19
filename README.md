@@ -80,6 +80,10 @@ NEXT_PUBLIC_R2_PUBLIC_URL=<your-r2-public-url>
 
 # Cloudflare R2 (静的アセット用)
 NEXT_PUBLIC_R2_ASSETS_URL=<your-r2-assets-url>
+
+# Google AdSense (任意)
+NEXT_PUBLIC_ADSENSE_CLIENT_ID=ca-pub-xxxxxxxxxxxxxxxx
+NEXT_PUBLIC_ADSENSE_SLOT_ID=xxxxxxxxxx
 ```
 
 ### 5. データベースのセットアップ

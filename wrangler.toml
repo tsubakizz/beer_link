@@ -59,6 +59,7 @@ NEXT_PUBLIC_R2_ASSETS_URL = "https://r2-assets.beer-link.com"
 NEXT_PUBLIC_SUPABASE_URL = "https://dzxlhatxlpspjhzmipeh.supabase.co"
 NEXT_PUBLIC_SUPABASE_ANON_KEY = "sb_publishable_HlSP-NOxzMpYRguIEA1e7Q_8IefLKy2"
 NEXT_PUBLIC_GTM_ID = "GTM-KD497KSD"
+NEXT_PUBLIC_ADSENSE_CLIENT_ID = "ca-pub-8072275026982974"
 
 [[env.production.r2_buckets]]
 binding = "R2_BUCKET"
