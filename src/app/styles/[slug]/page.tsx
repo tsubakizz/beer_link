@@ -11,6 +11,7 @@ import { eq, and, inArray } from "drizzle-orm";
 import { notFound, redirect } from "next/navigation";
 import Link from "next/link";
 import { FlavorProfile, BeerCard, RelatedStyles } from "@/components/beer";
+import { Breadcrumb } from "@/components/ui/Breadcrumb";
 import type { Metadata } from "next";
 
 // ビルド時にDBに接続できないため動的レンダリング
@@ -162,7 +163,7 @@ export default async function StylePage({ params }: Props) {
     .from(beers)
     .leftJoin(breweries, eq(beers.breweryId, breweries.id))
     .leftJoin(beerStyles, eq(beers.styleId, beerStyles.id))
-    .where(and(eq(beers.styleId, style.id), eq(beers.status, "approved")))
+    .where(eq(beers.styleId, style.id))
     .limit(12);
 
   // 関連スタイルを取得
@@ -207,17 +208,12 @@ export default async function StylePage({ params }: Props) {
   return (
     <div className="container mx-auto px-4 py-8">
       {/* パンくずリスト */}
-      <div className="breadcrumbs text-sm mb-6">
-        <ul>
-          <li>
-            <Link href="/">ホーム</Link>
-          </li>
-          <li>
-            <Link href="/styles">ビアスタイル</Link>
-          </li>
-          <li>{style.name}</li>
-        </ul>
-      </div>
+      <Breadcrumb
+        items={[
+          { label: "ビアスタイル", href: "/styles" },
+          { label: style.name },
+        ]}
+      />
 
       {/* ヘッダー */}
       <div className="mb-10">
@@ -365,7 +361,7 @@ export default async function StylePage({ params }: Props) {
           <h2 className="text-2xl font-bold">このスタイルのビール</h2>
           {styleBeers.length > 0 && (
             <Link
-              href={`/beers/style-${style.id}`}
+              href={`/beers/style/${style.slug}`}
               className="btn btn-outline btn-sm"
             >
               すべて見る →
@@ -382,7 +378,7 @@ export default async function StylePage({ params }: Props) {
             {styleBeers.length >= 12 && (
               <div className="text-center mt-8">
                 <Link
-                  href={`/beers/style-${style.id}`}
+                  href={`/beers/style/${style.slug}`}
                   className="btn btn-primary"
                 >
                   {style.name}のビールをもっと見る
