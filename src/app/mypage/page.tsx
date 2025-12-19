@@ -8,6 +8,7 @@ import Link from "next/link";
 import { ProfileForm } from "./ProfileForm";
 import { ReviewActions } from "./ReviewActions";
 import { BeerCard, FlavorBars } from "@/components/beer";
+import { Breadcrumb } from "@/components/ui/Breadcrumb";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -106,6 +107,9 @@ export default async function MyPage() {
 
   return (
     <div className="container mx-auto px-4 py-8">
+      {/* パンくずリスト */}
+      <Breadcrumb items={[{ label: "マイページ" }]} />
+
       <h1 className="text-3xl font-bold mb-8">マイページ</h1>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
