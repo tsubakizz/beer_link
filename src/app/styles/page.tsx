@@ -4,6 +4,7 @@ import { eq, and, gte, lte, ilike, or, exists, count, type SQL, type Column } fr
 import { StyleCard } from "@/components/beer";
 import { StyleFilter } from "@/components/beer/StyleFilter";
 import { Pagination, ITEMS_PER_PAGE } from "@/components/ui/Pagination";
+import { Breadcrumb } from "@/components/ui/Breadcrumb";
 import type { Metadata } from "next";
 
 // ビルド時にDBに接続できないため動的レンダリング
@@ -204,6 +205,9 @@ export default async function StylesPage({ searchParams }: Props) {
 
   return (
     <div className="container mx-auto px-4 py-8">
+      {/* パンくずリスト */}
+      <Breadcrumb items={[{ label: "ビアスタイル" }]} />
+
       {/* ヘッダーセクション */}
       <div className="text-center mb-10">
         <h1 className="text-4xl font-bold mb-4">{pageTitle}</h1>
