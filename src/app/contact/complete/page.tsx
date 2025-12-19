@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Breadcrumb } from "@/components/ui/Breadcrumb";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -10,6 +11,14 @@ export default function ContactCompletePage() {
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="max-w-md mx-auto">
+        {/* パンくずリスト */}
+        <Breadcrumb
+          items={[
+            { label: "お問い合わせ", href: "/contact" },
+            { label: "送信完了" },
+          ]}
+        />
+
         <div className="card bg-base-100 shadow">
           <div className="card-body">
             <div className="text-center py-8">

@@ -1,6 +1,6 @@
 "use client";
 
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { useCallback, useState } from "react";
 import { SearchableSelect } from "@/components/ui/SearchableSelect";
 
@@ -21,33 +21,43 @@ export function BreweryFilter({
   currentPrefecture,
 }: BreweryFilterProps) {
   const router = useRouter();
-  const searchParams = useSearchParams();
   const [query, setQuery] = useState(currentQuery || "");
   const [isComposing, setIsComposing] = useState(false);
 
-  const updateFilter = useCallback(
-    (key: string, value: string) => {
-      const params = new URLSearchParams(searchParams.toString());
-      if (value) {
-        params.set(key, value);
-      } else {
-        params.delete(key);
+  // 構造化URLを生成するか、クエリパラメータを使用するか判断
+  const navigateWithFilter = useCallback(
+    (newPrefecture?: string, newQuery?: string) => {
+      // 単一フィルター（都道府県のみ）かつ検索クエリなしの場合は構造化URLへ
+      if (newPrefecture && !newQuery) {
+        router.push(`/breweries/prefecture/${newPrefecture}`);
+        return;
       }
-      // ページを1に戻す
-      params.delete("page");
-      router.push(`/breweries?${params.toString()}`);
+
+      // 検索クエリありの場合はクエリパラメータ
+      const params = new URLSearchParams();
+      if (newQuery) params.set("q", newQuery);
+      if (newPrefecture) params.set("prefecture", newPrefecture);
+
+      const queryString = params.toString();
+      router.push(queryString ? `/breweries?${queryString}` : "/breweries");
     },
-    [router, searchParams]
+    [router]
+  );
+
+  const handlePrefectureChange = useCallback(
+    (value: string) => {
+      navigateWithFilter(value || undefined, currentQuery);
+    },
+    [navigateWithFilter, currentQuery]
   );
 
   const handleSearch = useCallback(
     (e: React.FormEvent) => {
       e.preventDefault();
-      // IME変換中は検索しない
       if (isComposing) return;
-      updateFilter("q", query);
+      navigateWithFilter(currentPrefecture, query || undefined);
     },
-    [query, updateFilter, isComposing]
+    [isComposing, query, navigateWithFilter, currentPrefecture]
   );
 
   const clearFilters = useCallback(() => {
@@ -95,7 +105,7 @@ export function BreweryFilter({
           <SearchableSelect
             options={prefectures}
             value={currentPrefecture}
-            onChange={(value) => updateFilter("prefecture", value)}
+            onChange={handlePrefectureChange}
             label="都道府県"
             placeholder="都道府県を検索..."
             emptyLabel="すべての都道府県"

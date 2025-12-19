@@ -1,10 +1,11 @@
 import { db } from "@/lib/db";
 import { breweries, prefectures, beers } from "@/lib/db/schema";
-import { eq, and, count } from "drizzle-orm";
+import { eq, count, and } from "drizzle-orm";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { BreweryCard, BreweryFilter } from "@/components/beer";
 import { Pagination, ITEMS_PER_PAGE } from "@/components/ui/Pagination";
+import { Breadcrumb } from "@/components/ui/Breadcrumb";
 import type { Metadata } from "next";
 
 export const dynamic = "force-dynamic";
@@ -19,7 +20,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const prefectureId = parseInt(id, 10);
 
   if (isNaN(prefectureId)) {
-    return { title: "都道府県が見つかりません | beer_link" };
+    return { title: "都道府県が見つかりません | Beer Link" };
   }
 
   const prefecture = await db
@@ -30,11 +31,11 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     .then((rows) => rows[0]);
 
   if (!prefecture) {
-    return { title: "都道府県が見つかりません | beer_link" };
+    return { title: "都道府県が見つかりません | Beer Link" };
   }
 
-  const title = `${prefecture.name}のブルワリー一覧 | beer_link`;
-  const description = `${prefecture.name}のクラフトビール醸造所一覧。beer_linkで${prefecture.name}のブルワリーを探そう。`;
+  const title = `${prefecture.name}のブルワリー一覧`;
+  const description = `${prefecture.name}のクラフトビール醸造所一覧。Beer Linkで${prefecture.name}のブルワリーを探そう。`;
 
   return {
     title,
@@ -44,7 +45,10 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   };
 }
 
-export default async function PrefectureBreweriesPage({ params, searchParams }: Props) {
+export default async function PrefectureBreweriesPage({
+  params,
+  searchParams,
+}: Props) {
   const { id } = await params;
   const { page } = await searchParams;
   const prefectureId = parseInt(id, 10);
@@ -70,10 +74,7 @@ export default async function PrefectureBreweriesPage({ params, searchParams }: 
   const offset = (currentPage - 1) * ITEMS_PER_PAGE;
 
   // 検索条件
-  const conditions = [
-    eq(breweries.status, "approved"),
-    eq(breweries.prefectureId, prefectureId),
-  ];
+  const conditions = [eq(breweries.prefectureId, prefectureId)];
 
   // 総件数を取得
   const [{ totalCount }] = await db
@@ -81,13 +82,19 @@ export default async function PrefectureBreweriesPage({ params, searchParams }: 
     .from(breweries)
     .where(and(...conditions));
 
-  // ブルワリー一覧を都道府県と製造ビール数と一緒に取得
+  // 0件の場合は404
+  if (totalCount === 0) {
+    notFound();
+  }
+
+  // ブルワリー一覧を取得
   const breweryList = await db
     .select({
       id: breweries.id,
       name: breweries.name,
       description: breweries.description,
       imageUrl: breweries.imageUrl,
+      address: breweries.address,
       prefecture: {
         id: prefectures.id,
         name: prefectures.name,
@@ -103,26 +110,22 @@ export default async function PrefectureBreweriesPage({ params, searchParams }: 
     .limit(ITEMS_PER_PAGE)
     .offset(offset);
 
-  // フィルター用の都道府県一覧を取得
+  // フィルター用の都道府県一覧を取得（ブルワリーが存在するもののみ）
   const prefectureOptions = await db
-    .select({ id: prefectures.id, name: prefectures.name })
+    .selectDistinct({ id: prefectures.id, name: prefectures.name })
     .from(prefectures)
+    .innerJoin(breweries, eq(breweries.prefectureId, prefectures.id))
     .orderBy(prefectures.id);
 
   return (
     <div className="container mx-auto px-4 py-8">
       {/* パンくずリスト */}
-      <div className="breadcrumbs text-sm mb-6">
-        <ul>
-          <li>
-            <Link href="/">ホーム</Link>
-          </li>
-          <li>
-            <Link href="/breweries">ブルワリー</Link>
-          </li>
-          <li>{prefecture.name}</li>
-        </ul>
-      </div>
+      <Breadcrumb
+        items={[
+          { label: "ブルワリー", href: "/breweries" },
+          { label: prefecture.name },
+        ]}
+      />
 
       {/* ヘッダーセクション */}
       <div className="text-center mb-10">
@@ -133,7 +136,7 @@ export default async function PrefectureBreweriesPage({ params, searchParams }: 
           {prefecture.name}のクラフトビール醸造所を探索しよう。
         </p>
         <Link
-          href={`/prefectures/${prefecture.id}/beers`}
+          href={`/beers/prefecture/${prefecture.id}`}
           className="btn btn-outline btn-sm"
         >
           {prefecture.name}のビール一覧 →
@@ -176,7 +179,7 @@ export default async function PrefectureBreweriesPage({ params, searchParams }: 
       <Pagination
         currentPage={currentPage}
         totalCount={totalCount}
-        basePath={`/prefectures/${prefecture.id}/breweries`}
+        basePath={`/breweries/prefecture/${prefecture.id}`}
       />
     </div>
   );

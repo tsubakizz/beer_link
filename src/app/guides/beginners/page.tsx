@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Breadcrumb } from "@/components/ui/Breadcrumb";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -10,15 +11,13 @@ export const metadata: Metadata = {
 export default function BeginnersGuidePage() {
   return (
     <div className="container mx-auto px-4 py-8">
-      {/* パンくず */}
-      <div className="text-sm breadcrumbs mb-6">
-        <ul>
-          <li>
-            <Link href="/guides">ガイド</Link>
-          </li>
-          <li>ビール入門</li>
-        </ul>
-      </div>
+      {/* パンくずリスト */}
+      <Breadcrumb
+        items={[
+          { label: "ガイド", href: "/guides" },
+          { label: "ビール入門" },
+        ]}
+      />
 
       {/* ヘッダー */}
       <div className="text-center mb-12">

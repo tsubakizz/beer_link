@@ -1,4 +1,5 @@
 import { ContactForm } from "./ContactForm";
+import { Breadcrumb } from "@/components/ui/Breadcrumb";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -10,6 +11,9 @@ export default function ContactPage() {
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="max-w-md mx-auto">
+        {/* パンくずリスト */}
+        <Breadcrumb items={[{ label: "お問い合わせ" }]} />
+
         <h1 className="text-3xl font-bold mb-2">お問い合わせ</h1>
         <p className="text-base-content/70 mb-8">
           ご質問・ご要望などお気軽にお問い合わせください。

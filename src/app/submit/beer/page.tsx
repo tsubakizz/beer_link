@@ -4,6 +4,7 @@ import { eq } from "drizzle-orm";
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import { BeerSubmitForm } from "./BeerSubmitForm";
+import { Breadcrumb } from "@/components/ui/Breadcrumb";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -23,11 +24,10 @@ export default async function BeerSubmitPage() {
     redirect("/login");
   }
 
-  // ブルワリー一覧を取得（承認済みのみ）
+  // ブルワリー一覧を取得
   const breweryList = await db
     .select({ id: breweries.id, name: breweries.name })
     .from(breweries)
-    .where(eq(breweries.status, "approved"))
     .orderBy(breweries.name);
 
   // ビアスタイル一覧を取得（承認済みのみ）
@@ -64,6 +64,14 @@ export default async function BeerSubmitPage() {
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="max-w-md mx-auto">
+        {/* パンくずリスト */}
+        <Breadcrumb
+          items={[
+            { label: "ビール", href: "/beers" },
+            { label: "追加" },
+          ]}
+        />
+
         <h1 className="text-3xl font-bold mb-2">ビール追加</h1>
         <p className="text-base-content/70 mb-8">
           サイトに掲載されていないビールを追加できます。

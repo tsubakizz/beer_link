@@ -1,7 +1,18 @@
 import type { MetadataRoute } from "next";
 import { db } from "@/lib/db";
-import { beers, breweries, beerStyles } from "@/lib/db/schema";
-import { eq } from "drizzle-orm";
+import { beers, breweries, beerStyles, prefectures } from "@/lib/db/schema";
+import { isNotNull, eq } from "drizzle-orm";
+import {
+  BITTERNESS_RANGES,
+  ABV_RANGES,
+  type BitternessLevel,
+  type AbvLevel,
+} from "@/lib/constants/beer-filters";
+
+// 苦味レベル
+const BITTERNESS_LEVELS: BitternessLevel[] = ["light", "medium", "strong"];
+// アルコール度数レベル
+const ABV_LEVELS: AbvLevel[] = ["light", "medium", "strong"];
 
 // ビルド時にDBに接続できないため動的レンダリング
 export const dynamic = "force-dynamic";
@@ -69,19 +80,29 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   ];
 
   // 動的ページを取得
-  const [beerList, breweryList, styleList] = await Promise.all([
+  const [beerList, breweryList, styleList, prefectureList, beersWithIbu, beersWithAbv] = await Promise.all([
     db
       .select({ id: beers.id, updatedAt: beers.updatedAt })
-      .from(beers)
-      .where(eq(beers.status, "approved")),
+      .from(beers),
     db
-      .select({ id: breweries.id, updatedAt: breweries.updatedAt })
-      .from(breweries)
-      .where(eq(breweries.status, "approved")),
+      .select({ id: breweries.id, updatedAt: breweries.updatedAt, prefectureId: breweries.prefectureId })
+      .from(breweries),
     db
       .select({ id: beerStyles.id, slug: beerStyles.slug, updatedAt: beerStyles.updatedAt })
-      .from(beerStyles)
-      .where(eq(beerStyles.status, "approved")),
+      .from(beerStyles),
+    db
+      .selectDistinct({ id: prefectures.id })
+      .from(prefectures)
+      .innerJoin(breweries, eq(breweries.prefectureId, prefectures.id))
+      .innerJoin(beers, eq(beers.breweryId, breweries.id)),
+    db
+      .select({ ibu: beers.ibu })
+      .from(beers)
+      .where(isNotNull(beers.ibu)),
+    db
+      .select({ abv: beers.abv })
+      .from(beers)
+      .where(isNotNull(beers.abv)),
   ]);
 
   // ビール詳細ページ
@@ -110,7 +131,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   // ビアスタイル別ビール一覧ページ
   const styleBeerPages: MetadataRoute.Sitemap = styleList.map((style) => ({
-    url: `${siteUrl}/beers/style-${style.id}`,
+    url: `${siteUrl}/beers/style/${style.slug}`,
     lastModified: new Date(),
     changeFrequency: "daily" as const,
     priority: 0.7,
@@ -118,7 +139,43 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   // ブルワリー別ビール一覧ページ
   const breweryBeerPages: MetadataRoute.Sitemap = breweryList.map((brewery) => ({
-    url: `${siteUrl}/beers/brewery-${brewery.id}`,
+    url: `${siteUrl}/beers/brewery/${brewery.id}`,
+    lastModified: new Date(),
+    changeFrequency: "daily" as const,
+    priority: 0.7,
+  }));
+
+  // 都道府県別ビール一覧ページ
+  const prefectureBeerPages: MetadataRoute.Sitemap = prefectureList.map((prefecture) => ({
+    url: `${siteUrl}/beers/prefecture/${prefecture.id}`,
+    lastModified: new Date(),
+    changeFrequency: "daily" as const,
+    priority: 0.7,
+  }));
+
+  // 苦味レベル別ビール一覧ページ（該当ビールがあるレベルのみ）
+  const bitternessPages: MetadataRoute.Sitemap = BITTERNESS_LEVELS.filter((level) => {
+    const range = BITTERNESS_RANGES[level];
+    return beersWithIbu.some((beer) => {
+      const ibu = beer.ibu!;
+      return ibu >= range.min && (range.max === null || ibu <= range.max);
+    });
+  }).map((level) => ({
+    url: `${siteUrl}/beers/bitterness/${level}`,
+    lastModified: new Date(),
+    changeFrequency: "daily" as const,
+    priority: 0.7,
+  }));
+
+  // アルコール度数レベル別ビール一覧ページ（該当ビールがあるレベルのみ）
+  const abvPages: MetadataRoute.Sitemap = ABV_LEVELS.filter((level) => {
+    const range = ABV_RANGES[level];
+    return beersWithAbv.some((beer) => {
+      const abv = parseFloat(beer.abv!);
+      return abv >= range.min && (range.max === null || abv <= range.max);
+    });
+  }).map((level) => ({
+    url: `${siteUrl}/beers/abv/${level}`,
     lastModified: new Date(),
     changeFrequency: "daily" as const,
     priority: 0.7,
@@ -131,5 +188,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     ...stylePages,
     ...styleBeerPages,
     ...breweryBeerPages,
+    ...prefectureBeerPages,
+    ...bitternessPages,
+    ...abvPages,
   ];
 }

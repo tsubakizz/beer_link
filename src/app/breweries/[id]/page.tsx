@@ -1,10 +1,11 @@
 import { db } from "@/lib/db";
 import { breweries, prefectures, beers, beerStyles } from "@/lib/db/schema";
-import { eq, and } from "drizzle-orm";
+import { eq } from "drizzle-orm";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import { BeerCard } from "@/components/beer";
+import { Breadcrumb } from "@/components/ui/Breadcrumb";
 import type { Metadata } from "next";
 
 // ビルド時にDBに接続できないため動的レンダリング
@@ -114,22 +115,17 @@ export default async function BreweryDetailPage({ params }: Props) {
     .from(beers)
     .leftJoin(breweries, eq(beers.breweryId, breweries.id))
     .leftJoin(beerStyles, eq(beers.styleId, beerStyles.id))
-    .where(and(eq(beers.breweryId, brewery.id), eq(beers.status, "approved")));
+    .where(eq(beers.breweryId, brewery.id));
 
   return (
     <div className="container mx-auto px-4 py-8">
       {/* パンくずリスト */}
-      <div className="breadcrumbs text-sm mb-6">
-        <ul>
-          <li>
-            <Link href="/">ホーム</Link>
-          </li>
-          <li>
-            <Link href="/breweries">ブルワリー</Link>
-          </li>
-          <li>{brewery.name}</li>
-        </ul>
-      </div>
+      <Breadcrumb
+        items={[
+          { label: "ブルワリー", href: "/breweries" },
+          { label: brewery.name },
+        ]}
+      />
 
       {/* ヘッダー */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-12">
@@ -170,7 +166,7 @@ export default async function BreweryDetailPage({ params }: Props) {
             <p className="text-lg text-base-content/60 mb-4">
               📍{" "}
               <Link
-                href={`/prefectures/${brewery.prefecture.id}/breweries`}
+                href={`/breweries/prefecture/${brewery.prefecture.id}`}
                 className="hover:text-primary transition-colors"
               >
                 {brewery.prefecture.name}
@@ -218,13 +214,13 @@ export default async function BreweryDetailPage({ params }: Props) {
           {brewery.prefecture && (
             <div className="flex flex-wrap gap-3 mt-6">
               <Link
-                href={`/prefectures/${brewery.prefecture.id}/beers`}
+                href={`/beers/prefecture/${brewery.prefecture.id}`}
                 className="btn btn-outline btn-sm"
               >
                 {brewery.prefecture.name}のビール一覧 →
               </Link>
               <Link
-                href={`/prefectures/${brewery.prefecture.id}/breweries`}
+                href={`/breweries/prefecture/${brewery.prefecture.id}`}
                 className="btn btn-outline btn-sm"
               >
                 {brewery.prefecture.name}のブルワリー一覧 →

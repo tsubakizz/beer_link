@@ -4,10 +4,16 @@ import { eq, avg, count, desc, and, or } from "drizzle-orm";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
-import { FlavorProfile, FavoriteButton, BeerCard } from "@/components/beer";
-import { BeerFilter } from "@/components/beer/BeerFilter";
+import { FlavorProfile, FavoriteButton, BeerCard, BeerFilter } from "@/components/beer";
+import {
+  BITTERNESS_OPTIONS,
+  BITTERNESS_RANGES,
+  ABV_OPTIONS,
+  ABV_RANGES,
+} from "@/lib/constants/beer-filters";
 import { ReviewCard } from "@/components/review/ReviewCard";
 import { AuthRequiredLink } from "@/components/ui/AuthRequiredLink";
+import { Breadcrumb } from "@/components/ui/Breadcrumb";
 import { createClient } from "@/lib/supabase/server";
 import type { Metadata } from "next";
 
@@ -16,6 +22,28 @@ export const dynamic = "force-dynamic";
 
 interface Props {
   params: Promise<{ id: string }>;
+}
+
+// IBUから苦味レベルを判定
+function getBitternessLevel(ibu: number): { value: string; label: string } | null {
+  for (const option of BITTERNESS_OPTIONS) {
+    const range = BITTERNESS_RANGES[option.value];
+    if (ibu >= range.min && (range.max === null || ibu <= range.max)) {
+      return { value: option.value, label: option.label };
+    }
+  }
+  return null;
+}
+
+// ABVからアルコール度数レベルを判定
+function getAbvLevel(abv: number): { value: string; label: string } | null {
+  for (const option of ABV_OPTIONS) {
+    const range = ABV_RANGES[option.value];
+    if (abv >= range.min && (range.max === null || abv <= range.max)) {
+      return { value: option.value, label: option.label };
+    }
+  }
+  return null;
 }
 
 // フィルターパターンをパース
@@ -242,17 +270,12 @@ async function FilteredBeersPage({ filterType, filterId }: { filterType: "style"
   return (
     <div className="container mx-auto px-4 py-8">
       {/* パンくずリスト */}
-      <div className="breadcrumbs text-sm mb-6">
-        <ul>
-          <li>
-            <Link href="/">ホーム</Link>
-          </li>
-          <li>
-            <Link href="/beers">ビール</Link>
-          </li>
-          <li>{filterName}</li>
-        </ul>
-      </div>
+      <Breadcrumb
+        items={[
+          { label: "ビール", href: "/beers" },
+          { label: filterName },
+        ]}
+      />
 
       {/* ヘッダーセクション */}
       <div className="text-center mb-10">
@@ -434,17 +457,12 @@ async function BeerDetailPage({ beerId }: { beerId: number }) {
   return (
     <div className="container mx-auto px-4 py-8">
       {/* パンくずリスト */}
-      <div className="breadcrumbs text-sm mb-6">
-        <ul>
-          <li>
-            <Link href="/">ホーム</Link>
-          </li>
-          <li>
-            <Link href="/beers">ビール</Link>
-          </li>
-          <li>{beer.name}</li>
-        </ul>
-      </div>
+      <Breadcrumb
+        items={[
+          { label: "ビール", href: "/beers" },
+          { label: beer.name },
+        ]}
+      />
 
       {/* メイン情報 */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-12">
@@ -548,33 +566,6 @@ async function BeerDetailPage({ beerId }: { beerId: number }) {
             )}
           </div>
 
-          {/* 関連ページへのリンク */}
-          <div className="flex flex-wrap gap-3 mt-6">
-            {beer.style?.id && (
-              <Link
-                href={`/beers/style-${beer.style.id}`}
-                className="btn btn-outline btn-sm"
-              >
-                {beer.style.name}のビール一覧 →
-              </Link>
-            )}
-            {beer.brewery?.id && (
-              <Link
-                href={`/beers/brewery-${beer.brewery.id}`}
-                className="btn btn-outline btn-sm"
-              >
-                {beer.brewery.name}のビール一覧 →
-              </Link>
-            )}
-            {beer.prefecture?.id && (
-              <Link
-                href={`/prefectures/${beer.prefecture.id}/beers`}
-                className="btn btn-outline btn-sm"
-              >
-                {beer.prefecture.name}のビール一覧 →
-              </Link>
-            )}
-          </div>
         </div>
       </div>
 
@@ -654,6 +645,53 @@ async function BeerDetailPage({ beerId }: { beerId: number }) {
             </Link>
           </div>
         )}
+      </div>
+
+      {/* 関連ページへのリンク */}
+      <div className="mt-12 pt-8 border-t border-base-300">
+        <h2 className="text-xl font-bold mb-4">関連するビール一覧</h2>
+        <div className="flex flex-wrap gap-3">
+          {beer.style?.id && (
+            <Link
+              href={`/beers/style/${beer.style.slug}`}
+              className="btn btn-outline btn-sm"
+            >
+              {beer.style.name}のビール一覧 →
+            </Link>
+          )}
+          {beer.brewery?.id && (
+            <Link
+              href={`/beers/brewery/${beer.brewery.id}`}
+              className="btn btn-outline btn-sm"
+            >
+              {beer.brewery.name}のビール一覧 →
+            </Link>
+          )}
+          {beer.prefecture?.id && (
+            <Link
+              href={`/beers/prefecture/${beer.prefecture.id}`}
+              className="btn btn-outline btn-sm"
+            >
+              {beer.prefecture.name}のビール一覧 →
+            </Link>
+          )}
+          {beer.ibu && getBitternessLevel(beer.ibu) && (
+            <Link
+              href={`/beers/bitterness/${getBitternessLevel(beer.ibu)!.value}`}
+              className="btn btn-outline btn-sm"
+            >
+              苦味{getBitternessLevel(beer.ibu)!.label}のビール一覧 →
+            </Link>
+          )}
+          {beer.abv && getAbvLevel(parseFloat(beer.abv)) && (
+            <Link
+              href={`/beers/abv/${getAbvLevel(parseFloat(beer.abv))!.value}`}
+              className="btn btn-outline btn-sm"
+            >
+              アルコール度数{getAbvLevel(parseFloat(beer.abv))!.label}のビール一覧 →
+            </Link>
+          )}
+        </div>
       </div>
     </div>
   );
