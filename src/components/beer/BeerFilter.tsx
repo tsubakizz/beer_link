@@ -1,6 +1,6 @@
 "use client";
 
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { useCallback, useState } from "react";
 import { SearchableSelect } from "@/components/ui/SearchableSelect";
 
@@ -10,6 +10,7 @@ interface FilterOption {
 }
 
 interface StyleOption extends FilterOption {
+  slug?: string;
   otherNames?: string[];
 }
 
@@ -33,33 +34,109 @@ export function BeerFilter({
   currentPrefecture,
 }: BeerFilterProps) {
   const router = useRouter();
-  const searchParams = useSearchParams();
   const [query, setQuery] = useState(currentQuery || "");
   const [isComposing, setIsComposing] = useState(false);
 
-  const updateFilter = useCallback(
-    (key: string, value: string) => {
-      const params = new URLSearchParams(searchParams.toString());
-      if (value) {
-        params.set(key, value);
-      } else {
-        params.delete(key);
+  // 構造化URLを生成するか、クエリパラメータを使用するか判断
+  const navigateWithFilter = useCallback(
+    (
+      newStyle?: string,
+      newBrewery?: string,
+      newPrefecture?: string,
+      newQuery?: string
+    ) => {
+      // アクティブなフィルター数をカウント
+      const activeFilters = [newStyle, newBrewery, newPrefecture, newQuery].filter(
+        Boolean
+      ).length;
+
+      // 単一フィルターかつ検索クエリなしの場合は構造化URLへ
+      if (activeFilters === 1 && !newQuery) {
+        if (newStyle) {
+          const style = styles.find((s) => String(s.id) === newStyle);
+          if (style?.slug) {
+            router.push(`/beers/style/${style.slug}`);
+            return;
+          }
+        }
+        if (newBrewery) {
+          router.push(`/beers/brewery/${newBrewery}`);
+          return;
+        }
+        if (newPrefecture) {
+          router.push(`/beers/prefecture/${newPrefecture}`);
+          return;
+        }
       }
-      // ページを1に戻す
-      params.delete("page");
-      router.push(`/beers?${params.toString()}`);
+
+      // 複数フィルターまたは検索クエリありの場合はクエリパラメータ
+      const params = new URLSearchParams();
+      if (newQuery) params.set("q", newQuery);
+      if (newStyle) params.set("style", newStyle);
+      if (newBrewery) params.set("brewery", newBrewery);
+      if (newPrefecture) params.set("prefecture", newPrefecture);
+
+      const queryString = params.toString();
+      router.push(queryString ? `/beers?${queryString}` : "/beers");
     },
-    [router, searchParams]
+    [router, styles]
+  );
+
+  const handleStyleChange = useCallback(
+    (value: string) => {
+      navigateWithFilter(
+        value || undefined,
+        currentBrewery,
+        currentPrefecture,
+        currentQuery
+      );
+    },
+    [navigateWithFilter, currentBrewery, currentPrefecture, currentQuery]
+  );
+
+  const handleBreweryChange = useCallback(
+    (value: string) => {
+      navigateWithFilter(
+        currentStyle,
+        value || undefined,
+        currentPrefecture,
+        currentQuery
+      );
+    },
+    [navigateWithFilter, currentStyle, currentPrefecture, currentQuery]
+  );
+
+  const handlePrefectureChange = useCallback(
+    (value: string) => {
+      navigateWithFilter(
+        currentStyle,
+        currentBrewery,
+        value || undefined,
+        currentQuery
+      );
+    },
+    [navigateWithFilter, currentStyle, currentBrewery, currentQuery]
   );
 
   const handleSearch = useCallback(
     (e: React.FormEvent) => {
       e.preventDefault();
-      // IME変換中は検索しない
       if (isComposing) return;
-      updateFilter("q", query);
+      navigateWithFilter(
+        currentStyle,
+        currentBrewery,
+        currentPrefecture,
+        query || undefined
+      );
     },
-    [query, updateFilter, isComposing]
+    [
+      isComposing,
+      query,
+      navigateWithFilter,
+      currentStyle,
+      currentBrewery,
+      currentPrefecture,
+    ]
   );
 
   const clearFilters = useCallback(() => {
@@ -67,7 +144,8 @@ export function BeerFilter({
     router.push("/beers");
   }, [router]);
 
-  const hasFilters = currentQuery || currentStyle || currentBrewery || currentPrefecture;
+  const hasFilters =
+    currentQuery || currentStyle || currentBrewery || currentPrefecture;
 
   return (
     <div className="card bg-base-100 shadow mb-8">
@@ -107,7 +185,7 @@ export function BeerFilter({
           <SearchableSelect
             options={styles}
             value={currentStyle}
-            onChange={(value) => updateFilter("style", value)}
+            onChange={handleStyleChange}
             label="ビアスタイル"
             placeholder="スタイルを検索..."
             emptyLabel="すべてのスタイル"
@@ -116,7 +194,7 @@ export function BeerFilter({
           <SearchableSelect
             options={breweries}
             value={currentBrewery}
-            onChange={(value) => updateFilter("brewery", value)}
+            onChange={handleBreweryChange}
             label="ブルワリー"
             placeholder="ブルワリーを検索..."
             emptyLabel="すべてのブルワリー"
@@ -126,7 +204,7 @@ export function BeerFilter({
             <SearchableSelect
               options={prefectures}
               value={currentPrefecture}
-              onChange={(value) => updateFilter("prefecture", value)}
+              onChange={handlePrefectureChange}
               label="都道府県"
               placeholder="都道府県を検索..."
               emptyLabel="すべての都道府県"
