@@ -1,6 +1,7 @@
 import { db } from "@/lib/db";
 import { beers, beerStyles, breweries, users } from "@/lib/db/schema";
-import { eq, desc, sql, or, ilike } from "drizzle-orm";
+import { eq, desc } from "drizzle-orm";
+import Link from "next/link";
 import { BeerList } from "./BeerList";
 
 // ビルド時にDBに接続できないため動的レンダリング
@@ -64,17 +65,6 @@ export default async function BeersAdminPage({ searchParams }: Props) {
       )
     : beerList;
 
-  // 全スタイルと全ブルワリーを取得（編集用）
-  const allStyles = await db
-    .select({ id: beerStyles.id, name: beerStyles.name })
-    .from(beerStyles)
-    .orderBy(beerStyles.name);
-
-  const allBreweries = await db
-    .select({ id: breweries.id, name: breweries.name })
-    .from(breweries)
-    .orderBy(breweries.name);
-
   // 統計
   const stats = {
     total: beerList.length,
@@ -84,7 +74,12 @@ export default async function BeersAdminPage({ searchParams }: Props) {
 
   return (
     <div>
-      <h1 className="text-3xl font-bold mb-8">ビール管理</h1>
+      <div className="flex justify-between items-center mb-8">
+        <h1 className="text-3xl font-bold">ビール管理</h1>
+        <Link href="/admin/beers/new" className="btn btn-primary">
+          新規作成
+        </Link>
+      </div>
 
       {/* 統計カード */}
       <div className="grid grid-cols-3 gap-4 mb-8">
@@ -104,8 +99,6 @@ export default async function BeersAdminPage({ searchParams }: Props) {
 
       <BeerList
         beers={filteredBeers}
-        styles={allStyles}
-        breweries={allBreweries}
         currentStatus={statusFilter}
         currentSearch={searchQuery}
       />
