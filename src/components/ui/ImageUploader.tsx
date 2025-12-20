@@ -176,7 +176,7 @@ export function ImageUploader({
       {previewUrl ? (
         <div className="relative">
           <div
-            className={`relative ${aspectRatioClass} w-full overflow-hidden rounded-lg border border-base-300`}
+            className={`relative ${aspectRatioClass} w-full overflow-hidden rounded-lg border border-base-300 bg-base-200`}
           >
             <Image
               src={previewUrl}
