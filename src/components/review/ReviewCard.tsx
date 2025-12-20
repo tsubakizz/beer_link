@@ -107,7 +107,7 @@ export function ReviewCard({ review, beerId, currentUserId }: ReviewCardProps) {
                 alt="レビュー画像"
                 width={300}
                 height={200}
-                className="rounded-lg object-cover"
+                className="rounded-lg object-cover bg-base-200"
               />
             </div>
           )}

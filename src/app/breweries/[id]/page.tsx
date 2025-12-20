@@ -137,7 +137,7 @@ export default async function BreweryDetailPage({ params }: Props) {
               alt={brewery.name}
               width={400}
               height={400}
-              className="rounded-xl w-full h-auto object-cover shadow-lg"
+              className="rounded-xl w-full h-auto object-cover shadow-lg bg-base-200"
             />
           ) : (
             <div className="rounded-xl w-full aspect-square bg-base-200 flex items-center justify-center shadow-lg">

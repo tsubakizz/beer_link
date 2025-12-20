@@ -1,12 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
-import { PutObjectCommand } from "@aws-sdk/client-s3";
-import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
-import { r2Client, R2_BUCKET_NAME, R2_PUBLIC_URL } from "@/lib/r2/client";
+import { generatePresignedUrl, R2_PUBLIC_URL } from "@/lib/r2/client";
 import { createClient } from "@/lib/supabase/server";
 import { z } from "zod";
-
-// Node.js Runtimeを使用（Edge Runtimeではfsが使えないため）
-export const runtime = "nodejs";
 
 // リクエストのバリデーションスキーマ
 const uploadRequestSchema = z.object({
@@ -55,22 +50,13 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const { filename, contentType, category } = parsed.data;
+    const { filename, category } = parsed.data;
 
     // オブジェクトキーを生成
     const objectKey = generateObjectKey(category, user.id, filename);
 
     // presigned URLを生成（有効期限: 5分）
-    const command = new PutObjectCommand({
-      Bucket: R2_BUCKET_NAME,
-      Key: objectKey,
-      ContentType: contentType,
-      CacheControl: "public, max-age=31536000, immutable",
-    });
-
-    const presignedUrl = await getSignedUrl(r2Client, command, {
-      expiresIn: 300, // 5分
-    });
+    const presignedUrl = await generatePresignedUrl(objectKey, 300);
 
     // 公開URLを生成
     const publicUrl = `${R2_PUBLIC_URL}/${objectKey}`;

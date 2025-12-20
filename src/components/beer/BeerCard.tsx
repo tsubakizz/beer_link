@@ -32,7 +32,7 @@ export function BeerCard({ beer }: BeerCardProps) {
               alt={beer.name}
               width={200}
               height={200}
-              className="rounded-xl h-48 w-full object-cover"
+              className="rounded-xl h-48 w-full object-cover bg-base-200"
             />
           ) : (
             <div className="rounded-xl h-48 w-full bg-base-200 flex items-center justify-center">
