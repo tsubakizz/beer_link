@@ -50,13 +50,13 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const { filename, contentType, category } = parsed.data;
+    const { filename, category } = parsed.data;
 
     // オブジェクトキーを生成
     const objectKey = generateObjectKey(category, user.id, filename);
 
     // presigned URLを生成（有効期限: 5分）
-    const presignedUrl = await generatePresignedUrl(objectKey, contentType, 300);
+    const presignedUrl = await generatePresignedUrl(objectKey, 300);
 
     // 公開URLを生成
     const publicUrl = `${R2_PUBLIC_URL}/${objectKey}`;

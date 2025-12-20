@@ -22,7 +22,6 @@ export const R2_PUBLIC_URL = process.env.NEXT_PUBLIC_R2_PUBLIC_URL!;
  */
 export async function generatePresignedUrl(
   key: string,
-  contentType: string,
   expiresIn: number = 300
 ): Promise<string> {
   const client = getR2Client();
@@ -34,13 +33,10 @@ export async function generatePresignedUrl(
   // AWS Signature V4のクエリパラメータを追加
   url.searchParams.set("X-Amz-Expires", expiresIn.toString());
 
-  // aws4fetchでリクエストに署名
+  // aws4fetchでリクエストに署名（ヘッダーは署名に含めない）
+  // クライアント側でContent-Typeを自由に設定できるようにする
   const signedRequest = await client.sign(url.toString(), {
     method: "PUT",
-    headers: {
-      "Content-Type": contentType,
-      "Cache-Control": "public, max-age=31536000, immutable",
-    },
     aws: {
       signQuery: true, // URLクエリパラメータに署名を含める
     },

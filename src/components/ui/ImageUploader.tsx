@@ -114,6 +114,7 @@ export function ImageUploader({
           body: compressedFile,
           headers: {
             "Content-Type": compressedFile.type,
+            "Cache-Control": "public, max-age=31536000, immutable",
           },
         });
 
