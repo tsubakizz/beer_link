@@ -60,11 +60,10 @@ export async function getStyleById(styleId: number) {
   }
 }
 
-interface UpdateStyleInput {
+interface StyleInput {
   name: string;
   description: string | null;
   shortDescription: string | null;
-  status: string;
   otherNames: string[];
   bitterness: number | null;
   sweetness: number | null;
@@ -83,8 +82,78 @@ interface UpdateStyleInput {
   servingTempMax: number | null;
 }
 
+// スタイルの作成
+export async function createStyle(input: StyleInput) {
+  const adminCheck = await checkAdmin();
+  if (!adminCheck.success) {
+    return adminCheck;
+  }
+
+  try {
+    // スラグを生成
+    const slug = input.name
+      .toLowerCase()
+      .replace(/[^a-z0-9\u3040-\u309f\u30a0-\u30ff\u4e00-\u9faf]/g, "-")
+      .replace(/-+/g, "-")
+      .replace(/^-|-$/g, "") || `style-${Date.now()}`;
+
+    // 重複チェック
+    const [existingStyle] = await db
+      .select()
+      .from(beerStyles)
+      .where(eq(beerStyles.name, input.name));
+
+    if (existingStyle) {
+      return { success: false, error: "同じ名前のスタイルが既に登録されています" };
+    }
+
+    const [insertedStyle] = await db
+      .insert(beerStyles)
+      .values({
+        name: input.name,
+        slug,
+        description: input.description,
+        shortDescription: input.shortDescription,
+        status: "approved",
+        bitterness: input.bitterness,
+        sweetness: input.sweetness,
+        body: input.body,
+        aroma: input.aroma,
+        sourness: input.sourness,
+        history: input.history,
+        origin: input.origin,
+        abvMin: input.abvMin,
+        abvMax: input.abvMax,
+        ibuMin: input.ibuMin,
+        ibuMax: input.ibuMax,
+        srmMin: input.srmMin,
+        srmMax: input.srmMax,
+        servingTempMin: input.servingTempMin,
+        servingTempMax: input.servingTempMax,
+      })
+      .returning({ id: beerStyles.id });
+
+    // 別名を追加
+    if (input.otherNames.length > 0 && insertedStyle) {
+      await db.insert(beerStyleOtherNames).values(
+        input.otherNames.map((name) => ({
+          styleId: insertedStyle.id,
+          name,
+        }))
+      );
+    }
+
+    revalidatePath("/admin/styles");
+    revalidatePath("/styles");
+    return { success: true };
+  } catch (error) {
+    console.error("Failed to create style:", error);
+    return { success: false, error: "作成に失敗しました" };
+  }
+}
+
 // スタイルの更新
-export async function updateStyle(styleId: number, input: UpdateStyleInput) {
+export async function updateStyle(styleId: number, input: StyleInput) {
   const adminCheck = await checkAdmin();
   if (!adminCheck.success) {
     return adminCheck;
@@ -105,7 +174,6 @@ export async function updateStyle(styleId: number, input: UpdateStyleInput) {
         slug,
         description: input.description,
         shortDescription: input.shortDescription,
-        status: input.status,
         bitterness: input.bitterness,
         sweetness: input.sweetness,
         body: input.body,

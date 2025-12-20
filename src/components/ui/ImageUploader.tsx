@@ -219,35 +219,37 @@ export function ImageUploader({
           )}
         </div>
       ) : (
-        <button
-          type="button"
-          onClick={handleClick}
-          disabled={isLoading}
-          className={`w-full ${aspectRatioClass} min-h-32 border-2 border-dashed border-base-300 rounded-lg
-            hover:border-primary hover:bg-base-200/50 transition-colors
-            flex flex-col items-center justify-center gap-2 cursor-pointer
-            ${isLoading ? "opacity-50 cursor-not-allowed" : ""}`}
-        >
-          <svg
-            className="w-10 h-10 text-base-content/40"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
+        <div className="flex justify-center">
+          <button
+            type="button"
+            onClick={handleClick}
+            disabled={isLoading}
+            className={`${aspectRatioClass} min-h-32 min-w-48 border-2 border-dashed border-base-300 rounded-lg
+              hover:border-primary hover:bg-base-200/50 transition-colors
+              flex flex-col items-center justify-center gap-2 cursor-pointer px-8
+              ${isLoading ? "opacity-50 cursor-not-allowed" : ""}`}
           >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={1.5}
-              d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
-            />
-          </svg>
-          <span className="text-sm text-base-content/60">
-            クリックして画像を選択
-          </span>
-          <span className="text-xs text-base-content/40">
-            JPEG, PNG, WebP (最大10MB)
-          </span>
-        </button>
+            <svg
+              className="w-10 h-10 text-base-content/40"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={1.5}
+                d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
+              />
+            </svg>
+            <span className="text-sm text-base-content/60">
+              クリックして画像を選択
+            </span>
+            <span className="text-xs text-base-content/40">
+              JPEG, PNG, WebP (最大10MB)
+            </span>
+          </button>
+        </div>
       )}
 
       {errorMessage && (

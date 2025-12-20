@@ -24,7 +24,7 @@ async function checkAdmin() {
   return { success: true, user };
 }
 
-interface UpdateBeerInput {
+interface BeerInput {
   name: string;
   breweryId: number;
   styleId: number | null;
@@ -32,12 +32,50 @@ interface UpdateBeerInput {
   ibu: number | null;
   shortDescription: string | null;
   description: string | null;
-  status: string;
   imageUrl: string | null;
 }
 
+// ビールの作成
+export async function createBeer(input: BeerInput) {
+  const adminCheck = await checkAdmin();
+  if (!adminCheck.success) {
+    return adminCheck;
+  }
+
+  // 重複チェック
+  const [existingBeer] = await db
+    .select()
+    .from(beers)
+    .where(eq(beers.name, input.name));
+
+  if (existingBeer) {
+    return { success: false, error: "同じ名前のビールが既に登録されています" };
+  }
+
+  try {
+    await db.insert(beers).values({
+      name: input.name,
+      breweryId: input.breweryId,
+      styleId: input.styleId,
+      abv: input.abv,
+      ibu: input.ibu,
+      shortDescription: input.shortDescription,
+      description: input.description,
+      status: "approved",
+      imageUrl: input.imageUrl,
+    });
+
+    revalidatePath("/admin/beers");
+    revalidatePath("/beers");
+    return { success: true };
+  } catch (error) {
+    console.error("Failed to create beer:", error);
+    return { success: false, error: "作成に失敗しました" };
+  }
+}
+
 // ビールの更新
-export async function updateBeer(beerId: number, input: UpdateBeerInput) {
+export async function updateBeer(beerId: number, input: BeerInput) {
   const adminCheck = await checkAdmin();
   if (!adminCheck.success) {
     return adminCheck;
@@ -64,7 +102,6 @@ export async function updateBeer(beerId: number, input: UpdateBeerInput) {
         ibu: input.ibu,
         shortDescription: input.shortDescription,
         description: input.description,
-        status: input.status,
         imageUrl: input.imageUrl,
         updatedAt: new Date(),
       })

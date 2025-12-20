@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { BeerEditModal } from "./BeerEditModal";
+import Link from "next/link";
 import { deleteBeer, updateBeerStatus } from "./actions";
 
 interface Beer {
@@ -22,15 +22,12 @@ interface Beer {
 
 interface Props {
   beers: Beer[];
-  styles: { id: number; name: string }[];
-  breweries: { id: number; name: string }[];
   currentStatus: string;
   currentSearch: string;
 }
 
-export function BeerList({ beers, styles, breweries, currentStatus, currentSearch }: Props) {
+export function BeerList({ beers, currentStatus, currentSearch }: Props) {
   const router = useRouter();
-  const [editingBeer, setEditingBeer] = useState<Beer | null>(null);
   const [deletingId, setDeletingId] = useState<number | null>(null);
 
   const handleStatusFilter = (status: string) => {
@@ -148,12 +145,12 @@ export function BeerList({ beers, styles, breweries, currentStatus, currentSearc
                           確認
                         </button>
                       )}
-                      <button
-                        onClick={() => setEditingBeer(beer)}
+                      <Link
+                        href={`/admin/beers/${beer.id}/edit`}
                         className="btn btn-ghost btn-xs"
                       >
                         編集
-                      </button>
+                      </Link>
                       <button
                         onClick={() => handleDelete(beer.id)}
                         className="btn btn-error btn-outline btn-xs"
@@ -176,16 +173,6 @@ export function BeerList({ beers, styles, breweries, currentStatus, currentSearc
         <div className="text-center py-12 bg-base-100 rounded-lg">
           <p className="text-base-content/60">該当するビールがありません</p>
         </div>
-      )}
-
-      {/* 編集モーダル */}
-      {editingBeer && (
-        <BeerEditModal
-          beer={editingBeer}
-          styles={styles}
-          breweries={breweries}
-          onClose={() => setEditingBeer(null)}
-        />
       )}
     </div>
   );

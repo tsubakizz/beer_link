@@ -9,6 +9,7 @@ interface Option {
 }
 
 interface FormSearchSelectProps {
+  id?: string;
   options: Option[];
   value: string;
   onChange: (value: string) => void;
@@ -21,6 +22,7 @@ interface FormSearchSelectProps {
 }
 
 export function FormSearchSelect({
+  id,
   options,
   value,
   onChange,
@@ -109,8 +111,8 @@ export function FormSearchSelect({
   return (
     <div className="form-control w-full" ref={containerRef}>
       {label && (
-        <label className="label">
-          <span className="label-text">
+        <label htmlFor={id} className="label">
+          <span className="text-base label-text">
             {label}
             {required && " *"}
           </span>
@@ -119,6 +121,7 @@ export function FormSearchSelect({
 
       <div className="relative">
         <input
+          id={id}
           ref={inputRef}
           type="text"
           className="input input-bordered w-full pr-10"

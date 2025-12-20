@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { BreweryEditModal } from "./BreweryEditModal";
+import Link from "next/link";
 import { deleteBrewery, updateBreweryStatus } from "./actions";
 
 interface Brewery {
@@ -21,14 +21,12 @@ interface Brewery {
 
 interface Props {
   breweries: Brewery[];
-  prefectures: { id: number; name: string }[];
   currentStatus: string;
   currentSearch: string;
 }
 
-export function BreweryList({ breweries, prefectures, currentStatus, currentSearch }: Props) {
+export function BreweryList({ breweries, currentStatus, currentSearch }: Props) {
   const router = useRouter();
-  const [editingBrewery, setEditingBrewery] = useState<Brewery | null>(null);
   const [deletingId, setDeletingId] = useState<number | null>(null);
 
   const handleStatusFilter = (status: string) => {
@@ -145,12 +143,12 @@ export function BreweryList({ breweries, prefectures, currentStatus, currentSear
                           確認
                         </button>
                       )}
-                      <button
-                        onClick={() => setEditingBrewery(brewery)}
+                      <Link
+                        href={`/admin/breweries/${brewery.id}/edit`}
                         className="btn btn-ghost btn-xs"
                       >
                         編集
-                      </button>
+                      </Link>
                       <button
                         onClick={() => handleDelete(brewery.id)}
                         className="btn btn-error btn-outline btn-xs"
@@ -173,15 +171,6 @@ export function BreweryList({ breweries, prefectures, currentStatus, currentSear
         <div className="text-center py-12 bg-base-100 rounded-lg">
           <p className="text-base-content/60">該当するブルワリーがありません</p>
         </div>
-      )}
-
-      {/* 編集モーダル */}
-      {editingBrewery && (
-        <BreweryEditModal
-          brewery={editingBrewery}
-          prefectures={prefectures}
-          onClose={() => setEditingBrewery(null)}
-        />
       )}
     </div>
   );

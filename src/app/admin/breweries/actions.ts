@@ -24,7 +24,7 @@ async function checkAdmin() {
   return { success: true, user };
 }
 
-interface UpdateBreweryInput {
+interface BreweryInput {
   name: string;
   shortDescription: string | null;
   description: string | null;
@@ -32,11 +32,48 @@ interface UpdateBreweryInput {
   address: string | null;
   websiteUrl: string | null;
   imageUrl: string | null;
-  status: string;
+}
+
+// ブルワリーの作成
+export async function createBrewery(input: BreweryInput) {
+  const adminCheck = await checkAdmin();
+  if (!adminCheck.success) {
+    return adminCheck;
+  }
+
+  // 重複チェック
+  const [existingBrewery] = await db
+    .select()
+    .from(breweries)
+    .where(eq(breweries.name, input.name));
+
+  if (existingBrewery) {
+    return { success: false, error: "同じ名前のブルワリーが既に登録されています" };
+  }
+
+  try {
+    await db.insert(breweries).values({
+      name: input.name,
+      shortDescription: input.shortDescription,
+      description: input.description,
+      prefectureId: input.prefectureId,
+      address: input.address,
+      websiteUrl: input.websiteUrl,
+      imageUrl: input.imageUrl,
+      status: "approved",
+    });
+
+    revalidatePath("/admin/breweries");
+    revalidatePath("/breweries");
+    return { success: true };
+  } catch (error) {
+    console.error("Failed to create brewery:", error);
+    return { success: false, error: "作成に失敗しました" };
+  }
 }
 
 // ブルワリーの更新
-export async function updateBrewery(breweryId: number, input: UpdateBreweryInput) {
+export async function updateBrewery(breweryId: number, input: BreweryInput) {
   const adminCheck = await checkAdmin();
   if (!adminCheck.success) {
     return adminCheck;
@@ -63,7 +100,6 @@ export async function updateBrewery(breweryId: number, input: UpdateBreweryInput
         address: input.address,
         websiteUrl: input.websiteUrl,
         imageUrl: input.imageUrl,
-        status: input.status,
         updatedAt: new Date(),
       })
       .where(eq(breweries.id, breweryId));
