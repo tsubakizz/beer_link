@@ -30,6 +30,7 @@ interface UpdateBeerInput {
   styleId: number | null;
   abv: string | null;
   ibu: number | null;
+  shortDescription: string | null;
   description: string | null;
   status: string;
   imageUrl: string | null;
@@ -61,6 +62,7 @@ export async function updateBeer(beerId: number, input: UpdateBeerInput) {
         styleId: input.styleId,
         abv: input.abv,
         ibu: input.ibu,
+        shortDescription: input.shortDescription,
         description: input.description,
         status: input.status,
         imageUrl: input.imageUrl,

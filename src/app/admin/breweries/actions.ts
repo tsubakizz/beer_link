@@ -26,6 +26,7 @@ async function checkAdmin() {
 
 interface UpdateBreweryInput {
   name: string;
+  shortDescription: string | null;
   description: string | null;
   prefectureId: number | null;
   address: string | null;
@@ -56,6 +57,7 @@ export async function updateBrewery(breweryId: number, input: UpdateBreweryInput
       .update(breweries)
       .set({
         name: input.name,
+        shortDescription: input.shortDescription,
         description: input.description,
         prefectureId: input.prefectureId,
         address: input.address,

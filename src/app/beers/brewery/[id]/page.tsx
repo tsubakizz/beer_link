@@ -113,6 +113,7 @@ export default async function BreweryBeersPage({
     .select({
       id: beers.id,
       name: beers.name,
+      shortDescription: beers.shortDescription,
       description: beers.description,
       abv: beers.abv,
       ibu: beers.ibu,

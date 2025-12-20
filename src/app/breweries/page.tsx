@@ -93,6 +93,7 @@ export default async function BreweriesPage({ searchParams }: Props) {
     .select({
       id: breweries.id,
       name: breweries.name,
+      shortDescription: breweries.shortDescription,
       description: breweries.description,
       imageUrl: breweries.imageUrl,
       address: breweries.address,

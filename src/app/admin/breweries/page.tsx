@@ -20,6 +20,7 @@ export default async function BreweriesAdminPage({ searchParams }: Props) {
     .select({
       id: breweries.id,
       name: breweries.name,
+      shortDescription: breweries.shortDescription,
       description: breweries.description,
       prefectureId: breweries.prefectureId,
       address: breweries.address,

@@ -8,6 +8,7 @@ import { deleteBrewery, updateBreweryStatus } from "./actions";
 interface Brewery {
   id: number;
   name: string;
+  shortDescription: string | null;
   description: string | null;
   prefectureId: number | null;
   address: string | null;

@@ -69,6 +69,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     .select({
       id: beerStyles.id,
       name: beerStyles.name,
+      shortDescription: beerStyles.shortDescription,
       description: beerStyles.description,
       origin: beerStyles.origin,
     })
@@ -94,6 +95,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
   const title = `${titleWithOtherNames} | ビアスタイル一覧`;
   const description =
+    style.shortDescription ||
     style.description ||
     `${titleWithOtherNames}の特徴、歴史、おすすめビールを紹介。${style.origin ? `発祥: ${style.origin}。` : ""}beer_linkでビアスタイルを学ぼう。`;
 

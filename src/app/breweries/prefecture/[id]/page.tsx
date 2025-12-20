@@ -92,6 +92,7 @@ export default async function PrefectureBreweriesPage({
     .select({
       id: breweries.id,
       name: breweries.name,
+      shortDescription: breweries.shortDescription,
       description: breweries.description,
       imageUrl: breweries.imageUrl,
       address: breweries.address,
