@@ -5,6 +5,9 @@ import { r2Client, R2_BUCKET_NAME, R2_PUBLIC_URL } from "@/lib/r2/client";
 import { createClient } from "@/lib/supabase/server";
 import { z } from "zod";
 
+// Node.js Runtimeを使用（Edge Runtimeではfsが使えないため）
+export const runtime = "nodejs";
+
 // リクエストのバリデーションスキーマ
 const uploadRequestSchema = z.object({
   filename: z.string().min(1),
