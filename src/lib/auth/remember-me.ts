@@ -139,37 +139,47 @@ export async function validateRememberTokenFromRequest(
     return null;
   }
 
-  const tokenHash = await hashToken(token);
-  const now = new Date();
+  try {
+    const tokenHash = await hashToken(token);
+    const now = new Date();
 
-  // DBからトークンを検索（有効期限内のもの）
-  const [tokenRecord] = await db
-    .select({
-      userId: rememberTokens.userId,
-    })
-    .from(rememberTokens)
-    .where(
-      and(
-        eq(rememberTokens.tokenHash, tokenHash),
-        gt(rememberTokens.expiresAt, now)
-      )
-    );
+    // DBからトークンを検索（有効期限内のもの）
+    const [tokenRecord] = await db
+      .select({
+        userId: rememberTokens.userId,
+      })
+      .from(rememberTokens)
+      .where(
+        and(
+          eq(rememberTokens.tokenHash, tokenHash),
+          gt(rememberTokens.expiresAt, now)
+        )
+      );
 
-  if (!tokenRecord) {
+    if (!tokenRecord) {
+      return null;
+    }
+
+    // ユーザー情報を取得
+    const [user] = await db
+      .select({ email: users.email })
+      .from(users)
+      .where(eq(users.id, tokenRecord.userId));
+
+    if (!user) {
+      return null;
+    }
+
+    return { userId: tokenRecord.userId, email: user.email };
+  } catch (error) {
+    console.error("validateRememberTokenFromRequest error:", error);
+    console.error("Error details:", {
+      name: (error as Error).name,
+      message: (error as Error).message,
+      stack: (error as Error).stack,
+    });
     return null;
   }
-
-  // ユーザー情報を取得
-  const [user] = await db
-    .select({ email: users.email })
-    .from(users)
-    .where(eq(users.id, tokenRecord.userId));
-
-  if (!user) {
-    return null;
-  }
-
-  return { userId: tokenRecord.userId, email: user.email };
 }
 
 /**
