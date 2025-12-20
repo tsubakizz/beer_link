@@ -8,6 +8,7 @@ import { FormSearchSelect } from "@/components/ui/FormSearchSelect";
 interface Brewery {
   id: number;
   name: string;
+  shortDescription: string | null;
   description: string | null;
   prefectureId: number | null;
   address: string | null;
@@ -27,6 +28,7 @@ export function BreweryEditModal({ brewery, prefectures, onClose }: Props) {
   const [error, setError] = useState<string | null>(null);
 
   const [name, setName] = useState(brewery.name);
+  const [shortDescription, setShortDescription] = useState(brewery.shortDescription || "");
   const [description, setDescription] = useState(brewery.description || "");
   const [prefectureId, setPrefectureId] = useState<number | null>(brewery.prefectureId);
   const [address, setAddress] = useState(brewery.address || "");
@@ -46,6 +48,7 @@ export function BreweryEditModal({ brewery, prefectures, onClose }: Props) {
     startTransition(async () => {
       const result = await updateBrewery(brewery.id, {
         name: name.trim(),
+        shortDescription: shortDescription || null,
         description: description || null,
         prefectureId,
         address: address || null,
@@ -126,17 +129,32 @@ export function BreweryEditModal({ brewery, prefectures, onClose }: Props) {
             />
           </div>
 
+          {/* 短い説明 */}
+          <div className="form-control">
+            <label className="label">
+              <span className="label-text">短い説明（一覧・メタデータ用、100文字以内）</span>
+            </label>
+            <input
+              type="text"
+              value={shortDescription}
+              onChange={(e) => setShortDescription(e.target.value)}
+              className="input input-bordered"
+              maxLength={100}
+              placeholder="一覧ページやOGPに表示される短い説明..."
+            />
+          </div>
+
           {/* 説明 */}
           <div className="form-control">
             <label className="label">
-              <span className="label-text">説明</span>
+              <span className="label-text">詳細説明</span>
             </label>
             <textarea
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               className="textarea textarea-bordered"
               rows={3}
-              placeholder="ブルワリーの説明を入力..."
+              placeholder="ブルワリーの詳細説明を入力..."
             />
           </div>
 

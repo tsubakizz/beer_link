@@ -8,6 +8,7 @@ import { deleteBeer, updateBeerStatus } from "./actions";
 interface Beer {
   id: number;
   name: string;
+  shortDescription: string | null;
   description: string | null;
   abv: string | null;
   ibu: number | null;

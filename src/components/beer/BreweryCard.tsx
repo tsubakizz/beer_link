@@ -5,6 +5,7 @@ interface BreweryCardProps {
   brewery: {
     id: number;
     name: string;
+    shortDescription?: string | null;
     description?: string | null;
     imageUrl?: string | null;
     address?: string | null;
@@ -56,9 +57,9 @@ export function BreweryCard({ brewery }: BreweryCardProps) {
             </p>
           )}
 
-          {brewery.description && (
+          {(brewery.shortDescription || brewery.description) && (
             <p className="text-sm text-base-content/80 line-clamp-2">
-              {brewery.description}
+              {brewery.shortDescription || brewery.description}
             </p>
           )}
 

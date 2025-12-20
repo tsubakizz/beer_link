@@ -26,6 +26,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const brewery = await db
     .select({
       name: breweries.name,
+      shortDescription: breweries.shortDescription,
       description: breweries.description,
       imageUrl: breweries.imageUrl,
     })
@@ -40,6 +41,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
   const title = `${brewery.name} | ブルワリー一覧`;
   const description =
+    brewery.shortDescription ||
     brewery.description ||
     `${brewery.name}の詳細情報と製造しているビール一覧。beer_linkでクラフトビール醸造所の情報をチェック。`;
 

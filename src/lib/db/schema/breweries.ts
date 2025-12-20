@@ -1,9 +1,10 @@
-import { pgTable, serial, text, integer, timestamp } from "drizzle-orm/pg-core";
+import { pgTable, serial, text, integer, timestamp, varchar } from "drizzle-orm/pg-core";
 import { prefectures } from "./prefectures";
 
 export const breweries = pgTable("breweries", {
   id: serial("id").primaryKey(),
   name: text("name").notNull().unique(),
+  shortDescription: varchar("short_description", { length: 100 }), // 一覧ページ・メタデータ用の短い紹介文
   description: text("description"),
   prefectureId: integer("prefecture_id").references(() => prefectures.id),
   address: text("address"),

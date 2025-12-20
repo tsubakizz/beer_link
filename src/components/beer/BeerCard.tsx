@@ -5,6 +5,7 @@ interface BeerCardProps {
   beer: {
     id: number;
     name: string;
+    shortDescription?: string | null;
     description?: string | null;
     abv?: string | null;
     ibu?: number | null;
@@ -59,9 +60,9 @@ export function BeerCard({ beer }: BeerCardProps) {
             <p className="text-sm text-base-content/60">{beer.brewery.name}</p>
           )}
 
-          {beer.description && (
+          {(beer.shortDescription || beer.description) && (
             <p className="text-sm text-base-content/80 line-clamp-2">
-              {beer.description}
+              {beer.shortDescription || beer.description}
             </p>
           )}
 

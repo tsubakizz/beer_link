@@ -124,6 +124,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const beer = await db
     .select({
       name: beers.name,
+      shortDescription: beers.shortDescription,
       description: beers.description,
       breweryName: breweries.name,
     })
@@ -138,7 +139,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   }
 
   const title = `${beer.name} | ${beer.breweryName || "ビール"}`;
-  const description = beer.description || `${beer.name}の詳細情報とレビュー。beer_linkでクラフトビールの口コミをチェック。`;
+  const description = beer.shortDescription || beer.description || `${beer.name}の詳細情報とレビュー。beer_linkでクラフトビールの口コミをチェック。`;
 
   return {
     title,

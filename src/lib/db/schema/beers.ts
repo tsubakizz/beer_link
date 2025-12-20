@@ -1,4 +1,4 @@
-import { pgTable, serial, text, integer, decimal, uuid, timestamp } from "drizzle-orm/pg-core";
+import { pgTable, serial, text, integer, decimal, uuid, timestamp, varchar } from "drizzle-orm/pg-core";
 import { breweries } from "./breweries";
 import { beerStyles } from "./beer-styles";
 import { users } from "./users";
@@ -6,6 +6,7 @@ import { users } from "./users";
 export const beers = pgTable("beers", {
   id: serial("id").primaryKey(),
   name: text("name").notNull().unique(),
+  shortDescription: varchar("short_description", { length: 100 }), // 一覧ページ・メタデータ用の短い紹介文
   description: text("description"),
   breweryId: integer("brewery_id").notNull().references(() => breweries.id),
   styleId: integer("style_id").references(() => beerStyles.id),

@@ -94,6 +94,7 @@ export default async function AbvBeerPage({ params, searchParams }: Props) {
     .select({
       id: beers.id,
       name: beers.name,
+      shortDescription: beers.shortDescription,
       description: beers.description,
       abv: beers.abv,
       ibu: beers.ibu,
