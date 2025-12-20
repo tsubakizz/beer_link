@@ -80,6 +80,7 @@ export default async function BreweryDetailPage({ params }: Props) {
       address: breweries.address,
       websiteUrl: breweries.websiteUrl,
       imageUrl: breweries.imageUrl,
+      imageSourceUrl: breweries.imageSourceUrl,
       prefecture: {
         id: prefectures.id,
         name: prefectures.name,
@@ -157,6 +158,19 @@ export default async function BreweryDetailPage({ params }: Props) {
                 />
               </svg>
             </div>
+          )}
+          {brewery.imageSourceUrl && (
+            <p className="text-sm text-base-content/60 mt-2 text-center">
+              画像出典元:{" "}
+              <a
+                href={brewery.imageSourceUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="link link-hover"
+              >
+                {new URL(brewery.imageSourceUrl).hostname}
+              </a>
+            </p>
           )}
         </div>
 

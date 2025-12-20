@@ -16,6 +16,7 @@ interface Brewery {
   address: string | null;
   websiteUrl: string | null;
   imageUrl: string | null;
+  imageSourceUrl: string | null;
   status: string;
 }
 
@@ -44,6 +45,9 @@ export function BreweryForm({ brewery, prefectures }: Props) {
   const [imageUrl, setImageUrl] = useState<string | null>(
     brewery?.imageUrl || null
   );
+  const [imageSourceUrl, setImageSourceUrl] = useState(
+    brewery?.imageSourceUrl || ""
+  );
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -63,6 +67,7 @@ export function BreweryForm({ brewery, prefectures }: Props) {
         address: address || null,
         websiteUrl: websiteUrl || null,
         imageUrl,
+        imageSourceUrl: imageSourceUrl || null,
       };
 
       const result = isEdit
@@ -207,12 +212,32 @@ export function BreweryForm({ brewery, prefectures }: Props) {
       <fieldset className="fieldset bg-base-200 border-base-300 rounded-box border p-4">
         <legend className="fieldset-legend">画像</legend>
 
-        <ImageUploader
-          category="breweries"
-          onUploadComplete={(url) => setImageUrl(url || null)}
-          currentImageUrl={imageUrl}
-          aspectRatio="square"
-        />
+        <div className="space-y-4">
+          <ImageUploader
+            category="breweries"
+            onUploadComplete={(url) => setImageUrl(url || null)}
+            currentImageUrl={imageUrl}
+            aspectRatio="square"
+          />
+
+          {/* 画像参照元URL */}
+          <div>
+            <label htmlFor="brewery-image-source" className="label">
+              <span className="text-base label-text">画像参照元URL</span>
+            </label>
+            <input
+              id="brewery-image-source"
+              type="url"
+              value={imageSourceUrl}
+              onChange={(e) => setImageSourceUrl(e.target.value)}
+              className="w-full input input-bordered"
+              placeholder="https://..."
+            />
+            <p className="text-sm text-base-content/60 mt-1">
+              外部サイトから画像を使用する場合、出典元のURLを入力してください
+            </p>
+          </div>
+        </div>
       </fieldset>
 
       {/* ボタン */}
