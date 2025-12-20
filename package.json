@@ -19,6 +19,7 @@
     "@opennextjs/cloudflare": "^1.14.4",
     "@supabase/ssr": "^0.8.0",
     "@supabase/supabase-js": "^2.86.1",
+    "aws4fetch": "^1.0.20",
     "browser-image-compression": "^2.0.2",
     "clsx": "^2.1.1",
     "daisyui": "^5.5.8",
