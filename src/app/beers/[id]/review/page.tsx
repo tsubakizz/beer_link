@@ -1,8 +1,9 @@
 import { db } from "@/lib/db";
 import { beers, breweries, beerStyles } from "@/lib/db/schema";
 import { eq } from "drizzle-orm";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import Image from "next/image";
+import { createClient } from "@/lib/supabase/server";
 import { ReviewForm } from "./ReviewForm";
 import { Breadcrumb } from "@/components/ui/Breadcrumb";
 import type { Metadata } from "next";
@@ -40,6 +41,14 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 export default async function ReviewPage({ params }: Props) {
+  // 認証チェック
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+
+  if (!user) {
+    redirect("/login");
+  }
+
   const { id } = await params;
   const beerId = parseInt(id, 10);
 

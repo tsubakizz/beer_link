@@ -1,3 +1,5 @@
+"use client";
+
 import { AdSenseUnit } from "./AdSenseUnit";
 
 export function FooterAd() {

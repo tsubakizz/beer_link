@@ -439,6 +439,7 @@ async function BeerDetailPage({ beerId }: { beerId: number }) {
   // お気に入り状態を取得
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
+  const isAuthenticated = !!user;
   let isFavorited = false;
 
   if (user) {
@@ -618,9 +619,13 @@ async function BeerDetailPage({ beerId }: { beerId: number }) {
           <h2 className="text-2xl font-bold">
             レビュー ({reviewStats.count})
           </h2>
-          <Link href={`/beers/${beer.id}/review`} className="btn btn-primary">
+          <AuthRequiredLink
+            href={`/beers/${beer.id}/review`}
+            isAuthenticated={isAuthenticated}
+            className="btn btn-primary"
+          >
             レビューを書く
-          </Link>
+          </AuthRequiredLink>
         </div>
 
         {beerReviews.length > 0 ? (
@@ -640,9 +645,13 @@ async function BeerDetailPage({ beerId }: { beerId: number }) {
             <p className="text-base-content/60 mb-4">
               まだレビューがありません
             </p>
-            <Link href={`/beers/${beer.id}/review`} className="btn btn-primary">
+            <AuthRequiredLink
+              href={`/beers/${beer.id}/review`}
+              isAuthenticated={isAuthenticated}
+              className="btn btn-primary"
+            >
               最初のレビューを書く
-            </Link>
+            </AuthRequiredLink>
           </div>
         )}
       </div>
