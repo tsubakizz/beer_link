@@ -10,6 +10,7 @@ declare global {
 
 interface AdSenseUnitProps {
   slot: string;
+  clientId: string;
   format?: "auto" | "rectangle" | "horizontal" | "vertical";
   responsive?: boolean;
   className?: string;
@@ -17,21 +18,22 @@ interface AdSenseUnitProps {
 
 export function AdSenseUnit({
   slot,
+  clientId,
   format = "auto",
   responsive = true,
   className = "",
 }: AdSenseUnitProps) {
-  const clientId = process.env.NEXT_PUBLIC_ADSENSE_CLIENT_ID;
-
   useEffect(() => {
-    if (!clientId) return;
+    if (!clientId || !slot) {
+      return;
+    }
 
     try {
       (window.adsbygoogle = window.adsbygoogle || []).push({});
     } catch (error) {
       console.error("AdSense error:", error);
     }
-  }, [clientId]);
+  }, [clientId, slot]);
 
   // AdSenseの設定がない場合は何も表示しない
   if (!clientId || !slot) {
