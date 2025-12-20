@@ -10,6 +10,7 @@ export const breweries = pgTable("breweries", {
   address: text("address"),
   websiteUrl: text("website_url"),
   imageUrl: text("image_url"),
+  imageSourceUrl: text("image_source_url"), // 画像の参照元URL
   status: text("status").default("approved").notNull(), // 'pending' | 'approved' | 'rejected'
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),

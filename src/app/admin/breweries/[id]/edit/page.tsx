@@ -30,6 +30,7 @@ export default async function EditBreweryPage({ params }: Props) {
       address: breweries.address,
       websiteUrl: breweries.websiteUrl,
       imageUrl: breweries.imageUrl,
+      imageSourceUrl: breweries.imageSourceUrl,
       status: breweries.status,
     })
     .from(breweries)
