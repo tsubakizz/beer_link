@@ -14,7 +14,12 @@ if (!connectionString) {
 const sql = postgres(connectionString, { prepare: false });
 
 // RLS設定の定義
-const rlsConfig = [
+// disableRls: true のテーブルはRLSを無効化する
+const rlsConfig: Array<{
+  table: string;
+  policies: Array<{ name: string; cmd: string; using: string }>;
+  disableRls?: boolean;
+}> = [
   // 公開読み取りのみ
   { table: "prefectures", policies: [{ name: "Public read access", cmd: "SELECT", using: "true" }] },
   { table: "beer_styles", policies: [{ name: "Public read access", cmd: "SELECT", using: "true" }] },
@@ -36,14 +41,14 @@ const rlsConfig = [
   // 問い合わせ（管理者のみアクセス、サービスロール経由）
   { table: "contacts", policies: [] },
 
-  // ログイン維持トークン（サーバー側からのみアクセス）
-  { table: "remember_tokens", policies: [{ name: "Service access", cmd: "ALL", using: "true" }] },
+  // ログイン維持トークン（サーバー側からのみアクセス、RLS無効化）
+  { table: "remember_tokens", policies: [], disableRls: true },
 ];
 
 async function setupRLS() {
   console.log("🔐 Setting up RLS...");
 
-  for (const { table, policies } of rlsConfig) {
+  for (const { table, policies, disableRls } of rlsConfig) {
     // テーブルが存在するか確認
     const exists = await sql`
       SELECT EXISTS (
@@ -55,6 +60,13 @@ async function setupRLS() {
 
     if (!exists[0].exists) {
       console.log(`  ⏭️  Skipping ${table} (table does not exist)`);
+      continue;
+    }
+
+    // RLSを無効化するテーブルの場合
+    if (disableRls) {
+      await sql.unsafe(`ALTER TABLE "${table}" DISABLE ROW LEVEL SECURITY`);
+      console.log(`  🔓 Disabled RLS on ${table}`);
       continue;
     }
 
