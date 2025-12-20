@@ -36,8 +36,8 @@ const rlsConfig = [
   // 問い合わせ（管理者のみアクセス、サービスロール経由）
   { table: "contacts", policies: [] },
 
-  // ログイン維持トークン（サービスロール経由のみ）
-  { table: "remember_tokens", policies: [] },
+  // ログイン維持トークン（サーバー側からのみアクセス）
+  { table: "remember_tokens", policies: [{ name: "Service access", cmd: "ALL", using: "true" }] },
 ];
 
 async function setupRLS() {

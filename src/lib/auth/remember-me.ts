@@ -79,13 +79,11 @@ export async function validateRememberToken(): Promise<{
   const now = new Date();
 
   // DBからトークンを検索（有効期限内のもの）
-  const [record] = await db
+  const [tokenRecord] = await db
     .select({
       userId: rememberTokens.userId,
-      email: users.email,
     })
     .from(rememberTokens)
-    .innerJoin(users, eq(rememberTokens.userId, users.id))
     .where(
       and(
         eq(rememberTokens.tokenHash, tokenHash),
@@ -93,13 +91,24 @@ export async function validateRememberToken(): Promise<{
       )
     );
 
-  if (!record) {
+  if (!tokenRecord) {
     // 無効なトークンはCookieから削除
     cookieStore.delete(REMEMBER_TOKEN_COOKIE_NAME);
     return null;
   }
 
-  return { userId: record.userId, email: record.email };
+  // ユーザー情報を取得
+  const [user] = await db
+    .select({ email: users.email })
+    .from(users)
+    .where(eq(users.id, tokenRecord.userId));
+
+  if (!user) {
+    cookieStore.delete(REMEMBER_TOKEN_COOKIE_NAME);
+    return null;
+  }
+
+  return { userId: tokenRecord.userId, email: user.email };
 }
 
 /**
@@ -134,13 +143,11 @@ export async function validateRememberTokenFromRequest(
   const now = new Date();
 
   // DBからトークンを検索（有効期限内のもの）
-  const [record] = await db
+  const [tokenRecord] = await db
     .select({
       userId: rememberTokens.userId,
-      email: users.email,
     })
     .from(rememberTokens)
-    .innerJoin(users, eq(rememberTokens.userId, users.id))
     .where(
       and(
         eq(rememberTokens.tokenHash, tokenHash),
@@ -148,11 +155,21 @@ export async function validateRememberTokenFromRequest(
       )
     );
 
-  if (!record) {
+  if (!tokenRecord) {
     return null;
   }
 
-  return { userId: record.userId, email: record.email };
+  // ユーザー情報を取得
+  const [user] = await db
+    .select({ email: users.email })
+    .from(users)
+    .where(eq(users.id, tokenRecord.userId));
+
+  if (!user) {
+    return null;
+  }
+
+  return { userId: tokenRecord.userId, email: user.email };
 }
 
 /**
