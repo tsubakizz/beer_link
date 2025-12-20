@@ -25,6 +25,7 @@ NEXT_PUBLIC_R2_PUBLIC_URL = "https://pub-cdb979a7c5384512a98ac2106b339f21.r2.dev
 NEXT_PUBLIC_R2_ASSETS_URL = "https://pub-cc459d1800fc49b793f5669f940edb77.r2.dev"
 NEXT_PUBLIC_SUPABASE_URL = "https://ywldjjuajjuabdenlylo.supabase.co"
 NEXT_PUBLIC_SUPABASE_ANON_KEY = "sb_publishable_e17vZYTMCHGnJaKXkVBJ_Q_gFNKRarH"
+R2_BUCKET_NAME = "beer-link-staging-public"
 
 # R2 バケットの紐付け
 [[r2_buckets]]
@@ -61,6 +62,7 @@ NEXT_PUBLIC_SUPABASE_ANON_KEY = "sb_publishable_HlSP-NOxzMpYRguIEA1e7Q_8IefLKy2"
 NEXT_PUBLIC_GTM_ID = "GTM-KD497KSD"
 NEXT_PUBLIC_ADSENSE_CLIENT_ID = "ca-pub-8072275026982974"
 NEXT_PUBLIC_ADSENSE_SLOT_ID = "7655634241"
+R2_BUCKET_NAME = "beer-link-production-public"
 
 [[env.production.r2_buckets]]
 binding = "R2_BUCKET"
