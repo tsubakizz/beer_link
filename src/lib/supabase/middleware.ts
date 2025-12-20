@@ -3,6 +3,7 @@ import { NextResponse, type NextRequest } from "next/server";
 import {
   validateRememberTokenFromRequest,
   createSupabaseSessionForUser,
+  rotateRememberTokenForMiddleware,
   REMEMBER_TOKEN_COOKIE_NAME,
 } from "@/lib/auth/remember-me";
 
@@ -55,6 +56,11 @@ export async function updateSession(request: NextRequest) {
 
         if (!error && data.user) {
           user = data.user;
+          // トークンをローテーション（有効期限を延長）
+          await rotateRememberTokenForMiddleware(
+            rememberUser.userId,
+            supabaseResponse
+          );
         }
       } else {
         // セッション発行に失敗した場合、無効なトークンとしてCookieを削除

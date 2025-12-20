@@ -3,7 +3,7 @@ import { rememberTokens, users } from "@/lib/db/schema";
 import { eq, and, gt } from "drizzle-orm";
 import { cookies } from "next/headers";
 import { createAdminClient } from "@/lib/supabase/admin";
-import type { NextRequest } from "next/server";
+import { type NextRequest, NextResponse } from "next/server";
 
 export const REMEMBER_TOKEN_COOKIE_NAME = "remember_token";
 const TOKEN_EXPIRY_DAYS = 30;
@@ -79,13 +79,11 @@ export async function validateRememberToken(): Promise<{
   const now = new Date();
 
   // DBからトークンを検索（有効期限内のもの）
-  const [record] = await db
+  const [tokenRecord] = await db
     .select({
       userId: rememberTokens.userId,
-      email: users.email,
     })
     .from(rememberTokens)
-    .innerJoin(users, eq(rememberTokens.userId, users.id))
     .where(
       and(
         eq(rememberTokens.tokenHash, tokenHash),
@@ -93,13 +91,24 @@ export async function validateRememberToken(): Promise<{
       )
     );
 
-  if (!record) {
+  if (!tokenRecord) {
     // 無効なトークンはCookieから削除
     cookieStore.delete(REMEMBER_TOKEN_COOKIE_NAME);
     return null;
   }
 
-  return { userId: record.userId, email: record.email };
+  // ユーザー情報を取得
+  const [user] = await db
+    .select({ email: users.email })
+    .from(users)
+    .where(eq(users.id, tokenRecord.userId));
+
+  if (!user) {
+    cookieStore.delete(REMEMBER_TOKEN_COOKIE_NAME);
+    return null;
+  }
+
+  return { userId: tokenRecord.userId, email: user.email };
 }
 
 /**
@@ -117,6 +126,9 @@ export async function deleteRememberToken(userId: string): Promise<void> {
 /**
  * ミドルウェア用: Remember meトークンを検証してユーザー情報を取得
  * NextRequestのcookiesを直接使用
+ *
+ * 注意: ミドルウェアはEdge Runtimeで実行されるため、
+ * postgres.js（netモジュール使用）ではなくSupabase Client（HTTP使用）を使用
  */
 export async function validateRememberTokenFromRequest(
   request: NextRequest
@@ -130,29 +142,41 @@ export async function validateRememberTokenFromRequest(
     return null;
   }
 
-  const tokenHash = await hashToken(token);
-  const now = new Date();
+  try {
+    const tokenHash = await hashToken(token);
+    const now = new Date().toISOString();
 
-  // DBからトークンを検索（有効期限内のもの）
-  const [record] = await db
-    .select({
-      userId: rememberTokens.userId,
-      email: users.email,
-    })
-    .from(rememberTokens)
-    .innerJoin(users, eq(rememberTokens.userId, users.id))
-    .where(
-      and(
-        eq(rememberTokens.tokenHash, tokenHash),
-        gt(rememberTokens.expiresAt, now)
-      )
-    );
+    // Supabase Admin Clientを使用（Edge Runtime対応）
+    const supabaseAdmin = createAdminClient();
 
-  if (!record) {
+    // DBからトークンを検索（有効期限内のもの）
+    const { data: tokenRecord, error: tokenError } = await supabaseAdmin
+      .from("remember_tokens")
+      .select("user_id")
+      .eq("token_hash", tokenHash)
+      .gt("expires_at", now)
+      .single();
+
+    if (tokenError || !tokenRecord) {
+      return null;
+    }
+
+    // ユーザー情報を取得
+    const { data: user, error: userError } = await supabaseAdmin
+      .from("users")
+      .select("email")
+      .eq("id", tokenRecord.user_id)
+      .single();
+
+    if (userError || !user) {
+      return null;
+    }
+
+    return { userId: tokenRecord.user_id, email: user.email };
+  } catch (error) {
+    console.error("validateRememberTokenFromRequest error:", error);
     return null;
   }
-
-  return { userId: record.userId, email: record.email };
 }
 
 /**
@@ -160,6 +184,42 @@ export async function validateRememberTokenFromRequest(
  */
 export async function rotateRememberToken(userId: string): Promise<void> {
   await createRememberToken(userId);
+}
+
+/**
+ * ミドルウェア用: トークンローテーション
+ * Edge Runtime対応のため、Supabase Client使用 + NextResponseにCookieを設定
+ */
+export async function rotateRememberTokenForMiddleware(
+  userId: string,
+  response: NextResponse
+): Promise<void> {
+  const supabaseAdmin = createAdminClient();
+
+  // 既存のトークンを削除
+  await supabaseAdmin.from("remember_tokens").delete().eq("user_id", userId);
+
+  // 新しいトークンを生成
+  const token = await generateToken();
+  const tokenHash = await hashToken(token);
+  const expiresAt = new Date();
+  expiresAt.setDate(expiresAt.getDate() + TOKEN_EXPIRY_DAYS);
+
+  // DBに保存
+  await supabaseAdmin.from("remember_tokens").insert({
+    user_id: userId,
+    token_hash: tokenHash,
+    expires_at: expiresAt.toISOString(),
+  });
+
+  // Cookieに保存
+  response.cookies.set(REMEMBER_TOKEN_COOKIE_NAME, token, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "lax",
+    maxAge: TOKEN_EXPIRY_DAYS * 24 * 60 * 60, // 30日（秒）
+    path: "/",
+  });
 }
 
 /**
