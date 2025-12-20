@@ -143,6 +143,12 @@ export async function validateRememberTokenFromRequest(
     const tokenHash = await hashToken(token);
     const now = new Date();
 
+    // デバッグ: 接続テスト
+    console.log("validateRememberTokenFromRequest: starting query", {
+      tokenHashPrefix: tokenHash.substring(0, 8),
+      now: now.toISOString(),
+    });
+
     // DBからトークンを検索（有効期限内のもの）
     const [tokenRecord] = await db
       .select({
@@ -155,6 +161,10 @@ export async function validateRememberTokenFromRequest(
           gt(rememberTokens.expiresAt, now)
         )
       );
+
+    console.log("validateRememberTokenFromRequest: query succeeded", {
+      found: !!tokenRecord,
+    });
 
     if (!tokenRecord) {
       return null;
@@ -173,10 +183,14 @@ export async function validateRememberTokenFromRequest(
     return { userId: tokenRecord.userId, email: user.email };
   } catch (error) {
     console.error("validateRememberTokenFromRequest error:", error);
+    const err = error as Error & { cause?: unknown; code?: string; detail?: string };
     console.error("Error details:", {
-      name: (error as Error).name,
-      message: (error as Error).message,
-      stack: (error as Error).stack,
+      name: err.name,
+      message: err.message,
+      code: err.code,
+      detail: err.detail,
+      cause: err.cause,
+      fullError: JSON.stringify(error, Object.getOwnPropertyNames(error)),
     });
     return null;
   }
