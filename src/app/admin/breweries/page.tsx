@@ -1,6 +1,7 @@
 import { db } from "@/lib/db";
 import { breweries, prefectures } from "@/lib/db/schema";
 import { desc, eq } from "drizzle-orm";
+import Link from "next/link";
 import { BreweryList } from "./BreweryList";
 
 // ビルド時にDBに接続できないため動的レンダリング
@@ -49,12 +50,6 @@ export default async function BreweriesAdminPage({ searchParams }: Props) {
     );
   }
 
-  // 都道府県一覧を取得（編集用）
-  const prefectureList = await db
-    .select({ id: prefectures.id, name: prefectures.name })
-    .from(prefectures)
-    .orderBy(prefectures.id);
-
   // 統計
   const stats = {
     total: breweryList.length,
@@ -64,7 +59,12 @@ export default async function BreweriesAdminPage({ searchParams }: Props) {
 
   return (
     <div>
-      <h1 className="text-3xl font-bold mb-8">ブルワリー管理</h1>
+      <div className="flex justify-between items-center mb-8">
+        <h1 className="text-3xl font-bold">ブルワリー管理</h1>
+        <Link href="/admin/breweries/new" className="btn btn-primary">
+          新規作成
+        </Link>
+      </div>
 
       {/* 統計カード */}
       <div className="grid grid-cols-3 gap-4 mb-8">
@@ -84,7 +84,6 @@ export default async function BreweriesAdminPage({ searchParams }: Props) {
 
       <BreweryList
         breweries={filteredBreweries}
-        prefectures={prefectureList}
         currentStatus={statusFilter}
         currentSearch={searchQuery}
       />
