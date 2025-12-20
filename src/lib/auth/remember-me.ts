@@ -3,7 +3,7 @@ import { rememberTokens, users } from "@/lib/db/schema";
 import { eq, and, gt } from "drizzle-orm";
 import { cookies } from "next/headers";
 import { createAdminClient } from "@/lib/supabase/admin";
-import type { NextRequest } from "next/server";
+import { type NextRequest, NextResponse } from "next/server";
 
 export const REMEMBER_TOKEN_COOKIE_NAME = "remember_token";
 const TOKEN_EXPIRY_DAYS = 30;
@@ -184,6 +184,42 @@ export async function validateRememberTokenFromRequest(
  */
 export async function rotateRememberToken(userId: string): Promise<void> {
   await createRememberToken(userId);
+}
+
+/**
+ * ミドルウェア用: トークンローテーション
+ * Edge Runtime対応のため、Supabase Client使用 + NextResponseにCookieを設定
+ */
+export async function rotateRememberTokenForMiddleware(
+  userId: string,
+  response: NextResponse
+): Promise<void> {
+  const supabaseAdmin = createAdminClient();
+
+  // 既存のトークンを削除
+  await supabaseAdmin.from("remember_tokens").delete().eq("user_id", userId);
+
+  // 新しいトークンを生成
+  const token = await generateToken();
+  const tokenHash = await hashToken(token);
+  const expiresAt = new Date();
+  expiresAt.setDate(expiresAt.getDate() + TOKEN_EXPIRY_DAYS);
+
+  // DBに保存
+  await supabaseAdmin.from("remember_tokens").insert({
+    user_id: userId,
+    token_hash: tokenHash,
+    expires_at: expiresAt.toISOString(),
+  });
+
+  // Cookieに保存
+  response.cookies.set(REMEMBER_TOKEN_COOKIE_NAME, token, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "lax",
+    maxAge: TOKEN_EXPIRY_DAYS * 24 * 60 * 60, // 30日（秒）
+    path: "/",
+  });
 }
 
 /**
