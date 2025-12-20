@@ -184,10 +184,12 @@ export default async function BreweryDetailPage({ params }: Props) {
 
           {/* 詳細情報 */}
           <div className="space-y-3">
-            {brewery.address && (
+            {(brewery.prefecture || brewery.address) && (
               <div className="flex items-start gap-2">
                 <span className="font-medium min-w-20">所在地:</span>
-                <span className="text-base-content/80">{brewery.address}</span>
+                <span className="text-base-content/80">
+                  {brewery.prefecture?.name}{brewery.address}
+                </span>
               </div>
             )}
             {brewery.websiteUrl && (

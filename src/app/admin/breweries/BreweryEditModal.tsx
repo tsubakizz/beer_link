@@ -104,15 +104,20 @@ export function BreweryEditModal({ brewery, prefectures, onClose }: Props) {
           {/* 住所 */}
           <div className="form-control">
             <label className="label">
-              <span className="label-text">住所</span>
+              <span className="label-text">住所（都道府県以降）</span>
             </label>
             <input
               type="text"
               value={address}
               onChange={(e) => setAddress(e.target.value)}
               className="input input-bordered"
-              placeholder="〒000-0000 東京都..."
+              placeholder="〒000-0000 渋谷区..."
             />
+            <label className="label">
+              <span className="label-text-alt text-base-content/60">
+                都道府県は上で選択してください。表示時に自動で結合されます。
+              </span>
+            </label>
           </div>
 
           {/* Webサイト */}
