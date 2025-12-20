@@ -126,6 +126,9 @@ export async function deleteRememberToken(userId: string): Promise<void> {
 /**
  * ミドルウェア用: Remember meトークンを検証してユーザー情報を取得
  * NextRequestのcookiesを直接使用
+ *
+ * 注意: ミドルウェアはEdge Runtimeで実行されるため、
+ * postgres.js（netモジュール使用）ではなくSupabase Client（HTTP使用）を使用
  */
 export async function validateRememberTokenFromRequest(
   request: NextRequest
@@ -141,57 +144,37 @@ export async function validateRememberTokenFromRequest(
 
   try {
     const tokenHash = await hashToken(token);
-    const now = new Date();
+    const now = new Date().toISOString();
 
-    // デバッグ: 接続テスト
-    console.log("validateRememberTokenFromRequest: starting query", {
-      tokenHashPrefix: tokenHash.substring(0, 8),
-      now: now.toISOString(),
-    });
+    // Supabase Admin Clientを使用（Edge Runtime対応）
+    const supabaseAdmin = createAdminClient();
 
     // DBからトークンを検索（有効期限内のもの）
-    const [tokenRecord] = await db
-      .select({
-        userId: rememberTokens.userId,
-      })
-      .from(rememberTokens)
-      .where(
-        and(
-          eq(rememberTokens.tokenHash, tokenHash),
-          gt(rememberTokens.expiresAt, now)
-        )
-      );
+    const { data: tokenRecord, error: tokenError } = await supabaseAdmin
+      .from("remember_tokens")
+      .select("user_id")
+      .eq("token_hash", tokenHash)
+      .gt("expires_at", now)
+      .single();
 
-    console.log("validateRememberTokenFromRequest: query succeeded", {
-      found: !!tokenRecord,
-    });
-
-    if (!tokenRecord) {
+    if (tokenError || !tokenRecord) {
       return null;
     }
 
     // ユーザー情報を取得
-    const [user] = await db
-      .select({ email: users.email })
-      .from(users)
-      .where(eq(users.id, tokenRecord.userId));
+    const { data: user, error: userError } = await supabaseAdmin
+      .from("users")
+      .select("email")
+      .eq("id", tokenRecord.user_id)
+      .single();
 
-    if (!user) {
+    if (userError || !user) {
       return null;
     }
 
-    return { userId: tokenRecord.userId, email: user.email };
+    return { userId: tokenRecord.user_id, email: user.email };
   } catch (error) {
     console.error("validateRememberTokenFromRequest error:", error);
-    const err = error as Error & { cause?: unknown; code?: string; detail?: string };
-    console.error("Error details:", {
-      name: err.name,
-      message: err.message,
-      code: err.code,
-      detail: err.detail,
-      cause: err.cause,
-      fullError: JSON.stringify(error, Object.getOwnPropertyNames(error)),
-    });
     return null;
   }
 }
