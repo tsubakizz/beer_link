@@ -1,6 +1,7 @@
 import { db } from "@/lib/db";
 import { beerStyles, beerStyleOtherNames } from "@/lib/db/schema";
 import { desc } from "drizzle-orm";
+import Link from "next/link";
 import { StyleList } from "./StyleList";
 
 // ビルド時にDBに接続できないため動的レンダリング
@@ -68,7 +69,12 @@ export default async function StylesAdminPage({ searchParams }: Props) {
 
   return (
     <div>
-      <h1 className="text-3xl font-bold mb-8">スタイル管理</h1>
+      <div className="flex justify-between items-center mb-8">
+        <h1 className="text-3xl font-bold">スタイル管理</h1>
+        <Link href="/admin/styles/new" className="btn btn-primary">
+          新規作成
+        </Link>
+      </div>
 
       {/* 統計カード */}
       <div className="grid grid-cols-3 gap-4 mb-8">
