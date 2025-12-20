@@ -16,9 +16,10 @@ const navItems = [
 
 interface NavigationClientProps {
   user: User | null;
+  logoUrl: string;
 }
 
-export function NavigationClient({ user }: NavigationClientProps) {
+export function NavigationClient({ user, logoUrl }: NavigationClientProps) {
   const pathname = usePathname();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
@@ -36,7 +37,7 @@ export function NavigationClient({ user }: NavigationClientProps) {
               className="hover:opacity-80 transition-opacity flex items-center gap-2"
             >
               <Image
-                src={`${process.env.NEXT_PUBLIC_R2_ASSETS_URL}/7fde81d3-c2be-4b41-8485-7ab75bf50055.webp`}
+                src={logoUrl}
                 alt="Beer Link"
                 width={40}
                 height={40}
