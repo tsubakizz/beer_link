@@ -28,7 +28,7 @@ export function BreweryCard({ brewery }: BreweryCardProps) {
               alt={brewery.name}
               width={200}
               height={200}
-              className="rounded-xl h-48 w-full object-cover bg-base-200"
+              className="rounded-xl h-48 w-full object-contain bg-base-200"
             />
           ) : (
             <div className="rounded-xl h-48 w-full bg-base-200 flex items-center justify-center">

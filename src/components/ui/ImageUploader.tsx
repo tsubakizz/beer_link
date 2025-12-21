@@ -16,9 +16,9 @@ interface ImageUploaderProps {
   category: ImageCategory;
   onUploadComplete: (url: string) => void;
   onUploadError?: (error: string) => void;
+  onUploadingChange?: (isUploading: boolean) => void;
   currentImageUrl?: string | null;
   className?: string;
-  aspectRatio?: "square" | "video" | "auto";
 }
 
 type UploadStatus = "idle" | "compressing" | "uploading" | "complete" | "error";
@@ -27,9 +27,9 @@ export function ImageUploader({
   category,
   onUploadComplete,
   onUploadError,
+  onUploadingChange,
   currentImageUrl,
   className = "",
-  aspectRatio = "square",
 }: ImageUploaderProps) {
   const [previewUrl, setPreviewUrl] = useState<string | null>(
     currentImageUrl || null
@@ -47,6 +47,12 @@ export function ImageUploader({
       }
     };
   }, [previewUrl, currentImageUrl]);
+
+  // アップロード状態の変化を親に通知
+  useEffect(() => {
+    const isUploading = status === "compressing" || status === "uploading";
+    onUploadingChange?.(isUploading);
+  }, [status, onUploadingChange]);
 
   const handleFileSelect = useCallback(
     async (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -154,12 +160,6 @@ export function ImageUploader({
     }
   };
 
-  const aspectRatioClass = {
-    square: "aspect-square",
-    video: "aspect-video",
-    auto: "",
-  }[aspectRatio];
-
   const isLoading = status === "compressing" || status === "uploading";
 
   return (
@@ -176,7 +176,7 @@ export function ImageUploader({
       {previewUrl ? (
         <div className="relative">
           <div
-            className={`relative ${aspectRatioClass} w-full overflow-hidden rounded-lg border border-base-300 bg-base-200`}
+            className="relative aspect-square w-full overflow-hidden rounded-lg border border-base-300 bg-base-200"
           >
             <Image
               src={previewUrl}
@@ -224,7 +224,7 @@ export function ImageUploader({
             type="button"
             onClick={handleClick}
             disabled={isLoading}
-            className={`${aspectRatioClass} min-h-32 min-w-48 border-2 border-dashed border-base-300 rounded-lg
+            className={`min-h-32 min-w-48 border-2 border-dashed border-base-300 rounded-lg
               hover:border-primary hover:bg-base-200/50 transition-colors
               flex flex-col items-center justify-center gap-2 cursor-pointer px-8
               ${isLoading ? "opacity-50 cursor-not-allowed" : ""}`}
