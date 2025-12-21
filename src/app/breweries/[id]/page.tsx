@@ -140,7 +140,7 @@ export default async function BreweryDetailPage({ params }: Props) {
               alt={brewery.name}
               width={400}
               height={400}
-              className="rounded-xl w-full h-auto object-cover shadow-lg bg-base-200"
+              className="rounded-xl w-full h-auto min-h-64 object-contain shadow-lg bg-base-200"
             />
           ) : (
             <div className="rounded-xl w-full aspect-square bg-base-200 flex items-center justify-center shadow-lg">
@@ -208,12 +208,12 @@ export default async function BreweryDetailPage({ params }: Props) {
             )}
             {brewery.websiteUrl && (
               <div className="flex items-start gap-2">
-                <span className="font-medium min-w-20">Website:</span>
+                <span className="font-medium min-w-20 shrink-0">Website:</span>
                 <a
                   href={brewery.websiteUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="link link-primary"
+                  className="link link-primary break-all"
                 >
                   {brewery.websiteUrl}
                 </a>
