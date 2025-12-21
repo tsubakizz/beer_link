@@ -47,6 +47,7 @@ export function BeerForm({ beer, breweries, styles }: Props) {
   const [imageUrl, setImageUrl] = useState<string | null>(
     beer?.imageUrl || null
   );
+  const [isUploading, setIsUploading] = useState(false);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -241,8 +242,8 @@ export function BeerForm({ beer, breweries, styles }: Props) {
         <ImageUploader
           category="beers"
           onUploadComplete={(url) => setImageUrl(url || null)}
+          onUploadingChange={setIsUploading}
           currentImageUrl={imageUrl}
-          aspectRatio="square"
         />
       </fieldset>
 
@@ -251,7 +252,7 @@ export function BeerForm({ beer, breweries, styles }: Props) {
         <Link href="/admin/beers" className="btn btn-ghost">
           キャンセル
         </Link>
-        <button type="submit" className="btn btn-primary" disabled={isPending}>
+        <button type="submit" className="btn btn-primary" disabled={isPending || isUploading}>
           {isPending ? (
             <span className="loading loading-spinner loading-sm"></span>
           ) : isEdit ? (

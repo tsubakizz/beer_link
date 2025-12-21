@@ -33,6 +33,7 @@ export function ReviewEditForm({ beerId, review }: ReviewEditFormProps) {
   const [sourness, setSourness] = useState<number | null>(review.sourness);
   const [comment, setComment] = useState(review.comment || "");
   const [imageUrl, setImageUrl] = useState<string | null>(review.imageUrl);
+  const [isUploading, setIsUploading] = useState(false);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -174,8 +175,8 @@ export function ReviewEditForm({ beerId, review }: ReviewEditFormProps) {
         <ImageUploader
           category="reviews"
           onUploadComplete={(url) => setImageUrl(url || null)}
+          onUploadingChange={setIsUploading}
           currentImageUrl={imageUrl}
-          aspectRatio="video"
         />
         <p className="text-sm text-base-content/60 mt-2">
           投稿いただいた写真は、ビールの代表画像として使用させていただく場合があります。
@@ -202,7 +203,7 @@ export function ReviewEditForm({ beerId, review }: ReviewEditFormProps) {
         <button
           type="submit"
           className="btn btn-primary flex-1"
-          disabled={isPending || rating === 0}
+          disabled={isPending || rating === 0 || isUploading}
         >
           {isPending ? (
             <span className="loading loading-spinner loading-sm"></span>
