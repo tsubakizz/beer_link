@@ -8,7 +8,6 @@ import { createStyle, updateStyle } from "./[id]/edit/actions";
 interface Style {
   id: number;
   name: string;
-  slug: string;
   description: string | null;
   shortDescription: string | null;
   bitterness: number | null;

@@ -8,7 +8,6 @@ import { deleteStyle, updateStyleStatus } from "./actions";
 interface Style {
   id: number;
   name: string;
-  slug: string;
   description: string | null;
   status: string;
   createdAt: Date;
