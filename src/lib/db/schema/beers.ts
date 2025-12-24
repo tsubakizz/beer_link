@@ -10,6 +10,7 @@ export const beers = pgTable("beers", {
   description: text("description"),
   breweryId: integer("brewery_id").notNull().references(() => breweries.id),
   styleId: integer("style_id").references(() => beerStyles.id),
+  customStyleText: varchar("custom_style_text", { length: 100 }), // 「その他」スタイル選択時のカスタム名
   abv: decimal("abv", { precision: 4, scale: 2 }),
   ibu: integer("ibu"),
   imageUrl: text("image_url"),
