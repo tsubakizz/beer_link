@@ -80,7 +80,16 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   ];
 
   // 動的ページを取得
-  const [beerList, breweryList, styleList, prefectureList, beersWithIbu, beersWithAbv] = await Promise.all([
+  const [
+    beerList,
+    breweryList,
+    styleList,
+    prefectureList,
+    beersWithIbu,
+    beersWithAbv,
+    stylesWithBeers,
+    breweriesWithBeers,
+  ] = await Promise.all([
     db
       .select({ id: beers.id, updatedAt: beers.updatedAt })
       .from(beers),
@@ -103,6 +112,16 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       .select({ abv: beers.abv })
       .from(beers)
       .where(isNotNull(beers.abv)),
+    // ビールが存在するスタイルのみ
+    db
+      .selectDistinct({ id: beerStyles.id })
+      .from(beerStyles)
+      .innerJoin(beers, eq(beers.styleId, beerStyles.id)),
+    // ビールが存在するブルワリーのみ
+    db
+      .selectDistinct({ id: breweries.id })
+      .from(breweries)
+      .innerJoin(beers, eq(beers.breweryId, breweries.id)),
   ]);
 
   // ビール詳細ページ
@@ -129,16 +148,16 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.6,
   }));
 
-  // ビアスタイル別ビール一覧ページ
-  const styleBeerPages: MetadataRoute.Sitemap = styleList.map((style) => ({
+  // ビアスタイル別ビール一覧ページ（ビールが存在するスタイルのみ）
+  const styleBeerPages: MetadataRoute.Sitemap = stylesWithBeers.map((style) => ({
     url: `${siteUrl}/beers/style/${style.id}`,
     lastModified: new Date(),
     changeFrequency: "daily" as const,
     priority: 0.7,
   }));
 
-  // ブルワリー別ビール一覧ページ
-  const breweryBeerPages: MetadataRoute.Sitemap = breweryList.map((brewery) => ({
+  // ブルワリー別ビール一覧ページ（ビールが存在するブルワリーのみ）
+  const breweryBeerPages: MetadataRoute.Sitemap = breweriesWithBeers.map((brewery) => ({
     url: `${siteUrl}/beers/brewery/${brewery.id}`,
     lastModified: new Date(),
     changeFrequency: "daily" as const,
