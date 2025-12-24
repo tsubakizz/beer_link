@@ -11,6 +11,9 @@ export const breweries = pgTable("breweries", {
   websiteUrl: text("website_url"),
   imageUrl: text("image_url"),
   imageSourceUrl: text("image_source_url"), // 画像の参照元URL
+  amazonUrl: text("amazon_url"), // Amazonストアリンク
+  rakutenUrl: text("rakuten_url"), // 楽天ストアリンク
+  otherShopUrl: text("other_shop_url"), // その他のサイトURL
   status: text("status").default("approved").notNull(), // 'pending' | 'approved' | 'rejected'
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),

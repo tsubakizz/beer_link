@@ -34,6 +34,10 @@ interface BeerInput {
   shortDescription: string | null;
   description: string | null;
   imageUrl: string | null;
+  amazonUrl: string | null;
+  rakutenUrl: string | null;
+  officialUrl: string | null;
+  otherShopUrl: string | null;
 }
 
 // ビールの作成
@@ -65,6 +69,10 @@ export async function createBeer(input: BeerInput) {
       description: input.description,
       status: "approved",
       imageUrl: input.imageUrl,
+      amazonUrl: input.amazonUrl,
+      rakutenUrl: input.rakutenUrl,
+      officialUrl: input.officialUrl,
+      otherShopUrl: input.otherShopUrl,
     });
 
     revalidatePath("/admin/beers");
@@ -106,6 +114,10 @@ export async function updateBeer(beerId: number, input: BeerInput) {
         shortDescription: input.shortDescription,
         description: input.description,
         imageUrl: input.imageUrl,
+        amazonUrl: input.amazonUrl,
+        rakutenUrl: input.rakutenUrl,
+        officialUrl: input.officialUrl,
+        otherShopUrl: input.otherShopUrl,
         updatedAt: new Date(),
       })
       .where(eq(beers.id, beerId));

@@ -19,13 +19,17 @@ interface Beer {
   shortDescription: string | null;
   description: string | null;
   imageUrl: string | null;
+  amazonUrl: string | null;
+  rakutenUrl: string | null;
+  officialUrl: string | null;
+  otherShopUrl: string | null;
   status: string;
 }
 
 interface Props {
   beer?: Beer;
   breweries: { id: number; name: string }[];
-  styles: { id: number; name: string }[];
+  styles: { id: number; name: string; otherNames: string[] }[];
 }
 
 export function BeerForm({ beer, breweries, styles }: Props) {
@@ -56,6 +60,10 @@ export function BeerForm({ beer, breweries, styles }: Props) {
   const [imageUrl, setImageUrl] = useState<string | null>(
     beer?.imageUrl || null
   );
+  const [amazonUrl, setAmazonUrl] = useState(beer?.amazonUrl || "");
+  const [rakutenUrl, setRakutenUrl] = useState(beer?.rakutenUrl || "");
+  const [officialUrl, setOfficialUrl] = useState(beer?.officialUrl || "");
+  const [otherShopUrl, setOtherShopUrl] = useState(beer?.otherShopUrl || "");
   const [isUploading, setIsUploading] = useState(false);
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -83,6 +91,10 @@ export function BeerForm({ beer, breweries, styles }: Props) {
         shortDescription: shortDescription || null,
         description: description || null,
         imageUrl,
+        amazonUrl: amazonUrl || null,
+        rakutenUrl: rakutenUrl || null,
+        officialUrl: officialUrl || null,
+        otherShopUrl: otherShopUrl || null,
       };
 
       const result = isEdit
@@ -283,6 +295,79 @@ export function BeerForm({ beer, breweries, styles }: Props) {
           onUploadingChange={setIsUploading}
           currentImageUrl={imageUrl}
         />
+      </fieldset>
+
+      {/* 購入リンク */}
+      <fieldset className="fieldset bg-base-200 border-base-300 rounded-box border p-4">
+        <legend className="fieldset-legend">購入リンク</legend>
+
+        <div className="space-y-4">
+          {/* Official URL */}
+          <div>
+            <label htmlFor="beer-official-url" className="label">
+              <span className="text-base label-text">公式サイト URL</span>
+            </label>
+            <input
+              id="beer-official-url"
+              type="url"
+              value={officialUrl}
+              onChange={(e) => setOfficialUrl(e.target.value)}
+              className="w-full input input-bordered"
+              placeholder="https://..."
+            />
+          </div>
+
+          {/* Amazon URL */}
+          <div>
+            <label htmlFor="beer-amazon-url" className="label">
+              <span className="text-base label-text">Amazon URL</span>
+            </label>
+            <input
+              id="beer-amazon-url"
+              type="url"
+              value={amazonUrl}
+              onChange={(e) => setAmazonUrl(e.target.value)}
+              className="w-full input input-bordered"
+              placeholder="https://www.amazon.co.jp/..."
+            />
+            <p className="text-sm text-base-content/60 mt-1">
+              アフィリエイトリンクを含む完全なURLを入力
+            </p>
+          </div>
+
+          {/* Rakuten URL */}
+          <div>
+            <label htmlFor="beer-rakuten-url" className="label">
+              <span className="text-base label-text">楽天 URL</span>
+            </label>
+            <input
+              id="beer-rakuten-url"
+              type="url"
+              value={rakutenUrl}
+              onChange={(e) => setRakutenUrl(e.target.value)}
+              className="w-full input input-bordered"
+              placeholder="https://item.rakuten.co.jp/..."
+            />
+            <p className="text-sm text-base-content/60 mt-1">
+              アフィリエイトリンクを含む完全なURLを入力
+            </p>
+          </div>
+
+          {/* Other Shop URL */}
+          <div>
+            <label htmlFor="beer-other-shop-url" className="label">
+              <span className="text-base label-text">その他のサイト URL</span>
+            </label>
+            <input
+              id="beer-other-shop-url"
+              type="url"
+              value={otherShopUrl}
+              onChange={(e) => setOtherShopUrl(e.target.value)}
+              className="w-full input input-bordered"
+              placeholder="https://..."
+            />
+          </div>
+        </div>
       </fieldset>
 
       {/* ボタン */}

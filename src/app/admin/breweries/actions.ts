@@ -33,6 +33,9 @@ interface BreweryInput {
   websiteUrl: string | null;
   imageUrl: string | null;
   imageSourceUrl: string | null;
+  amazonUrl: string | null;
+  rakutenUrl: string | null;
+  otherShopUrl: string | null;
 }
 
 // ブルワリーの作成
@@ -62,6 +65,9 @@ export async function createBrewery(input: BreweryInput) {
       websiteUrl: input.websiteUrl,
       imageUrl: input.imageUrl,
       imageSourceUrl: input.imageSourceUrl,
+      amazonUrl: input.amazonUrl,
+      rakutenUrl: input.rakutenUrl,
+      otherShopUrl: input.otherShopUrl,
       status: "approved",
     });
 
@@ -103,6 +109,9 @@ export async function updateBrewery(breweryId: number, input: BreweryInput) {
         websiteUrl: input.websiteUrl,
         imageUrl: input.imageUrl,
         imageSourceUrl: input.imageSourceUrl,
+        amazonUrl: input.amazonUrl,
+        rakutenUrl: input.rakutenUrl,
+        otherShopUrl: input.otherShopUrl,
         updatedAt: new Date(),
       })
       .where(eq(breweries.id, breweryId));

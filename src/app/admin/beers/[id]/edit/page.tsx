@@ -1,5 +1,5 @@
 import { db } from "@/lib/db";
-import { beers, breweries, beerStyles } from "@/lib/db/schema";
+import { beers, breweries, beerStyles, beerStyleOtherNames } from "@/lib/db/schema";
 import { eq } from "drizzle-orm";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -32,6 +32,10 @@ export default async function EditBeerPage({ params }: Props) {
       shortDescription: beers.shortDescription,
       description: beers.description,
       imageUrl: beers.imageUrl,
+      amazonUrl: beers.amazonUrl,
+      rakutenUrl: beers.rakutenUrl,
+      officialUrl: beers.officialUrl,
+      otherShopUrl: beers.otherShopUrl,
       status: beers.status,
     })
     .from(beers)
@@ -54,6 +58,30 @@ export default async function EditBeerPage({ params }: Props) {
     .from(beerStyles)
     .orderBy(beerStyles.name);
 
+  // ビアスタイル別名一覧を取得
+  const otherNamesList = await db
+    .select({
+      styleId: beerStyleOtherNames.styleId,
+      name: beerStyleOtherNames.name,
+    })
+    .from(beerStyleOtherNames);
+
+  // スタイルIDごとに別名をグループ化
+  const otherNamesByStyleId = otherNamesList.reduce(
+    (acc, { styleId, name }) => {
+      if (!acc[styleId]) acc[styleId] = [];
+      acc[styleId].push(name);
+      return acc;
+    },
+    {} as Record<number, string[]>
+  );
+
+  // スタイルリストに別名を追加
+  const styleListWithOtherNames = styleList.map((style) => ({
+    ...style,
+    otherNames: otherNamesByStyleId[style.id] || [],
+  }));
+
   return (
     <div>
       {/* パンくずリスト */}
@@ -71,7 +99,7 @@ export default async function EditBeerPage({ params }: Props) {
 
       <h1 className="text-3xl font-bold mb-8">ビールを編集</h1>
 
-      <BeerForm beer={beer} breweries={breweryList} styles={styleList} />
+      <BeerForm beer={beer} breweries={breweryList} styles={styleListWithOtherNames} />
     </div>
   );
 }
