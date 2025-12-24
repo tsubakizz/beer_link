@@ -250,7 +250,6 @@ async function FilteredBeersPage({ filterType, filterId }: { filterType: "style"
     db
       .select({ id: beerStyles.id, name: beerStyles.name })
       .from(beerStyles)
-      .where(eq(beerStyles.status, "approved"))
       .orderBy(beerStyles.name),
     db
       .select({ id: breweries.id, name: breweries.name })

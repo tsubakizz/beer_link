@@ -109,7 +109,7 @@ export default async function StylesPage({ searchParams }: Props) {
   const offset = (currentPage - 1) * ITEMS_PER_PAGE;
 
   // 検索条件を構築
-  const conditions: SQL[] = [eq(beerStyles.status, "approved")];
+  const conditions: SQL[] = [];
 
   // 範囲フィルター用のヘルパー
   const addRangeCondition = (

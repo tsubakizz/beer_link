@@ -143,7 +143,6 @@ export default async function BreweryBeersPage({
         .selectDistinct({ id: beerStyles.id, name: beerStyles.name })
         .from(beerStyles)
         .innerJoin(beers, eq(beers.styleId, beerStyles.id))
-        .where(eq(beerStyles.status, "approved"))
         .orderBy(beerStyles.name),
       db
         .select({
