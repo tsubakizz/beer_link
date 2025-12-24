@@ -53,17 +53,9 @@ export async function submitStyle(input: SubmitStyleInput) {
     return { success: false, error: "この名前は既に別のスタイルの別名として登録されています" };
   }
 
-  // スラグを生成
-  const slug = input.name
-    .toLowerCase()
-    .replace(/[^a-z0-9\u3040-\u309f\u30a0-\u30ff\u4e00-\u9faf]/g, "-")
-    .replace(/-+/g, "-")
-    .replace(/^-|-$/g, "") || `style-${Date.now()}`;
-
   try {
     await db.insert(beerStyles).values({
       name: input.name,
-      slug,
       status: "pending", // 管理者の確認待ち
     });
 
