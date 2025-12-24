@@ -17,6 +17,9 @@ interface Brewery {
   websiteUrl: string | null;
   imageUrl: string | null;
   imageSourceUrl: string | null;
+  amazonUrl: string | null;
+  rakutenUrl: string | null;
+  otherShopUrl: string | null;
   status: string;
 }
 
@@ -48,6 +51,9 @@ export function BreweryForm({ brewery, prefectures }: Props) {
   const [imageSourceUrl, setImageSourceUrl] = useState(
     brewery?.imageSourceUrl || ""
   );
+  const [amazonUrl, setAmazonUrl] = useState(brewery?.amazonUrl || "");
+  const [rakutenUrl, setRakutenUrl] = useState(brewery?.rakutenUrl || "");
+  const [otherShopUrl, setOtherShopUrl] = useState(brewery?.otherShopUrl || "");
   const [isUploading, setIsUploading] = useState(false);
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -69,6 +75,9 @@ export function BreweryForm({ brewery, prefectures }: Props) {
         websiteUrl: websiteUrl || null,
         imageUrl,
         imageSourceUrl: imageSourceUrl || null,
+        amazonUrl: amazonUrl || null,
+        rakutenUrl: rakutenUrl || null,
+        otherShopUrl: otherShopUrl || null,
       };
 
       const result = isEdit
@@ -238,6 +247,64 @@ export function BreweryForm({ brewery, prefectures }: Props) {
             <p className="text-sm text-base-content/60 mt-1">
               外部サイトから画像を使用する場合、出典元のURLを入力してください
             </p>
+          </div>
+        </div>
+      </fieldset>
+
+      {/* 購入リンク */}
+      <fieldset className="fieldset bg-base-200 border-base-300 rounded-box border p-4">
+        <legend className="fieldset-legend">購入リンク</legend>
+
+        <div className="space-y-4">
+          {/* Amazon URL */}
+          <div>
+            <label htmlFor="brewery-amazon-url" className="label">
+              <span className="text-base label-text">Amazon URL</span>
+            </label>
+            <input
+              id="brewery-amazon-url"
+              type="url"
+              value={amazonUrl}
+              onChange={(e) => setAmazonUrl(e.target.value)}
+              className="w-full input input-bordered"
+              placeholder="https://www.amazon.co.jp/..."
+            />
+            <p className="text-sm text-base-content/60 mt-1">
+              アフィリエイトリンクを含む完全なURLを入力
+            </p>
+          </div>
+
+          {/* Rakuten URL */}
+          <div>
+            <label htmlFor="brewery-rakuten-url" className="label">
+              <span className="text-base label-text">楽天 URL</span>
+            </label>
+            <input
+              id="brewery-rakuten-url"
+              type="url"
+              value={rakutenUrl}
+              onChange={(e) => setRakutenUrl(e.target.value)}
+              className="w-full input input-bordered"
+              placeholder="https://item.rakuten.co.jp/..."
+            />
+            <p className="text-sm text-base-content/60 mt-1">
+              アフィリエイトリンクを含む完全なURLを入力
+            </p>
+          </div>
+
+          {/* Other Shop URL */}
+          <div>
+            <label htmlFor="brewery-other-shop-url" className="label">
+              <span className="text-base label-text">その他のサイト URL</span>
+            </label>
+            <input
+              id="brewery-other-shop-url"
+              type="url"
+              value={otherShopUrl}
+              onChange={(e) => setOtherShopUrl(e.target.value)}
+              className="w-full input input-bordered"
+              placeholder="https://..."
+            />
           </div>
         </div>
       </fieldset>

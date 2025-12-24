@@ -31,6 +31,9 @@ export default async function EditBreweryPage({ params }: Props) {
       websiteUrl: breweries.websiteUrl,
       imageUrl: breweries.imageUrl,
       imageSourceUrl: breweries.imageSourceUrl,
+      amazonUrl: breweries.amazonUrl,
+      rakutenUrl: breweries.rakutenUrl,
+      otherShopUrl: breweries.otherShopUrl,
       status: breweries.status,
     })
     .from(breweries)
