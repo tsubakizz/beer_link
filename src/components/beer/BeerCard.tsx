@@ -1,5 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
+import { OTHER_STYLE_NAME } from "@/lib/constants/beer-styles";
 
 interface BeerCardProps {
   beer: {
@@ -10,6 +11,7 @@ interface BeerCardProps {
     abv?: string | null;
     ibu?: number | null;
     imageUrl?: string | null;
+    customStyleText?: string | null;
     brewery?: {
       id: number;
       name: string;
@@ -68,7 +70,9 @@ export function BeerCard({ beer }: BeerCardProps) {
           <div className="flex flex-wrap gap-2 mt-2">
             {beer.style && (
               <span className="badge badge-primary badge-sm">
-                {beer.style.name}
+                {beer.style.name === OTHER_STYLE_NAME
+                  ? (beer.customStyleText || "その他")
+                  : beer.style.name}
               </span>
             )}
             {beer.abv && (

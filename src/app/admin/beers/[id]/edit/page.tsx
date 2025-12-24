@@ -26,6 +26,7 @@ export default async function EditBeerPage({ params }: Props) {
       name: beers.name,
       breweryId: beers.breweryId,
       styleId: beers.styleId,
+      customStyleText: beers.customStyleText,
       abv: beers.abv,
       ibu: beers.ibu,
       shortDescription: beers.shortDescription,

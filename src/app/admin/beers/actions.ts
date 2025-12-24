@@ -28,6 +28,7 @@ interface BeerInput {
   name: string;
   breweryId: number;
   styleId: number | null;
+  customStyleText?: string | null;
   abv: string | null;
   ibu: number | null;
   shortDescription: string | null;
@@ -57,6 +58,7 @@ export async function createBeer(input: BeerInput) {
       name: input.name,
       breweryId: input.breweryId,
       styleId: input.styleId,
+      customStyleText: input.customStyleText || null,
       abv: input.abv,
       ibu: input.ibu,
       shortDescription: input.shortDescription,
@@ -98,6 +100,7 @@ export async function updateBeer(beerId: number, input: BeerInput) {
         name: input.name,
         breweryId: input.breweryId,
         styleId: input.styleId,
+        customStyleText: input.customStyleText || null,
         abv: input.abv,
         ibu: input.ibu,
         shortDescription: input.shortDescription,

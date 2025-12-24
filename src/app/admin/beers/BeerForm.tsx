@@ -6,12 +6,14 @@ import Link from "next/link";
 import { ImageUploader } from "@/components/ui/ImageUploader";
 import { FormSearchSelect } from "@/components/ui/FormSearchSelect";
 import { createBeer, updateBeer } from "./actions";
+import { OTHER_STYLE_NAME } from "@/lib/constants/beer-styles";
 
 interface Beer {
   id: number;
   name: string;
   breweryId: number | null;
   styleId: number | null;
+  customStyleText: string | null;
   abv: string | null;
   ibu: number | null;
   shortDescription: string | null;
@@ -38,7 +40,14 @@ export function BeerForm({ beer, breweries, styles }: Props) {
     beer?.breweryId || null
   );
   const [styleId, setStyleId] = useState<number | null>(beer?.styleId || null);
+  const [customStyleText, setCustomStyleText] = useState(
+    beer?.customStyleText || ""
+  );
   const [abv, setAbv] = useState(beer?.abv || "");
+
+  // 「その他」スタイルが選択されているか判定
+  const isOtherStyleSelected =
+    styleId !== null && styles.find((s) => s.id === styleId)?.name === OTHER_STYLE_NAME;
   const [ibu, setIbu] = useState(beer?.ibu?.toString() || "");
   const [shortDescription, setShortDescription] = useState(
     beer?.shortDescription || ""
@@ -68,6 +77,7 @@ export function BeerForm({ beer, breweries, styles }: Props) {
         name: name.trim(),
         breweryId,
         styleId,
+        customStyleText: isOtherStyleSelected ? customStyleText.trim() || null : null,
         abv: abv || null,
         ibu: ibu ? parseInt(ibu) : null,
         shortDescription: shortDescription || null,
@@ -133,6 +143,7 @@ export function BeerForm({ beer, breweries, styles }: Props) {
               }
               label="ブルワリー *"
               placeholder="ブルワリーを検索..."
+              maxResults={100}
             />
           </div>
 
@@ -142,14 +153,41 @@ export function BeerForm({ beer, breweries, styles }: Props) {
               id="beer-style"
               options={styles}
               value={styleId?.toString() || ""}
-              onChange={(value) =>
-                setStyleId(value ? parseInt(value, 10) : null)
-              }
+              onChange={(value) => {
+                const newStyleId = value ? parseInt(value, 10) : null;
+                setStyleId(newStyleId);
+                // スタイル変更時にカスタムテキストをクリア（「その他」以外の場合）
+                if (newStyleId === null || styles.find((s) => s.id === newStyleId)?.name !== OTHER_STYLE_NAME) {
+                  setCustomStyleText("");
+                }
+              }}
               label="スタイル"
               placeholder="スタイルを検索..."
               clearable
+              maxResults={100}
             />
           </div>
+
+          {/* その他選択時のカスタムスタイル入力 */}
+          {isOtherStyleSelected && (
+            <div>
+              <label htmlFor="beer-custom-style" className="label">
+                <span className="text-base label-text">スタイル名（任意）</span>
+              </label>
+              <input
+                id="beer-custom-style"
+                type="text"
+                value={customStyleText}
+                onChange={(e) => setCustomStyleText(e.target.value)}
+                className="w-full input input-bordered"
+                maxLength={100}
+                placeholder="例：フルーツサワーエール、スモークドラガー"
+              />
+              <p className="text-sm text-base-content/60 mt-1">
+                分類が難しいスタイルの場合は入力してください
+              </p>
+            </div>
+          )}
 
           {/* ABV */}
           <div>

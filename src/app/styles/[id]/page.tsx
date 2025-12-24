@@ -12,6 +12,7 @@ import { notFound, redirect } from "next/navigation";
 import Link from "next/link";
 import { FlavorProfile, BeerCard, RelatedStyles } from "@/components/beer";
 import { Breadcrumb } from "@/components/ui/Breadcrumb";
+import { OTHER_STYLE_NAME } from "@/lib/constants/beer-styles";
 import type { Metadata } from "next";
 
 // ビルド時にDBに接続できないため動的レンダリング
@@ -144,6 +145,11 @@ export default async function StylePage({ params }: Props) {
     .then((rows) => rows[0]);
 
   if (!style) {
+    notFound();
+  }
+
+  // 「その他」スタイルへのアクセスは許可しない
+  if (style.name === OTHER_STYLE_NAME) {
     notFound();
   }
 

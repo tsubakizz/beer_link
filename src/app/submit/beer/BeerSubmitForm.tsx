@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { submitBeer } from "./actions";
 import { FormSearchSelect } from "@/components/ui/FormSearchSelect";
+import { OTHER_STYLE_NAME } from "@/lib/constants/beer-styles";
 
 interface BeerSubmitFormProps {
   breweries: { id: number; name: string }[];
@@ -20,6 +21,11 @@ export function BeerSubmitForm({ breweries, styles }: BeerSubmitFormProps) {
   const [name, setName] = useState("");
   const [breweryId, setBreweryId] = useState("");
   const [styleId, setStyleId] = useState("");
+  const [customStyleText, setCustomStyleText] = useState("");
+
+  // 「その他」スタイルが選択されているか判定
+  const isOtherStyleSelected =
+    styleId && styles.find((s) => s.id === parseInt(styleId, 10))?.name === OTHER_STYLE_NAME;
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -40,6 +46,7 @@ export function BeerSubmitForm({ breweries, styles }: BeerSubmitFormProps) {
         name: name.trim(),
         breweryId: parseInt(breweryId, 10),
         styleId: styleId ? parseInt(styleId, 10) : null,
+        customStyleText: isOtherStyleSelected ? customStyleText.trim() || null : null,
       });
 
       if (result.success) {
@@ -65,6 +72,7 @@ export function BeerSubmitForm({ breweries, styles }: BeerSubmitFormProps) {
               setName("");
               setBreweryId("");
               setStyleId("");
+              setCustomStyleText("");
             }}
             className="btn btn-primary"
           >
@@ -110,6 +118,7 @@ export function BeerSubmitForm({ breweries, styles }: BeerSubmitFormProps) {
         label="ブルワリー"
         placeholder="ブルワリー名で検索..."
         required
+        maxResults={100}
         helperText={
           <>
             見つからない場合は{" "}
@@ -124,19 +133,48 @@ export function BeerSubmitForm({ breweries, styles }: BeerSubmitFormProps) {
       <FormSearchSelect
         options={styles}
         value={styleId}
-        onChange={setStyleId}
+        onChange={(value) => {
+          setStyleId(value);
+          // スタイル変更時にカスタムテキストをクリア
+          if (!value || styles.find((s) => s.id === parseInt(value, 10))?.name !== OTHER_STYLE_NAME) {
+            setCustomStyleText("");
+          }
+        }}
         label="ビアスタイル（任意）"
         placeholder="スタイル名で検索..."
         clearable
+        maxResults={100}
         helperText={
           <>
-            見つからない場合は{" "}
+            見つからない場合は「その他」を選択するか、
             <Link href="/submit/style" className="link link-primary">
               スタイルを追加
             </Link>
           </>
         }
       />
+
+      {/* その他選択時のカスタムスタイル入力 */}
+      {isOtherStyleSelected && (
+        <div className="form-control">
+          <label className="label">
+            <span className="label-text">スタイル名（任意）</span>
+          </label>
+          <input
+            type="text"
+            className="input input-bordered w-full"
+            placeholder="例：フルーツサワーエール、スモークドラガー"
+            value={customStyleText}
+            onChange={(e) => setCustomStyleText(e.target.value)}
+            maxLength={100}
+          />
+          <label className="label">
+            <span className="label-text-alt text-base-content/60">
+              分類が難しいスタイルの場合は入力してください
+            </span>
+          </label>
+        </div>
+      )}
 
       <button
         type="submit"

@@ -1,13 +1,14 @@
 import type { MetadataRoute } from "next";
 import { db } from "@/lib/db";
 import { beers, breweries, beerStyles, prefectures } from "@/lib/db/schema";
-import { isNotNull, eq } from "drizzle-orm";
+import { isNotNull, eq, ne } from "drizzle-orm";
 import {
   BITTERNESS_RANGES,
   ABV_RANGES,
   type BitternessLevel,
   type AbvLevel,
 } from "@/lib/constants/beer-filters";
+import { OTHER_STYLE_NAME } from "@/lib/constants/beer-styles";
 
 // 苦味レベル
 const BITTERNESS_LEVELS: BitternessLevel[] = ["light", "medium", "strong"];
@@ -98,7 +99,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       .from(breweries),
     db
       .select({ id: beerStyles.id, updatedAt: beerStyles.updatedAt })
-      .from(beerStyles),
+      .from(beerStyles)
+      .where(ne(beerStyles.name, OTHER_STYLE_NAME)),
     db
       .selectDistinct({ id: prefectures.id })
       .from(prefectures)
@@ -112,11 +114,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       .select({ abv: beers.abv })
       .from(beers)
       .where(isNotNull(beers.abv)),
-    // ビールが存在するスタイルのみ
+    // ビールが存在するスタイルのみ（「その他」を除外）
     db
       .selectDistinct({ id: beerStyles.id })
       .from(beerStyles)
-      .innerJoin(beers, eq(beers.styleId, beerStyles.id)),
+      .innerJoin(beers, eq(beers.styleId, beerStyles.id))
+      .where(ne(beerStyles.name, OTHER_STYLE_NAME)),
     // ビールが存在するブルワリーのみ
     db
       .selectDistinct({ id: breweries.id })

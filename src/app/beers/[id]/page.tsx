@@ -11,6 +11,7 @@ import {
   ABV_OPTIONS,
   ABV_RANGES,
 } from "@/lib/constants/beer-filters";
+import { OTHER_STYLE_NAME } from "@/lib/constants/beer-styles";
 import { ReviewCard } from "@/components/review/ReviewCard";
 import { AuthRequiredLink } from "@/components/ui/AuthRequiredLink";
 import { Breadcrumb } from "@/components/ui/Breadcrumb";
@@ -359,6 +360,7 @@ async function BeerDetailPage({ beerId }: { beerId: number }) {
       abv: beers.abv,
       ibu: beers.ibu,
       imageUrl: beers.imageUrl,
+      customStyleText: beers.customStyleText,
       brewery: {
         id: breweries.id,
         name: breweries.name,
@@ -544,12 +546,18 @@ async function BeerDetailPage({ beerId }: { beerId: number }) {
           {/* スペック */}
           <div className="flex flex-wrap gap-3 mt-6">
             {beer.style && (
-              <Link
-                href={`/styles/${beer.style.id}`}
-                className="badge badge-primary badge-lg hover:badge-primary/80"
-              >
-                {beer.style.name}
-              </Link>
+              beer.style.name === OTHER_STYLE_NAME ? (
+                <span className="badge badge-primary badge-lg">
+                  {beer.customStyleText || "その他"}
+                </span>
+              ) : (
+                <Link
+                  href={`/styles/${beer.style.id}`}
+                  className="badge badge-primary badge-lg hover:badge-primary/80"
+                >
+                  {beer.style.name}
+                </Link>
+              )
             )}
             {beer.abv && (
               <span className="badge badge-outline badge-lg">
@@ -568,8 +576,8 @@ async function BeerDetailPage({ beerId }: { beerId: number }) {
 
       {/* 味の特性セクション */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12">
-        {/* スタイルの味特性 */}
-        {beer.style && (
+        {/* スタイルの味特性（「その他」の場合は表示しない） */}
+        {beer.style && beer.style.name !== OTHER_STYLE_NAME && (
           <div className="card bg-base-100 shadow">
             <div className="card-body items-center">
               <h2 className="card-title">
@@ -656,7 +664,7 @@ async function BeerDetailPage({ beerId }: { beerId: number }) {
       <div className="mt-12 pt-8 border-t border-base-300">
         <h2 className="text-xl font-bold mb-4">関連するビール一覧</h2>
         <div className="flex flex-wrap gap-3">
-          {beer.style?.id && (
+          {beer.style?.id && beer.style.name !== OTHER_STYLE_NAME && (
             <Link
               href={`/beers/style/${beer.style.id}`}
               className="btn btn-outline btn-sm"

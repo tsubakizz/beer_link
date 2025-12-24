@@ -176,7 +176,7 @@ export function FormSearchSelect({
 
       {helperText && (
         <label className="label">
-          <span className="label-text-alt">{helperText}</span>
+          <span className="label-text-alt whitespace-normal break-words">{helperText}</span>
         </label>
       )}
     </div>
