@@ -102,6 +102,7 @@ export default async function BitternessBeerPage({
       abv: beers.abv,
       ibu: beers.ibu,
       imageUrl: beers.imageUrl,
+      customStyleText: beers.customStyleText,
       brewery: {
         id: breweries.id,
         name: breweries.name,

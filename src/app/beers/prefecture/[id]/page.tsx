@@ -119,6 +119,7 @@ export default async function PrefectureBeersPage({
       abv: beers.abv,
       ibu: beers.ibu,
       imageUrl: beers.imageUrl,
+      customStyleText: beers.customStyleText,
       brewery: {
         id: breweries.id,
         name: breweries.name,
