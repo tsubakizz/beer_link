@@ -361,6 +361,10 @@ async function BeerDetailPage({ beerId }: { beerId: number }) {
       ibu: beers.ibu,
       imageUrl: beers.imageUrl,
       customStyleText: beers.customStyleText,
+      amazonUrl: beers.amazonUrl,
+      rakutenUrl: beers.rakutenUrl,
+      officialUrl: beers.officialUrl,
+      otherShopUrl: beers.otherShopUrl,
       brewery: {
         id: breweries.id,
         name: breweries.name,
@@ -659,6 +663,67 @@ async function BeerDetailPage({ beerId }: { beerId: number }) {
           </div>
         )}
       </div>
+
+      {/* 購入リンク */}
+      {(beer.amazonUrl || beer.rakutenUrl || beer.officialUrl || beer.otherShopUrl) && (
+        <div className="mt-12 pt-8 border-t border-base-300">
+          <h2 className="text-xl font-bold mb-4">このビールを購入</h2>
+          <div className="flex flex-wrap gap-3">
+            {beer.officialUrl && (
+              <a
+                href={beer.officialUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="btn btn-outline gap-2"
+              >
+                <span>公式サイト</span>
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                </svg>
+              </a>
+            )}
+            {beer.amazonUrl && (
+              <a
+                href={beer.amazonUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="btn btn-outline gap-2"
+              >
+                <span>Amazon</span>
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                </svg>
+              </a>
+            )}
+            {beer.rakutenUrl && (
+              <a
+                href={beer.rakutenUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="btn btn-outline gap-2"
+              >
+                <span>楽天</span>
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                </svg>
+              </a>
+            )}
+            {beer.otherShopUrl && (
+              <a
+                href={beer.otherShopUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="btn btn-outline gap-2"
+              >
+                <span>その他</span>
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                </svg>
+              </a>
+            )}
+          </div>
+        </div>
+      )}
 
       {/* 関連ページへのリンク */}
       <div className="mt-12 pt-8 border-t border-base-300">

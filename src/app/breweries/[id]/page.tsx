@@ -81,6 +81,9 @@ export default async function BreweryDetailPage({ params }: Props) {
       websiteUrl: breweries.websiteUrl,
       imageUrl: breweries.imageUrl,
       imageSourceUrl: breweries.imageSourceUrl,
+      amazonUrl: breweries.amazonUrl,
+      rakutenUrl: breweries.rakutenUrl,
+      otherShopUrl: breweries.otherShopUrl,
       prefecture: {
         id: prefectures.id,
         name: prefectures.name,
@@ -246,6 +249,54 @@ export default async function BreweryDetailPage({ params }: Props) {
           )}
         </div>
       </div>
+
+      {/* 購入リンク */}
+      {(brewery.amazonUrl || brewery.rakutenUrl || brewery.otherShopUrl) && (
+        <div className="mb-12 pt-8 border-t border-base-300">
+          <h2 className="text-xl font-bold mb-4">このブルワリーのビールを購入</h2>
+          <div className="flex flex-wrap gap-3">
+            {brewery.amazonUrl && (
+              <a
+                href={brewery.amazonUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="btn btn-outline gap-2"
+              >
+                <span>Amazon</span>
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                </svg>
+              </a>
+            )}
+            {brewery.rakutenUrl && (
+              <a
+                href={brewery.rakutenUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="btn btn-outline gap-2"
+              >
+                <span>楽天</span>
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                </svg>
+              </a>
+            )}
+            {brewery.otherShopUrl && (
+              <a
+                href={brewery.otherShopUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="btn btn-outline gap-2"
+              >
+                <span>その他</span>
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                </svg>
+              </a>
+            )}
+          </div>
+        </div>
+      )}
 
       {/* このブルワリーのビール */}
       <div>
