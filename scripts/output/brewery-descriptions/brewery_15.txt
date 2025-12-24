@@ -1,0 +1,24 @@
+収集した情報を元に出力を作成します。公式サイトでは「2020年」と記載されているため、公式サイトの情報を優先します。
+
+---
+
+**BREWERY_ID:** 15
+
+**BREWERY_NAME:** CRAFT BANK（クラフトバンク）
+
+**ADDRESS:** 京都府福知山市南本町264-5
+
+**DESCRIPTION_LONG:**
+CRAFT BANKは京都府福知山市にあるクラフトビール醸造所。約20〜30年間空いていた旧銀行の建物をリノベーションして誕生した。名前の由来は「銀行跡地をリノベーションしてビール醸造を始めたのでCRAFT BANK」。2020年に醸造を開始し、庄田氏と羽星氏が共同創業者・ブルワーとして運営している。コンセプトは「ビール片手に、なんかやろう。」で、「つまんない会議をやめよう。金のために働くのやめよう。若気の至りをやりつづけよう。」というサブテーマを掲げる。由良川の水系と山々に囲まれた福知山の環境を活かし、京都府与謝野町産のフレッシュホップを使用した季節限定商品の開発も行う。代表銘柄はBANK IPA、BANK LAGER、GERMAN PILSNER。醸造所併設のレストランでは7種のクラフトビールを提供している。
+
+**DESCRIPTION_SHORT:**
+京都府福知山市の旧銀行をリノベーションした醸造所。「ビール片手に、なんかやろう。」をコンセプトに、地元の水と素材を活かしたクラフトビールを醸造。
+
+**LOGO_URL:** https://www.craftbk.net/cdn/shop/files/843_x_200_px_843_x_100_px_300x.png?v=1653363107
+
+**SOURCES:**
+- https://www.craftbk.net/（公式サイト）
+- https://www.craftbk.net/pages/contact（公式サイト・連絡先）
+- https://www.craftbk.net/collections/all（公式サイト・商品一覧）
+- https://note.com/craftbank（公式note）
+- https://note.com/craftbank/all（公式note・記事一覧）

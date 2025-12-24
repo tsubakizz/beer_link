@@ -1,0 +1,22 @@
+収集した情報を元に出力を作成します。
+
+---
+
+## Step 4: 出力
+
+**BREWERY_ID:** 4
+
+**BREWERY_NAME:** MARCA BREWING
+
+**DESCRIPTION_LONG:** 
+2015年に大阪市西区北堀江で創業したマイクロブルワリー。当初は「MARCA Cafe & Beer Factory」としてブルワブを併設して運営していたが、2019年3月5日にカフェは閉店し、現在はビール製造に特化している。原料にはカナダ産モルトと、アメリカ、オーストラリア、ドイツ、チェコ、イギリスなど世界各国のホップを使用し、大阪の水で醸造を行う。ジューシーなホップフレーバーが特徴で、ヘイジーIPA、トリプルIPA、サワーなど多彩なスタイルを展開。代表銘柄「BERRY SHAKE IPA」はイチゴ、ラズベリー、ブラックベリーを使用し、フルーティーでありながらIPAらしい力強い苦味を持つ。「Coffee Amber」はIBC2021で銅賞を受賞している。TUGBOAT TAISHOフードコート内にBeer stand MARCAを運営し、出来立てのビールを提供している。
+
+**DESCRIPTION_SHORT:** 
+2015年創業の大阪北堀江のマイクロブルワリー。世界各国のホップを使用し、ジューシーなホップフレーバーが特徴。ヘイジーIPAやサワーなど多彩なスタイルを展開。
+
+**LOGO_URL:** https://beermarca.com/wp-content/uploads/2019/11/logo.svg
+
+**SOURCES:**
+- https://beermarca.com/ （公式サイト）
+- https://beertiful.jp/brewery/marca/ 
+- https://note.com/ 検索結果

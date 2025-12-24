@@ -1,0 +1,20 @@
+収集した情報を基に出力を作成します。
+
+---
+
+**BREWERY_ID:** 16
+
+**BREWERY_NAME:** Distant Shores Brewing
+
+**ADDRESS:** 東京都東村山市秋津町3-14-2
+
+**DESCRIPTION_LONG:** Distant Shores Brewingは2017年に東京都東村山市で誕生したマイクロブルワリー。Ashikawa Brewery Systems、浅草のブルーパブCampion Ale、代々木のブルーパブY.Y.G.breweryの3社によるパートナーシップで設立された。ブルワリー名の「Distant Shores（遥かな岸）」は、ビール文化がイギリスから世界に広がった歴史に由来し、かつて大帆船でエールを遠くまで運んでいた時代をイメージして名付けられた。基本的にイギリススタイルのエール系ビールを醸造しており、イギリス産・ドイツ産の麦芽、アメリカ産・イギリス産・ドイツ産のホップを使用。NHK「おはよう日本」で特集されるなど、メディアでも注目を集めている。
+
+**DESCRIPTION_SHORT:** 2017年創業の東京都東村山市のマイクロブルワリー。3社の共同設立で、大帆船でエールを運んだ歴史に由来する名を冠し、イギリススタイルのエールを中心に醸造。
+
+**LOGO_URL:** https://distantshoresbrewing.com/wp-content/uploads/2019/01/DSB_Logo_Yellow_1000x1000.png
+
+**SOURCES:**
+- https://distantshoresbrewing.com/
+- https://beertiful.jp/brewery/distant-shores-brewing
+- https://note.com/search?q=Distant+Shores+Brewing

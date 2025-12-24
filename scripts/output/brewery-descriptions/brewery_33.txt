@@ -1,0 +1,17 @@
+情報源からのコンテンツ取得に難航しています。収集できた情報に基づいて出力します。
+
+---
+
+BREWERY_ID: 33
+BREWERY_NAME: ヘリオス酒造沢内醸造所
+ADDRESS: 岩手県和賀郡西和賀町大字沢内字井戸鹿3-647-1
+DESCRIPTION_LONG: ヘリオス酒造沢内醸造所は、沖縄県名護市に本社を置く総合酒類メーカー・ヘリオス酒造が2020年に取得した岩手県の醸造拠点である。銀河高原ビールの製造で知られた沢内醸造所の設備を引き継ぎ、「名水の里」として知られる西和賀町の良質な水を活かしたビール造りを行っている。1996年にクラフトビール製造を開始し、2020年3月に沢内地域へ移転。同年7月より新ブランドとして再出発した。代表銘柄の「ユキノチカラ白ビール」をはじめ、マチャ、レッドエール、IPAなどPremium999シリーズを展開している。
+DESCRIPTION_SHORT: 沖縄のヘリオス酒造が2020年に岩手県西和賀町の銀河高原ビール沢内醸造所を取得。名水を活かした「ユキノチカラ白ビール」などを醸造している。
+LOGO_URL: https://img07.shop-pro.jp/PA01451/195/PA01451195.png?cmsp_timestamp=20250916141351
+SOURCES:
+- https://yukichika-beer.shop-pro.jp/
+- https://yukichika-beer.shop-pro.jp/?mode=f2
+- https://yukichika-beer.shop-pro.jp/?mode=sk
+- https://www.helios-syuzo.co.jp/
+- https://www.helios-syuzo.co.jp/company/
+- https://www.jbja.jp/?s=%E6%B2%A2%E5%86%85%E9%86%B8%E9%80%A0%E6%89%80

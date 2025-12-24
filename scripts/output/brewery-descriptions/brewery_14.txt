@@ -1,0 +1,14 @@
+収集できた情報に基づいて出力します。
+
+---
+
+BREWERY_ID: 14
+BREWERY_NAME: 北海道乙部追分ブリューイング
+ADDRESS: 〒043-0104 北海道爾志郡乙部町字館浦686-2
+DESCRIPTION_LONG: 北海道渡島半島西部の乙部町に位置するブルワリー。「私たちは自然と共に生き、自然に生かされてビールを造っています。自然の恵みと微生物の力でおいしいビールを皆様へお届けできることに感謝します。」というコンセプトのもと、地産地消にこだわったクラフトビールを醸造。仕込み水には乙部町産のシリカ含有天然水「Gaivota（ガイヴォータ）」を100%使用し、乙部町産の二条大麦麦芽や町内自生のホップ、蜂蜜などを原料に採用。木工所の倉庫をリノベーションした醸造所で、ろ過と熱処理を行わない無濾過ビールを製造し、生きた酵母の旨味を活かした「毎日飲んでも飽きない」味わいを追求。併設のビアレストラン「Guild Endeavour」では新鮮なクラフトビールと地元食材を使った料理を提供。PALE ALEは「DREAM BEER クラフトビール総選挙2025」で1位を獲得。
+DESCRIPTION_SHORT: 乙部町産の天然シリカ水と地元産大麦・ホップを使用し、無濾過で生きた酵母の旨味を活かしたクラフトビールを醸造。PALE ALEはDREAM BEERクラフトビール総選挙2025で1位獲得。
+LOGO_URL: 
+SOURCES:
+- https://www.otobe-oiwake-brewing.jp/index.html
+- https://www.otobe-oiwake-brewing.jp/about.html
+- https://www.otobe-oiwake-brewing.jp/craftbeer.html

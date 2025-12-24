@@ -1,0 +1,25 @@
+収集した情報をもとに、出力を作成します。
+
+---
+
+## Step 4: 出力
+
+**BREWERY_ID:** 30
+
+**BREWERY_NAME:** ノースアイランドビール
+
+**ADDRESS:** 〒067-0031 北海道江別市元町11-5
+
+**DESCRIPTION_LONG:**
+2002年設立、2003年醸造開始の北海道・江別市に拠点を置くクラフトビール醸造所。「Beer is Art」をコンセプトに掲げ、「自らが飲みたいものを造る。それが最良の道と信じ、造り手たちがそれぞれの想いと情熱で自由で多彩なビールを造る」という理念のもと、江別産小麦を使用したヴァイツェンや道産ホップを使用した限定ビールなど、地産素材を活かしたビール造りを行う。定番5種（ピルスナー、ブラウンエール、ヴァイツェン、I.P.A.、コリアンダーブラック）に加え、毎月限定醸造ビールを製造。大量生産ではなく一本一本に想いを込め、ラベル貼り・充填・検品まで丁寧な手作業で仕上げる。札幌市中心部・狸小路に直営ビアバーも展開。
+
+**DESCRIPTION_SHORT:**
+2003年醸造開始の北海道・江別市のブルワリー。「Beer is Art」を掲げ、江別産小麦や道産ホップなど地産素材を活かしたビール造りが特徴。定番5種と毎月の限定醸造を展開。
+
+**LOGO_URL:** https://northislandbeer.jp/images/logos/mark-navy.svg
+
+**SOURCES:**
+- https://northislandbeer.jp/
+- https://northislandbeer.jp/about/
+- https://northislandbeer.jp/concept/
+- https://northislandbeer.jp/beer/

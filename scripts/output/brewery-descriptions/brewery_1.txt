@@ -1,0 +1,20 @@
+収集できた情報に基づいて結果を出力します。
+
+---
+
+**BREWERY_ID:** 1
+
+**BREWERY_NAME:** HOPDOG BREWING
+
+**DESCRIPTION_LONG:**
+2023年、秋田市で85年続いた最後の銭湯「星の湯」をリノベーションして誕生したクラフトビール＆ハードサイダー醸造所。「多くの人に秋田の魅力を届けたい！」をテーマに、国内有数のホップ産地である横手産ホップを使用したクラフトビールや、秋田県産りんごなどの果実を使用したハードサイダーを製造。300L醸造設備による小ロット生産で、1回の醸造で600〜700本程度を生産している。代表銘柄は「FaRM to YOU DDH IPA」「FaRM to YOU DDH HAZY IPA」「あきたこまちゴールデンエール」など。インターナショナルビアカップ2024受賞。地域に愛された銭湯の想いを引き継ぎ、地域資源を活かした地域の誇りとなる製品を目指している。
+
+**DESCRIPTION_SHORT:**
+秋田市の銭湯「星の湯」を改装し2023年に誕生。横手産ホップと秋田県産果実を使用したクラフトビール＆ハードサイダーを小ロット生産。インターナショナルビアカップ2024受賞。
+
+**LOGO_URL:** https://hopdogbrewing.jp/wp-content/uploads/2023/01/ac905570628b9afb1a308097218aed22.png
+
+**SOURCES:**
+- https://beer-link.com/breweries/1
+- https://hopdogbrewing.jp/
+- https://hopdogbrewing.jp/story/

@@ -1,0 +1,20 @@
+収集した情報を基に出力を作成します。
+
+---
+
+**BREWERY_ID:** 28
+
+**BREWERY_NAME:** KURASHIKI BREWING CO.（倉敷ブルーイングカンパニー）
+
+**ADDRESS:** 〒701-0303 岡山県都窪郡早島町前潟528-1
+
+**DESCRIPTION_LONG:** 岡山県早島町に醸造所を構えるクラフトビールブルワリー。「OKAYAMA JIMOTO BEER 086®」のブランド名で、岡山の市外局番「086」を冠したビールを展開している。「発泡酒ではなくビール」であることにこだわった本物のクラフトビール製造を掲げ、岡山市、倉敷市、玉島、吉備路、津山市、瀬戸内市など各市町村の個性を大切にしながら、地元の誇りを感じる味わいを目指している。代表銘柄には柑橘系ホップを使用した「#2 OKAYAMA PALE ALE」、倉敷の白壁街並みをイメージした「#4 KURASHIKI HAZY IPA」、ローストモルトを使用した「#6 KIBIJI AMBER ALE」などがある。2024年フェミナリーズ世界ワインコンクール日本産ビール部門で金賞・銀賞・TOP最高賞を受賞。
+
+**DESCRIPTION_SHORT:** 岡山県早島町のブルワリー。市外局番「086」を冠した「OKAYAMA JIMOTO BEER 086®」で、岡山各地の個性を表現したクラフトビールを醸造。2024年フェミナリーズ世界ワインコンクールで金賞受賞。
+
+**LOGO_URL:** https://kurashiki-brewing.com/kurabizwp/wp-content/uploads/2024/11/logo.png
+
+**SOURCES:**
+- https://kurashiki-brewing.com/
+- https://kurashiki-brewing.com/product/
+- https://kurashiki-brewing.com/news/

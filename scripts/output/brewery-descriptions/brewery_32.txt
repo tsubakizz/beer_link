@@ -1,0 +1,19 @@
+情報が収集できました。収集した情報を元に出力を作成します。
+
+---
+
+## Step 4: 出力
+
+```
+BREWERY_ID: 32
+BREWERY_NAME: オラホビール
+ADDRESS: 〒389-0505 長野県東御市和3875
+DESCRIPTION_LONG: 1996年、長野県東御市で地域振興の一環として創業したクラフトビールブルワリー。「オラホ」は当地の方言で「わたしたち」を意味する。「価格は抑えて、でもどこにも負けないクラフトビール」をモットーに、「幸せってグラスの中にあるかもね、Little happiness in a glass.」というメッセージを掲げている。2010年から自社ホップ栽培を開始し、日本有数の「晴れのまち」として知られる東御市の気候と土壌を活かしたビールづくりを行う。トレンドに囚われない自由な醸造スタイルが特徴で、麦芽、ホップ、酵母の魅力を最大限に引き出すことを追求。代表銘柄にゴールデンエール、アンバーエール、雷電カンヌキIPAなどがある。
+DESCRIPTION_SHORT: 1996年創業、長野県東御市のブルワリー。「オラホ」は方言で「わたしたち」の意味。自社栽培ホップを使用し、トレンドに囚われない自由なビールづくりを行う。
+LOGO_URL: https://ohlahobeer.com/cms/wp-content/themes/ohlahobeer_themes/common/img/logo.svg
+SOURCES:
+- https://ohlahobeer.com/
+- https://ohlahobeer.com/about/
+- https://ohlahobeer.com/company/
+- https://ohlahobeer.com/beers/
+```

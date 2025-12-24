@@ -1,0 +1,12 @@
+収集した情報をもとに出力します。
+
+---
+
+BREWERY_ID: 8
+BREWERY_NAME: 立飛麦酒醸造所
+DESCRIPTION_LONG: 2021年8月に設立された東京都立川市のクラフトビールブルワリー。「make the future a better place」を醸造理念に掲げ、100年の歴史を持つ立飛グループのクラフトマンシップを継承している。2019年まで西国立駅前の「無門庵」で製造・販売していた「ファクトリーカミカゼ」の想いを受け継ぐ形で誕生した。150種類以上のビールスタイルから厳選し、基本に忠実で原料から製法にまでこだわった「感動を与えられるビール」を目指す。無濾過でナチュラルカーボネーション（自然発生の炭酸ガス）を採用し、環境配慮も意識した製造を行う。年間レギュラービールとしてチェコ・ボヘミアンスタイルの「TACHIHI PILSNER」、イギリス発祥の「TACHIHI PALE ALE」、ドイツの小麦ビール「TACHIHI WEIZEN」の3種を展開している。
+DESCRIPTION_SHORT: 2021年設立の立川市のブルワリー。「make the future a better place」を理念に、無濾過・ナチュラルカーボネーションにこだわった高品質なビールを醸造。
+LOGO_URL: https://shop20-makeshop.akamaized.net/shopimages/brewery1894/logo.png
+SOURCES:
+- https://www.tachihibrewery.com/
+- https://www.tachihi.co.jp/business/brewery/

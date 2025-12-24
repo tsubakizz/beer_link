@@ -1,0 +1,23 @@
+公式サイトから十分な情報を収集できましたので、出力を作成します。
+
+---
+
+**BREWERY_ID:** 27
+
+**BREWERY_NAME:** 反射炉ビヤ
+
+**ADDRESS:** 〒410-2113 静岡県伊豆の国市中 272-1
+
+**DESCRIPTION_LONG:**
+反射炉ビヤは、静岡県伊豆の国市韮山にある蔵屋鳴沢が運営するブルワリー。1997年創業。明治時代に良質な湧き水を活用して日本酒を製造していた蔵屋鳴沢が、1994年の酒税法改定を機に「韮山反射炉を訪れる観光客により多くの喜びをもたらそう」とビール醸造を開始。名前の由来は、江戸時代末期に伊豆韮山の代官・江川太郎左衛門英龍が発案した反射炉から。「未来を見据えて新しいものを取り入れた太郎左衛門の見識への敬意を込め、伝統と革新を両立しながらビールを造り続ける」という理念を掲げる。20〜30種類のモルトを扱い、無ろ過・非加熱製造により生きた酵母の深い味わいを実現。定番の「太郎左衛門」「早雲」「頼朝」に加え、多彩な限定ビールを展開している。
+
+**DESCRIPTION_SHORT:**
+1997年創業、静岡県伊豆の国市のブルワリー。江川太郎左衛門の反射炉に由来し、伝統と革新を両立。無ろ過・非加熱で多彩なクラフトビールを醸造。
+
+**LOGO_URL:** https://kuraya-narusawa.co.jp/brewing/wp/wp-content/themes/hansharo/images/logo_HansharoBeer.svg
+
+**SOURCES:**
+- https://kuraya-narusawa.co.jp/brewing/
+- https://kuraya-narusawa.co.jp/brewing/about/
+- https://kuraya-narusawa.co.jp/brewing/beer/
+- https://kuraya-narusawa.co.jp/

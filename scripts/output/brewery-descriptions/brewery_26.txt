@@ -1,0 +1,19 @@
+収集した情報に基づいて説明文を生成します。
+
+---
+
+**BREWERY_ID:** 26
+
+**BREWERY_NAME:** HORSEHEAD LABS
+
+**ADDRESS:** 静岡県静岡市清水区蒲原2-4-8（スルガノヴィレッジ内）
+
+**DESCRIPTION_LONG:** HORSEHEAD LABSは2022年に設立された、静岡市清水区蒲原の宿場町に拠点を置くクラフトビール醸造所。「静岡市の宿場町 蒲原宿でさまざまなお酒造りをする実験集団」を標榜し、富士山の麓の良質な水と、太陽と潮風に恵まれた環境でビール造りを行っている。JR新蒲原駅から徒歩30秒のスルガノヴィレッジ内に醸造所を構える。代表銘柄の「蒲原ヘイジー」はオーツや乳糖を使用したHazy IPAで、SNSを中心に高い支持を得ている。濃厚なヘイジービールが特徴で、クラフトビール愛好家から注目を集めるブルワリーとして評価されている。
+
+**DESCRIPTION_SHORT:** 静岡市の宿場町・蒲原宿で2022年に設立された「お酒造りの実験集団」。富士山麓の良質な水を活かした濃厚なHazy IPAで注目を集める。
+
+**LOGO_URL:** https://horsehead-labs.com/wp-content/uploads/2024/06/logo-1.png
+
+**SOURCES:**
+- https://horsehead-labs.com/
+- https://note.com/search?q=HORSEHEAD+LABS

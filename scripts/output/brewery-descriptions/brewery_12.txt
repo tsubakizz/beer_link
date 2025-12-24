@@ -1,0 +1,16 @@
+収集した情報を基に出力します。
+
+---
+
+BREWERY_ID: 12
+BREWERY_NAME: 鎌倉ビール
+ADDRESS: 神奈川県鎌倉市大町5-9-29（名越坂ブルワリーハウス）
+DESCRIPTION_LONG: 1997年創業、1998年に鎌倉市唯一のビール製造免許を取得した老舗クラフトビールメーカー。前身は大正時代から三代続いた酒屋で、地域の社交場として親しまれてきた。「鎌倉生まれ、鎌倉育ちのクラフトビール」をスローガンに、歴史あるまち鎌倉を訪れる人々に「食とともに味わう至福のひと時」を届けることを理念としている。防腐剤や酸化防止剤を一切加えず、酵母をろ過せず生きたまま瓶詰めする製法が特徴。オーストラリア製醸造設備を使用し、仕込みの大部分を手作業で行う。「豊かな香り、芳醇な味口、そして余韻を楽しめる」ビールを目指し、麦芽の甘みと旨み、ホップの苦味を調和させた心がほっこりする飲み口が特徴。代表銘柄は「月（アルト）」「星（ペールエール）」「花（ブラウン）」。
+DESCRIPTION_SHORT: 1997年創業、鎌倉市唯一のビール醸造所。防腐剤無添加・酵母を生きたまま瓶詰めする製法で「豊かな香り、芳醇な味口、余韻を楽しめる」ビールを手作業で醸造。
+LOGO_URL: https://www.kamakura-beer.co.jp/assets/images/logo.png
+SOURCES:
+- https://www.kamakura-beer.co.jp/
+- https://www.kamakura-beer.co.jp/about/
+- https://www.kamakura-beer.co.jp/company/
+- https://www.kamakura-beer.co.jp/kodawari/
+- https://www.kamakura-beer.co.jp/product/

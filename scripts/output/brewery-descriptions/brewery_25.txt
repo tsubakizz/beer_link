@@ -1,0 +1,26 @@
+これまでに収集できた情報をまとめます。公式サイトにアクセスできず、詳細な情報が限られていますが、収集できた情報を基に出力を作成します。
+
+---
+
+**BREWERY_ID:** 25
+
+**BREWERY_NAME:** Y.Y.G. BREWERY
+
+**ADDRESS:** 
+
+**DESCRIPTION_LONG:** 東京・代々木を拠点とするクラフトビールブルワリー。株式会社Y.Y.G. BREWING COMPANYが運営し、東京と千葉（本千葉駅近く）の2拠点で醸造を行うブリューパブスタイルの店舗を展開している。醸造所に併設されたバーやレストランで、自社醸造のフレッシュなビールを楽しめる。Sour Ale、Hazy IPA、Shibuya IPA、White Ale、Amber Ale、Pale Aleなど多彩なスタイルを醸造。他のブルワリーとのコラボレーションビールも手がけており、京都ビアラボとのSour Hazy IPAなどを発表している。
+
+**DESCRIPTION_SHORT:** 東京・代々木と千葉に醸造所を持つブリューパブ。併設バーでフレッシュな自社ビールを提供している。
+
+**LOGO_URL:** 
+
+**SOURCES:**
+- https://beer-link.com/breweries/25
+- https://note.com/kyotobeerlab/n/n1fd7da527d9b
+- https://note.com/craft_beer/n/n2df98cc16c61
+- https://note.com/craft_beer/n/n378de20be433
+- https://note.com/shiburadi/n/nf1cf1aab58ed
+
+---
+
+**注記:** 公式サイト（http://www.yygbrewery.com/）へのアクセスがSSLエラーにより失敗しました。コンセプト、創業者、名前の由来、創業年、住所などの詳細情報は取得できませんでした。追加の検索（「Y.Y.G. BREWERY インタビュー」「Y.Y.G. BREWERY 開業」）を実施しましたが、有効な情報源が見つかりませんでした。

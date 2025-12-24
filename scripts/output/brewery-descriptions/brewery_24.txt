@@ -1,0 +1,14 @@
+収集した情報をもとに出力を作成します。
+
+---
+
+BREWERY_ID: 24
+BREWERY_NAME: ホップガーデンブルワリー
+ADDRESS: 〒963-4702 福島県田村市都路町岩井沢北向185-6 グリーンパーク都路内
+DESCRIPTION_LONG: 福島県田村市に2020年11月にオープンしたブルワリー。「クラフトビールを軸にして産業の循環を作り、人・もの・ことを繋ぎ、人々を笑顔にする」をコンセプトに、原発事故の影響で休眠状態だった公共施設を改修して開設された。自社栽培の田村市産ホップを使用し、ホップの栽培から手がける1次産業から6次産業化へのサイクルを構築。ローカルサスティナビリティの取り組みを推進している。代表取締役は本間誠氏。陰陽五行をテーマとしたABUKUMAシリーズ（Green、Red、Black、Gold、Crystal）やIPA、Gose、Freshなどを醸造。ビアレストラン、タップルーム、キャンプ場・ロッジを併設した複合施設として運営されている。
+DESCRIPTION_SHORT: 福島県田村市で自社栽培ホップを使用するブルワリー。陰陽五行をテーマにしたABUKUMAシリーズを醸造。ビアレストランやキャンプ場を併設。
+LOGO_URL: https://hopjapan.com/wp-content/themes/hopjapan/assets/img/common/logo_main.svg
+SOURCES:
+- https://hopjapan.com/
+- https://hopjapan.com/about/
+- https://note.com/hopjapan

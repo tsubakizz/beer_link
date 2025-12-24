@@ -1,0 +1,21 @@
+収集した情報に基づいて、説明文を出力します。
+
+---
+
+**BREWERY_ID:** 10
+
+**BREWERY_NAME:** スワンレイクビール
+
+**ADDRESS:** 〒959-1944 新潟県阿賀野市金屋345-1
+
+**DESCRIPTION_LONG:** 1997年に新潟県阿賀野市で開業したスワンレイクビールは、「新潟から挑戦」「新潟から世界へ」をスローガンに掲げ、「一期一会のコンセプトでビール造り」を行っている。「旨さへの徹底した追求」をコンセプトに、「ビールが育つ環境と良質な素材。そして、職人の心」を大切にしている。地元新潟産のコシヒカリなど特産品を活かした製品開発や、長期熟成・バレルエイジングなどの高度な醸造技術が特徴。代表銘柄のアンバースワンエールはWorld's Best Amberを受賞し、ポーターはWorld Beer Cup、WORLD BEER AWARDSで金賞を獲得。2025年にはインターナショナル・ビアカップでポーターが金賞を受賞するなど、国内外で高い評価を得ている。
+
+**DESCRIPTION_SHORT:** 1997年創業の新潟県阿賀野市のブルワリー。「旨さへの徹底した追求」をコンセプトに、地元産コシヒカリを活かしたビールや世界的受賞歴を持つポーター、アンバースワンエールで知られる。
+
+**LOGO_URL:** https://www.swanlake.co.jp/main/beer/img/logo.png
+
+**SOURCES:**
+- https://www.swanlake.co.jp/main/beer/
+- https://www.swanlake.co.jp/main/
+- https://craftbeer-tokyo.info/beer/swanlake/
+- https://note.com/otamabrewing/n/n872600a14ee3

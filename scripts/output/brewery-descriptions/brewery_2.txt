@@ -1,0 +1,18 @@
+ロゴ画像URLは有効であることが確認できました。収集した情報を基に出力します。
+
+---
+
+**BREWERY_ID:** 2
+
+**BREWERY_NAME:** FUJI PREMIUM BREWING
+
+**DESCRIPTION_LONG:**
+静岡県御殿場市に2025年1月に創業したクラフトビールブルワリー。「目指したのは、きれいなビールです。」「いい水がビールのうまさを決める。」をスローガンに掲げ、富士山の伏流水100％で仕込む。厳選した麦芽とホップ、自社培養酵母を使用し、醸造家の熟練の技と最新設備、トップクラスの品質管理体制でビールを醸造している。代表取締役は坂井修文。
+
+**DESCRIPTION_SHORT:**
+静岡県御殿場市で2025年創業。「きれいなビール」を目指し、富士山の伏流水100％、厳選素材、自社培養酵母と熟練の技でビールを醸造。
+
+**LOGO_URL:** https://fujipremiumbrewing.jp/assets/img/mv/mv_logo.png
+
+**SOURCES:**
+- https://fujipremiumbrewing.jp/

@@ -1,0 +1,19 @@
+収集した情報をもとに出力を作成します。現時点で収集できた情報は以下の通りです：
+
+---
+
+**BREWERY_ID:** 3
+
+**BREWERY_NAME:** RISE & WIN Brewing Co. / KAMIKATZ BEER
+
+**DESCRIPTION_LONG:** 
+徳島県上勝町に拠点を置くマイクロブルワリー。2003年に「ゼロ・ウェイスト宣言」を行った上勝町の理念に沿い、持続可能な社会の実現を目指して設立された。「JUST DRINK KAMIKATZ BEER」をスローガンに掲げ、上質なクラフトビールを楽しむことが「上勝町の美しい環境を守り、社会課題を理解するきっかけになる」という好循環を生み出すことをミッションとしている。上勝町の良質な水を使用し、品質とオリジナリティを追求したビール造りを行う。定番フレーバーのほか、コラボレーションビールやバレルエイジドビールなど多彩なラインナップを展開。International Beer Cup 2025で金賞を受賞。上勝町の直営店と東京・東麻布のタップルームで提供している。
+
+**DESCRIPTION_SHORT:** 
+徳島県上勝町のゼロ・ウェイスト理念に基づき設立されたブルワリー。上勝の良質な水を使用し、品質とオリジナリティを追求したビール造りを行う。
+
+**LOGO_URL:** https://www.kamikatz.jp/files/common/rise_win_brewing.svg
+
+**SOURCES:**
+- https://www.kamikatz.jp/
+- https://www.kamikatz.jp/news

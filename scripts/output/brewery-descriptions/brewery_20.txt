@@ -1,0 +1,22 @@
+収集した情報をもとに出力を作成します。
+
+---
+
+**BREWERY_ID:** 20
+
+**BREWERY_NAME:** Y.MARKET BREWING
+
+**ADDRESS:** 名古屋市中村区名駅4-17-6
+
+**DESCRIPTION_LONG:**
+Y.MARKET BREWINGは2014年1月に創業した、名古屋初のクラフトビール醸造所。名古屋駅前の柳橋中央卸売市場内に醸造所を構え、「柳橋中央卸売市場」がブルワリー名の由来となっている。スローガンは「"とりあえず"とは言わせない」。「職人のわがままを沢山詰め込んだ、美味しくて楽しいクラフトビール」をコンセプトに掲げる。「ビールを楽しむことは人生の喜びがひとつ増えること」を理念とし、初めてクラフトビールを飲んだときの驚きと感動、ビールの奥深さを多くの人に伝えたいという想いで醸造を続けている。「ビールを通して日本を元気にしていきたい」という目標を掲げ、名古屋の中心地から人々の心を豊かにすることを目指している。
+
+**DESCRIPTION_SHORT:**
+2014年創業、名古屋駅前の柳橋市場に構える名古屋初のクラフトビール醸造所。「"とりあえず"とは言わせない」をスローガンに、職人のこだわりを詰め込んだビールを醸造。
+
+**LOGO_URL:** https://craftbeer.nagoya/wp-content/themes/craftbeernagoya/common/images/logo.png
+
+**SOURCES:**
+- https://craftbeer.nagoya/（公式サイト）
+- https://craftbeer.nagoya/about/
+- https://craftbeer.nagoya/story/

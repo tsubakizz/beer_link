@@ -1,0 +1,16 @@
+収集した情報をもとに、指定の形式で出力します。
+
+---
+
+BREWERY_ID: 11
+BREWERY_NAME: 横浜ビール
+ADDRESS: 〒231-0013 神奈川県横浜市中区住吉町6-68-1 横浜関内地所ビル
+DESCRIPTION_LONG: 1999年6月29日にビール製造を開始した、横浜市内で最も長い歴史を持つローカルビアカンパニー。「人と人を繋ぐビールで横浜の暮らしにワクワクを！」をスローガンに掲げ、地元の方々に「ホームタウンビール＝自分達のビール」として誇りに思い楽しんでもらえるビール造りを目指している。「飽きずに飲み続けられる綺麗なビール」を追求し、不易流行の精神で伝統と革新を両立。ヘッドブルワーの井田章一氏、加藤和樹氏らが醸造を担当。横浜ラガーは国際ビール大賞で複数年受賞、アルトはWorld Beer Cup 2024でジャーマンスタイルアルトビア部門銀賞を獲得。サーキュラーエコノミーにも取り組み、モルト粕を養殖飼料に活用している。
+DESCRIPTION_SHORT: 1999年創業、横浜市内で最も歴史あるブルワリー。「ホームタウンビール」として地元に愛され、World Beer Cup銀賞のアルトなど国際的な受賞歴を持つ。
+LOGO_URL: https://yokohamabeer.com/wpy/wp-content/uploads/2023/12/logo_yokohamabeer_black.svg
+SOURCES:
+- https://yokohamabeer.com/
+- https://yokohamabeer.com/about/
+- https://yokohamabeer.com/company/
+- https://yokohamabeer.com/product/yokohama-lager/
+- https://yokohamabeer.com/product-category/standard/
