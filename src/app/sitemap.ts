@@ -88,7 +88,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       .select({ id: breweries.id, updatedAt: breweries.updatedAt, prefectureId: breweries.prefectureId })
       .from(breweries),
     db
-      .select({ id: beerStyles.id, slug: beerStyles.slug, updatedAt: beerStyles.updatedAt })
+      .select({ id: beerStyles.id, updatedAt: beerStyles.updatedAt })
       .from(beerStyles),
     db
       .selectDistinct({ id: prefectures.id })
@@ -123,7 +123,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   // ビアスタイル詳細ページ
   const stylePages: MetadataRoute.Sitemap = styleList.map((style) => ({
-    url: `${siteUrl}/styles/${style.slug}`,
+    url: `${siteUrl}/styles/${style.id}`,
     lastModified: style.updatedAt || new Date(),
     changeFrequency: "monthly" as const,
     priority: 0.6,
@@ -131,7 +131,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   // ビアスタイル別ビール一覧ページ
   const styleBeerPages: MetadataRoute.Sitemap = styleList.map((style) => ({
-    url: `${siteUrl}/beers/style/${style.slug}`,
+    url: `${siteUrl}/beers/style/${style.id}`,
     lastModified: new Date(),
     changeFrequency: "daily" as const,
     priority: 0.7,

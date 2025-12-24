@@ -90,18 +90,10 @@ export async function updateStyle(styleId: number, input: UpdateStyleInput) {
   }
 
   try {
-    // スラグを生成
-    const slug = input.name
-      .toLowerCase()
-      .replace(/[^a-z0-9\u3040-\u309f\u30a0-\u30ff\u4e00-\u9faf]/g, "-")
-      .replace(/-+/g, "-")
-      .replace(/^-|-$/g, "") || `style-${styleId}`;
-
     await db
       .update(beerStyles)
       .set({
         name: input.name,
-        slug,
         description: input.description,
         status: input.status,
         updatedAt: new Date(),
@@ -124,7 +116,7 @@ export async function updateStyle(styleId: number, input: UpdateStyleInput) {
 
     revalidatePath("/admin/styles");
     revalidatePath("/styles");
-    revalidatePath(`/styles/${slug}`);
+    revalidatePath(`/styles/${styleId}`);
     return { success: true };
   } catch (error) {
     console.error("Failed to update style:", error);

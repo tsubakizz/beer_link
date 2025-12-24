@@ -109,7 +109,6 @@ export default async function BitternessBeerPage({
       style: {
         id: beerStyles.id,
         name: beerStyles.name,
-        slug: beerStyles.slug,
       },
     })
     .from(beers)
@@ -127,7 +126,6 @@ export default async function BitternessBeerPage({
         .selectDistinct({
           id: beerStyles.id,
           name: beerStyles.name,
-          slug: beerStyles.slug,
         })
         .from(beerStyles)
         .innerJoin(beers, eq(beers.styleId, beerStyles.id))

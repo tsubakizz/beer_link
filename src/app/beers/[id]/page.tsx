@@ -184,12 +184,11 @@ async function FilteredBeersPage({ filterType, filterId }: { filterType: "style"
   const isAuthenticated = !!user;
 
   let filterName = "";
-  let styleSlug: string | null = null;
 
   // フィルター対象の情報を取得
   if (filterType === "style") {
     const style = await db
-      .select({ id: beerStyles.id, name: beerStyles.name, slug: beerStyles.slug })
+      .select({ id: beerStyles.id, name: beerStyles.name })
       .from(beerStyles)
       .where(eq(beerStyles.id, filterId))
       .limit(1)
@@ -199,7 +198,6 @@ async function FilteredBeersPage({ filterType, filterId }: { filterType: "style"
       notFound();
     }
     filterName = style.name;
-    styleSlug = style.slug;
   } else {
     const brewery = await db
       .select({ id: breweries.id, name: breweries.name })
@@ -239,7 +237,6 @@ async function FilteredBeersPage({ filterType, filterId }: { filterType: "style"
       style: {
         id: beerStyles.id,
         name: beerStyles.name,
-        slug: beerStyles.slug,
       },
     })
     .from(beers)
@@ -286,8 +283,8 @@ async function FilteredBeersPage({ filterType, filterId }: { filterType: "style"
             ? `${filterName}スタイルのクラフトビールを探索しよう。`
             : `${filterName}が醸造するクラフトビールを探索しよう。`}
         </p>
-        {filterType === "style" && styleSlug && (
-          <Link href={`/styles/${styleSlug}`} className="btn btn-outline btn-sm">
+        {filterType === "style" && (
+          <Link href={`/styles/${filterId}`} className="btn btn-outline btn-sm">
             {filterName}について詳しく見る →
           </Link>
         )}
@@ -374,7 +371,6 @@ async function BeerDetailPage({ beerId }: { beerId: number }) {
       style: {
         id: beerStyles.id,
         name: beerStyles.name,
-        slug: beerStyles.slug,
         bitterness: beerStyles.bitterness,
         sweetness: beerStyles.sweetness,
         body: beerStyles.body,
@@ -550,7 +546,7 @@ async function BeerDetailPage({ beerId }: { beerId: number }) {
           <div className="flex flex-wrap gap-3 mt-6">
             {beer.style && (
               <Link
-                href={`/styles/${beer.style.slug}`}
+                href={`/styles/${beer.style.id}`}
                 className="badge badge-primary badge-lg hover:badge-primary/80"
               >
                 {beer.style.name}
@@ -663,7 +659,7 @@ async function BeerDetailPage({ beerId }: { beerId: number }) {
         <div className="flex flex-wrap gap-3">
           {beer.style?.id && (
             <Link
-              href={`/beers/style/${beer.style.slug}`}
+              href={`/beers/style/${beer.style.id}`}
               className="btn btn-outline btn-sm"
             >
               {beer.style.name}のビール一覧 →

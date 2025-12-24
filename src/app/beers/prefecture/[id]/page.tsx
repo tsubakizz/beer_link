@@ -126,7 +126,6 @@ export default async function PrefectureBeersPage({
       style: {
         id: beerStyles.id,
         name: beerStyles.name,
-        slug: beerStyles.slug,
       },
     })
     .from(beers)
@@ -142,7 +141,7 @@ export default async function PrefectureBeersPage({
     await Promise.all([
       // ビールが存在するスタイルのみ取得
       db
-        .selectDistinct({ id: beerStyles.id, name: beerStyles.name, slug: beerStyles.slug })
+        .selectDistinct({ id: beerStyles.id, name: beerStyles.name })
         .from(beerStyles)
         .innerJoin(beers, eq(beers.styleId, beerStyles.id))
         .where(eq(beerStyles.status, "approved"))

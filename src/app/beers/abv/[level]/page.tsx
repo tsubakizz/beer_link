@@ -106,7 +106,6 @@ export default async function AbvBeerPage({ params, searchParams }: Props) {
       style: {
         id: beerStyles.id,
         name: beerStyles.name,
-        slug: beerStyles.slug,
       },
     })
     .from(beers)
@@ -124,7 +123,6 @@ export default async function AbvBeerPage({ params, searchParams }: Props) {
         .selectDistinct({
           id: beerStyles.id,
           name: beerStyles.name,
-          slug: beerStyles.slug,
         })
         .from(beerStyles)
         .innerJoin(beers, eq(beers.styleId, beerStyles.id))

@@ -17,7 +17,6 @@ interface BeerCardProps {
     style?: {
       id: number;
       name: string;
-      slug: string;
     } | null;
   };
 }

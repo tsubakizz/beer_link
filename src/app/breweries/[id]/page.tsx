@@ -112,7 +112,6 @@ export default async function BreweryDetailPage({ params }: Props) {
       style: {
         id: beerStyles.id,
         name: beerStyles.name,
-        slug: beerStyles.slug,
       },
     })
     .from(beers)

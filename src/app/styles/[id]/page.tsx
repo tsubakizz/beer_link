@@ -38,10 +38,10 @@ const VALID_FILTER_TYPES = [
 type FilterType = (typeof VALID_FILTER_TYPES)[number];
 
 // フィルターパターンをパース（例: "bitterness-3" -> { type: "bitterness", value: 3 }）
-function parseFilterSlug(
-  slug: string
+function parseFilterPattern(
+  id: string
 ): { type: FilterType; value: number } | null {
-  const match = slug.match(
+  const match = id.match(
     /^(bitterness|sweetness|body|aroma|sourness)-([1-5])$/
   );
   if (!match) return null;
@@ -52,16 +52,21 @@ function parseFilterSlug(
 }
 
 interface Props {
-  params: Promise<{ slug: string }>;
+  params: Promise<{ id: string }>;
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const { slug } = await params;
+  const { id } = await params;
 
   // フィルターパターンの場合はリダイレクトされるのでここでは処理しない
-  const filter = parseFilterSlug(slug);
+  const filter = parseFilterPattern(id);
   if (filter) {
     return { title: "リダイレクト中..." };
+  }
+
+  const styleId = parseInt(id, 10);
+  if (isNaN(styleId)) {
+    return { title: "ビアスタイルが見つかりません | beer_link" };
   }
 
   // スタイル詳細
@@ -74,7 +79,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       origin: beerStyles.origin,
     })
     .from(beerStyles)
-    .where(eq(beerStyles.slug, slug))
+    .where(eq(beerStyles.id, styleId))
     .limit(1)
     .then((rows) => rows[0]);
 
@@ -116,20 +121,25 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 export default async function StylePage({ params }: Props) {
-  const { slug } = await params;
+  const { id } = await params;
 
   // フィルターパターンの場合はクエリパラメータ付きでリダイレクト
-  const filter = parseFilterSlug(slug);
+  const filter = parseFilterPattern(id);
   if (filter) {
     const { type, value } = filter;
     redirect(`/styles?${type}_min=${value}&${type}_max=${value}`);
+  }
+
+  const styleId = parseInt(id, 10);
+  if (isNaN(styleId)) {
+    notFound();
   }
 
   // スタイル詳細を表示
   const style = await db
     .select()
     .from(beerStyles)
-    .where(eq(beerStyles.slug, slug))
+    .where(eq(beerStyles.id, styleId))
     .limit(1)
     .then((rows) => rows[0]);
 
@@ -159,7 +169,6 @@ export default async function StylePage({ params }: Props) {
       style: {
         id: beerStyles.id,
         name: beerStyles.name,
-        slug: beerStyles.slug,
       },
     })
     .from(beers)
@@ -195,7 +204,6 @@ export default async function StylePage({ params }: Props) {
       ? await db
           .select({
             id: beerStyles.id,
-            slug: beerStyles.slug,
             name: beerStyles.name,
           })
           .from(beerStyles)
@@ -363,7 +371,7 @@ export default async function StylePage({ params }: Props) {
           <h2 className="text-2xl font-bold">このスタイルのビール</h2>
           {styleBeers.length > 0 && (
             <Link
-              href={`/beers/style/${style.slug}`}
+              href={`/beers/style/${style.id}`}
               className="btn btn-outline btn-sm"
             >
               すべて見る →
@@ -380,7 +388,7 @@ export default async function StylePage({ params }: Props) {
             {styleBeers.length >= 12 && (
               <div className="text-center mt-8">
                 <Link
-                  href={`/beers/style/${style.slug}`}
+                  href={`/beers/style/${style.id}`}
                   className="btn btn-primary"
                 >
                   {style.name}のビールをもっと見る

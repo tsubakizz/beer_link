@@ -25,17 +25,22 @@ import type { Metadata } from "next";
 export const dynamic = "force-dynamic";
 
 interface Props {
-  params: Promise<{ slug: string }>;
+  params: Promise<{ id: string }>;
   searchParams: Promise<{ page?: string }>;
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const { slug } = await params;
+  const { id } = await params;
+
+  const styleId = parseInt(id, 10);
+  if (isNaN(styleId)) {
+    return { title: "スタイルが見つかりません | Beer Link" };
+  }
 
   const style = await db
     .select({ name: beerStyles.name })
     .from(beerStyles)
-    .where(eq(beerStyles.slug, slug))
+    .where(eq(beerStyles.id, styleId))
     .limit(1)
     .then((rows) => rows[0]);
 
@@ -55,14 +60,19 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 export default async function StyleBeersPage({ params, searchParams }: Props) {
-  const { slug } = await params;
+  const { id } = await params;
   const { page } = await searchParams;
+
+  const styleId = parseInt(id, 10);
+  if (isNaN(styleId)) {
+    notFound();
+  }
 
   // スタイル情報を取得
   const style = await db
-    .select({ id: beerStyles.id, name: beerStyles.name, slug: beerStyles.slug })
+    .select({ id: beerStyles.id, name: beerStyles.name })
     .from(beerStyles)
-    .where(eq(beerStyles.slug, slug))
+    .where(eq(beerStyles.id, styleId))
     .limit(1)
     .then((rows) => rows[0]);
 
@@ -112,7 +122,6 @@ export default async function StyleBeersPage({ params, searchParams }: Props) {
       style: {
         id: beerStyles.id,
         name: beerStyles.name,
-        slug: beerStyles.slug,
       },
     })
     .from(beers)
@@ -128,7 +137,7 @@ export default async function StyleBeersPage({ params, searchParams }: Props) {
     await Promise.all([
       // ビールが存在するスタイルのみ取得
       db
-        .selectDistinct({ id: beerStyles.id, name: beerStyles.name, slug: beerStyles.slug })
+        .selectDistinct({ id: beerStyles.id, name: beerStyles.name })
         .from(beerStyles)
         .innerJoin(beers, eq(beers.styleId, beerStyles.id))
         .where(eq(beerStyles.status, "approved"))
@@ -190,7 +199,7 @@ export default async function StyleBeersPage({ params, searchParams }: Props) {
     {} as Record<number, string[]>
   );
 
-  // スタイルリストに別名とslugを追加
+  // スタイルリストに別名を追加
   const styleOptions = styleList.map((s) => ({
     ...s,
     otherNames: otherNamesByStyleId[s.id] || [],
@@ -212,7 +221,7 @@ export default async function StyleBeersPage({ params, searchParams }: Props) {
         <p className="text-lg text-base-content/70 max-w-2xl mx-auto mb-4">
           {style.name}スタイルのクラフトビールを探索しよう。
         </p>
-        <Link href={`/styles/${style.slug}`} className="btn btn-outline btn-sm">
+        <Link href={`/styles/${style.id}`} className="btn btn-outline btn-sm">
           {style.name}について詳しく見る →
         </Link>
       </div>
@@ -271,7 +280,7 @@ export default async function StyleBeersPage({ params, searchParams }: Props) {
       <Pagination
         currentPage={currentPage}
         totalCount={totalCount}
-        basePath={`/beers/style/${style.slug}`}
+        basePath={`/beers/style/${style.id}`}
       />
     </div>
   );

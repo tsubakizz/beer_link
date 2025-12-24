@@ -107,7 +107,6 @@ async function seed() {
   // 3. ビアスタイルデータを投入
   console.log("🍺 Inserting beer styles...");
   const styleValues = styleRows.map((row) => ({
-    slug: row.slug || "",
     name: row.name || "",
     description: row.description || null,
     bitterness: row.bitterness ? parseInt(row.bitterness) : null,

@@ -132,17 +132,9 @@ export async function approveStyle(requestId: number) {
       return { success: false, error: "申請が見つかりません" };
     }
 
-    // スラグを生成（名前からURLフレンドリーな文字列に）
-    const slug = request.name
-      .toLowerCase()
-      .replace(/[^a-z0-9\u3040-\u309f\u30a0-\u30ff\u4e00-\u9faf]/g, "-")
-      .replace(/-+/g, "-")
-      .replace(/^-|-$/g, "");
-
     // beerStylesテーブルに追加
     await db.insert(beerStyles).values({
       name: request.name,
-      slug: slug || `style-${requestId}`,
       description: request.description,
       status: "approved",
     });
