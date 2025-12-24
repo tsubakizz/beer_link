@@ -1,10 +1,11 @@
 import { db } from "@/lib/db";
 import { beerStyles, beerStyleOtherNames } from "@/lib/db/schema";
-import { eq, and, gte, lte, ilike, or, exists, count, type SQL, type Column } from "drizzle-orm";
+import { eq, and, gte, lte, ilike, or, exists, count, ne, type SQL, type Column } from "drizzle-orm";
 import { StyleCard } from "@/components/beer";
 import { StyleFilter } from "@/components/beer/StyleFilter";
 import { Pagination, ITEMS_PER_PAGE } from "@/components/ui/Pagination";
 import { Breadcrumb } from "@/components/ui/Breadcrumb";
+import { OTHER_STYLE_NAME } from "@/lib/constants/beer-styles";
 import type { Metadata } from "next";
 
 // ビルド時にDBに接続できないため動的レンダリング
@@ -110,6 +111,9 @@ export default async function StylesPage({ searchParams }: Props) {
 
   // 検索条件を構築
   const conditions: SQL[] = [];
+
+  // 「その他」スタイルを除外
+  conditions.push(ne(beerStyles.name, OTHER_STYLE_NAME));
 
   // 範囲フィルター用のヘルパー
   const addRangeCondition = (
