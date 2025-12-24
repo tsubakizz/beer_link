@@ -250,11 +250,52 @@ export default async function BreweryDetailPage({ params }: Props) {
         </div>
       </div>
 
+      {/* このブルワリーのビール */}
+      <div>
+        <div className="flex items-center justify-between mb-6">
+          <h2 className="text-2xl font-bold">製造ビール</h2>
+          {breweryBeers.length > 0 && (
+            <Link
+              href={`/beers/brewery-${brewery.id}`}
+              className="btn btn-outline btn-sm"
+            >
+              すべて見る →
+            </Link>
+          )}
+        </div>
+        {breweryBeers.length > 0 ? (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            {breweryBeers.map((beer) => (
+              <BeerCard key={beer.id} beer={beer} />
+            ))}
+          </div>
+        ) : (
+          <div className="text-center py-12 bg-base-200 rounded-lg">
+            <p className="text-base-content/60">
+              このブルワリーのビールはまだ登録されていません
+            </p>
+          </div>
+        )}
+      </div>
+
       {/* 購入リンク */}
-      {(brewery.amazonUrl || brewery.rakutenUrl || brewery.otherShopUrl) && (
-        <div className="mb-12 pt-8 border-t border-base-300">
+      {(brewery.websiteUrl || brewery.amazonUrl || brewery.rakutenUrl || brewery.otherShopUrl) && (
+        <div className="mt-12 pt-8 border-t border-base-300">
           <h2 className="text-xl font-bold mb-4">このブルワリーのビールを購入</h2>
           <div className="flex flex-wrap gap-3">
+            {brewery.websiteUrl && (
+              <a
+                href={brewery.websiteUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="btn btn-outline gap-2"
+              >
+                <span>公式サイト</span>
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                </svg>
+              </a>
+            )}
             {brewery.amazonUrl && (
               <a
                 href={brewery.amazonUrl}
@@ -297,34 +338,6 @@ export default async function BreweryDetailPage({ params }: Props) {
           </div>
         </div>
       )}
-
-      {/* このブルワリーのビール */}
-      <div>
-        <div className="flex items-center justify-between mb-6">
-          <h2 className="text-2xl font-bold">製造ビール</h2>
-          {breweryBeers.length > 0 && (
-            <Link
-              href={`/beers/brewery-${brewery.id}`}
-              className="btn btn-outline btn-sm"
-            >
-              すべて見る →
-            </Link>
-          )}
-        </div>
-        {breweryBeers.length > 0 ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {breweryBeers.map((beer) => (
-              <BeerCard key={beer.id} beer={beer} />
-            ))}
-          </div>
-        ) : (
-          <div className="text-center py-12 bg-base-200 rounded-lg">
-            <p className="text-base-content/60">
-              このブルワリーのビールはまだ登録されていません
-            </p>
-          </div>
-        )}
-      </div>
     </div>
   );
 }
