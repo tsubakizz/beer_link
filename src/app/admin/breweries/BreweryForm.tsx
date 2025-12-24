@@ -130,6 +130,7 @@ export function BreweryForm({ brewery, prefectures }: Props) {
               label="都道府県"
               placeholder="都道府県を検索..."
               clearable
+              maxResults={50}
             />
           </div>
 
