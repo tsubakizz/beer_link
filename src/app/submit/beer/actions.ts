@@ -11,6 +11,7 @@ interface SubmitBeerInput {
   name: string;
   breweryId: number;
   styleId: number | null;
+  customStyleText?: string | null;
 }
 
 export async function submitBeer(input: SubmitBeerInput) {
@@ -50,6 +51,7 @@ export async function submitBeer(input: SubmitBeerInput) {
       name: input.name,
       breweryId: input.breweryId,
       styleId: input.styleId,
+      customStyleText: input.customStyleText || null,
       status: "pending",
       submittedBy: user.id,
     });
