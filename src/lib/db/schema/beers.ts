@@ -14,6 +14,10 @@ export const beers = pgTable("beers", {
   abv: decimal("abv", { precision: 4, scale: 2 }),
   ibu: integer("ibu"),
   imageUrl: text("image_url"),
+  amazonUrl: text("amazon_url"), // Amazon購入リンク（アフィリエイト）
+  rakutenUrl: text("rakuten_url"), // 楽天購入リンク（アフィリエイト）
+  officialUrl: text("official_url"), // 公式サイトURL
+  otherShopUrl: text("other_shop_url"), // その他のサイトURL
   status: text("status").default("approved").notNull(), // 'pending' | 'approved' | 'rejected'
   submittedBy: uuid("submitted_by").references(() => users.id),
   createdAt: timestamp("created_at").defaultNow().notNull(),
