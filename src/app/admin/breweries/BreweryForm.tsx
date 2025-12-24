@@ -164,7 +164,7 @@ export function BreweryForm({ brewery, prefectures }: Props) {
           {/* Webサイト */}
           <div>
             <label htmlFor="brewery-website" className="label">
-              <span className="text-base label-text">Webサイト</span>
+              <span className="text-base label-text">公式サイト URL</span>
             </label>
             <input
               id="brewery-website"
@@ -174,6 +174,9 @@ export function BreweryForm({ brewery, prefectures }: Props) {
               className="w-full input input-bordered"
               placeholder="https://..."
             />
+            <p className="text-sm text-base-content/60 mt-1">
+              詳細ページで「公式サイト」ボタンとしても表示されます
+            </p>
           </div>
         </div>
       </fieldset>
