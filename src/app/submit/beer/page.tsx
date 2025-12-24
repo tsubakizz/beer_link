@@ -1,6 +1,5 @@
 import { db } from "@/lib/db";
 import { breweries, beerStyles, beerStyleOtherNames } from "@/lib/db/schema";
-import { eq } from "drizzle-orm";
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import { BeerSubmitForm } from "./BeerSubmitForm";
@@ -30,11 +29,10 @@ export default async function BeerSubmitPage() {
     .from(breweries)
     .orderBy(breweries.name);
 
-  // ビアスタイル一覧を取得（承認済みのみ）
+  // ビアスタイル一覧を取得
   const styleList = await db
     .select({ id: beerStyles.id, name: beerStyles.name })
     .from(beerStyles)
-    .where(eq(beerStyles.status, "approved"))
     .orderBy(beerStyles.name);
 
   // ビアスタイル別名一覧を取得

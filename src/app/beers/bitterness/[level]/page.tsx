@@ -129,7 +129,6 @@ export default async function BitternessBeerPage({
         })
         .from(beerStyles)
         .innerJoin(beers, eq(beers.styleId, beerStyles.id))
-        .where(eq(beerStyles.status, "approved"))
         .orderBy(beerStyles.name),
       db
         .select({
