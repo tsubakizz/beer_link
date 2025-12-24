@@ -2,9 +2,9 @@ import Link from "next/link";
 import type { BeerStyle } from "@/lib/db/schema";
 
 interface RelatedStylesProps {
-  parentStyles: Pick<BeerStyle, "id" | "slug" | "name">[];
-  childStyles: Pick<BeerStyle, "id" | "slug" | "name">[];
-  siblingStyles: Pick<BeerStyle, "id" | "slug" | "name">[];
+  parentStyles: Pick<BeerStyle, "id" | "name">[];
+  childStyles: Pick<BeerStyle, "id" | "name">[];
+  siblingStyles: Pick<BeerStyle, "id" | "name">[];
 }
 
 export function RelatedStyles({
@@ -51,7 +51,7 @@ export function RelatedStyles({
                 {parentStyles.map((style) => (
                   <li key={style.id}>
                     <Link
-                      href={`/styles/${style.slug}`}
+                      href={`/styles/${style.id}`}
                       className="link link-hover text-primary flex items-center gap-1"
                     >
                       <span className="text-sm">→</span>
@@ -87,7 +87,7 @@ export function RelatedStyles({
                 {childStyles.map((style) => (
                   <li key={style.id}>
                     <Link
-                      href={`/styles/${style.slug}`}
+                      href={`/styles/${style.id}`}
                       className="link link-hover text-primary flex items-center gap-1"
                     >
                       <span className="text-sm">→</span>
@@ -123,7 +123,7 @@ export function RelatedStyles({
                 {siblingStyles.map((style) => (
                   <li key={style.id}>
                     <Link
-                      href={`/styles/${style.slug}`}
+                      href={`/styles/${style.id}`}
                       className="link link-hover text-primary flex items-center gap-1"
                     >
                       <span className="text-sm">→</span>

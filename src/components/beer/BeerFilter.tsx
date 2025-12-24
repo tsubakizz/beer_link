@@ -17,7 +17,6 @@ interface FilterOption {
 }
 
 interface StyleOption extends FilterOption {
-  slug?: string;
   otherNames?: string[];
 }
 
@@ -253,11 +252,8 @@ export function BeerFilter({
 
       if (activeFilters === 1 && !newQuery) {
         if (newStyle) {
-          const style = styles.find((s) => String(s.id) === newStyle);
-          if (style?.slug) {
-            router.push(`/beers/style/${style.slug}`);
-            return;
-          }
+          router.push(`/beers/style/${newStyle}`);
+          return;
         }
         if (newBrewery) {
           router.push(`/beers/brewery/${newBrewery}`);
@@ -288,7 +284,7 @@ export function BeerFilter({
       const queryString = params.toString();
       router.push(queryString ? `/beers?${queryString}` : "/beers");
     },
-    [router, styles]
+    [router]
   );
 
   const handleStyleChange = useCallback(

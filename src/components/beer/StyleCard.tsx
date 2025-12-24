@@ -36,7 +36,7 @@ export function StyleCard({ style }: StyleCardProps) {
   const textColor = getSrmTextColor(style.srmMin, style.srmMax);
 
   return (
-    <Link href={`/styles/${style.slug}`}>
+    <Link href={`/styles/${style.id}`}>
       <div className="card bg-base-100 shadow-md hover:shadow-lg transition-shadow cursor-pointer h-full overflow-hidden">
         {/* SRM色のヘッダー */}
         <div
