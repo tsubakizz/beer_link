@@ -95,7 +95,6 @@ export default async function MyPage() {
       style: {
         id: beerStyles.id,
         name: beerStyles.name,
-        slug: beerStyles.slug,
       },
     })
     .from(beerFavorites)

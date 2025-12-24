@@ -49,7 +49,7 @@ export async function generateMetadata({ searchParams }: Props): Promise<Metadat
   if (activeFilters === 1 && !q) {
     if (style) {
       const styleData = await db
-        .select({ slug: beerStyles.slug, name: beerStyles.name })
+        .select({ name: beerStyles.name })
         .from(beerStyles)
         .where(eq(beerStyles.id, parseInt(style, 10)))
         .limit(1)
@@ -60,7 +60,7 @@ export async function generateMetadata({ searchParams }: Props): Promise<Metadat
           title: `${styleData.name}のビール一覧`,
           description: `${styleData.name}スタイルのクラフトビールを探索。Beer Linkで${styleData.name}のビールを見つけよう。`,
           alternates: {
-            canonical: `${siteUrl}/beers/style/${styleData.slug}`,
+            canonical: `${siteUrl}/beers/style/${style}`,
           },
         };
       }
@@ -223,7 +223,6 @@ export default async function BeersPage({ searchParams }: Props) {
       style: {
         id: beerStyles.id,
         name: beerStyles.name,
-        slug: beerStyles.slug,
       },
     })
     .from(beers)
@@ -239,7 +238,7 @@ export default async function BeersPage({ searchParams }: Props) {
     await Promise.all([
       // ビールが存在するスタイルのみ取得
       db
-        .selectDistinct({ id: beerStyles.id, name: beerStyles.name, slug: beerStyles.slug })
+        .selectDistinct({ id: beerStyles.id, name: beerStyles.name })
         .from(beerStyles)
         .innerJoin(beers, eq(beers.styleId, beerStyles.id))
         .where(eq(beerStyles.status, "approved"))
